@@ -1,5 +1,10 @@
 plugins {
     id 'java'
+    id 'application'
+}
+
+application {
+    mainClass = 'webserver.WebServer'
 }
 
 group 'codesquad'
@@ -7,7 +12,7 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-}
+}:
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
@@ -15,8 +20,6 @@ dependencies {
 
     implementation 'ch.qos.logback:logback-classic:1.2.3'
     testImplementation 'org.assertj:assertj-core:3.16.1'
-
-
 }
 
 test {
