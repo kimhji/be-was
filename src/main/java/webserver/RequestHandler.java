@@ -25,13 +25,14 @@ public class RequestHandler implements Runnable {
             String req = getReq(in);
             logger.debug(req);
 
-
+            SimpleReq simpleReq = new SimpleReq(req);
+            logger.debug("method : "+simpleReq.method.name() +"\n path : "+ simpleReq.path);
 
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = "<h1>Hello World</h1>".getBytes();
             response200Header(dos, body.length);
             responseBody(dos, body);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }
@@ -67,4 +68,5 @@ public class RequestHandler implements Runnable {
         }
         return req;
     }
+
 }
