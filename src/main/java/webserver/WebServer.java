@@ -2,6 +2,10 @@ package webserver;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,8 +13,16 @@ import org.slf4j.LoggerFactory;
 public class WebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
+    private static ExecutorService executor;
+
 
     public static void main(String args[]) throws Exception {
+        executor = new ThreadPoolExecutor(
+                2, 4, 60,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(10)
+        );
+
         int port = 0;
         if (args == null || args.length == 0) {
             port = DEFAULT_PORT;
@@ -25,9 +37,14 @@ public class WebServer {
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                Thread thread = new Thread(new RequestHandler(connection));
-                thread.start();
+                Socket currentConnection = connection;
+                executor.execute(() -> {
+                    new RequestHandler(currentConnection).run();
+                });
             }
+        }
+        finally {
+            executor.shutdown();
         }
     }
 }
