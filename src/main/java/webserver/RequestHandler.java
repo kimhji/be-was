@@ -21,15 +21,13 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-
             String req = getReq(in);
             logger.debug(req);
 
             SimpleReq simpleReq = new SimpleReq(req);
-            logger.debug("method : "+simpleReq.method.name() +"\n path : "+ simpleReq.path);
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "<h1>Hello World</h1>".getBytes();
+            byte[] body = Response.processReq(simpleReq);
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (Exception e) {
@@ -60,7 +58,6 @@ public class RequestHandler implements Runnable {
     private String getReq(InputStream in) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String line = br.readLine();
-        String firstLine = String.valueOf(line);
         String req = "";
         while(line != null && !line.isEmpty()){
             req += line + "\n";
@@ -68,5 +65,4 @@ public class RequestHandler implements Runnable {
         }
         return req;
     }
-
 }
