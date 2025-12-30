@@ -28,7 +28,7 @@ public class RequestHandler implements Runnable {
 
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = Response.processReq(simpleReq);
-            response200Header(dos, body.length);
+            response200HeaderByType(dos, body.length, simpleReq);
             responseBody(dos, body);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -44,6 +44,26 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private void response200HeaderByType(DataOutputStream dos, int lengthOfBodyContent, SimpleReq simpleReq) {
+        try {
+            dos.writeBytes("HTTP/1.1 200 OK \r\n");
+            dos.writeBytes("Content-Type: "+contentType(simpleReq.path)+"\r\n");
+            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+            dos.writeBytes("\r\n");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private String contentType(String path) {
+        if (path.endsWith(".html")) return "text/html;charset=utf-8";
+        if (path.endsWith(".css")) return "text/css";
+        if (path.endsWith(".js")) return "application/javascript";
+        if (path.endsWith(".png")) return "image/png";
+        if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return "image/jpeg";
+        return "application/octet-stream";
     }
 
     private void responseBody(DataOutputStream dos, byte[] body) {
