@@ -63,6 +63,7 @@ public class RequestHandler implements Runnable {
         if (path.endsWith(".js")) return "application/javascript";
         if (path.endsWith(".png")) return "image/png";
         if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return "image/jpeg";
+        if (path.endsWith(".svg")) return "image/svg+xml";
         return "application/octet-stream";
     }
 
