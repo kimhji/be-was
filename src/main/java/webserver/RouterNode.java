@@ -2,8 +2,9 @@ package webserver;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class RouterNode {
     Map<String, RouterNode> children = new HashMap<>();
-    Map<SimpleReq.Method, Runnable> funcs = new HashMap<>();
+    Map<SimpleReq.Method, Function<SimpleReq, byte[]>> funcs = new HashMap<>();
 }
