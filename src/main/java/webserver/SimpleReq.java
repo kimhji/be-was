@@ -5,7 +5,6 @@ import java.util.Map;
 
 class SimpleReq{
     enum Method{
-        NONE,
         GET,
         POST,
         PUT,
@@ -34,7 +33,6 @@ class SimpleReq{
             }
             path = pathSplit[0];
         }
-        if(method == Method.NONE) throw new RuntimeException("알맞지 않은 method입니다.");
     }
     SimpleReq(Method method, String path) {
         this.method = method;
@@ -42,8 +40,8 @@ class SimpleReq{
     }
 
     private Method getMethod(String methodStr){
-        if(methodStr==null || methodStr.isBlank()) return Method.NONE;
-        switch(methodStr.trim()){
+        if(methodStr==null || methodStr.isBlank()) throw new RuntimeException("알맞지 않은 method입니다.");
+        switch(methodStr.trim().toUpperCase()){
             case "GET":
                 return Method.GET;
             case "POST":
@@ -55,7 +53,7 @@ class SimpleReq{
             case "PATCH":
                 return Method.PATCH;
             default:
-                return Method.NONE;
+                throw new RuntimeException("알맞지 않은 method입니다.");
         }
     }
 }
