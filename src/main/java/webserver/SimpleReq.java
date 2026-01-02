@@ -25,7 +25,15 @@ class SimpleReq{
         }
         method = getMethod(firstHeader[0]);
         path = firstHeader[1];
-
+        String[] pathSplit = firstHeader[1].split("\\?");
+        if(pathSplit.length>1){
+            for(String param: pathSplit[1].split("&")){
+                String[] keyAndValue = param.split("=");
+                if(keyAndValue.length<=1) continue;
+                queryParam.put(keyAndValue[0],keyAndValue[1]);
+            }
+            path = pathSplit[0];
+        }
         if(method == Method.NONE) throw new Exception("알맞지 않은 method입니다.");
     }
     SimpleReq(Method method, String path) {

@@ -3,6 +3,7 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,8 @@ public class RequestHandler implements Runnable {
                     }
                 }
         );
+        router.register(new SimpleReq(SimpleReq.Method.GET, "/create"), value-> new User(value.queryParam.get("userId"), value.queryParam.get("password"),value.queryParam.get("name"),value.queryParam.get("email"))
+                .toString().getBytes());
     }
 
     public void run() {
