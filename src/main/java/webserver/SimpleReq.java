@@ -1,5 +1,8 @@
 package webserver;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class SimpleReq{
     enum Method{
         NONE,
@@ -12,6 +15,7 @@ class SimpleReq{
 
     Method method;
     String path;
+    Map<String, String> queryParam = new HashMap<>();
     SimpleReq(String req) throws Exception{
         if(req == null || req.isBlank()) throw new Exception("요청이 비어있습니다.");
         String[] lines = req.split("\n");
