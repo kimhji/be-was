@@ -17,10 +17,15 @@ public class WebServer {
 
 
     public static void main(String args[]) throws Exception {
-        executor = new ThreadPoolExecutor(
-                2, 4, 60,
-                TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(10)
+        int cpuCount = Runtime.getRuntime().availableProcessors();
+        logger.info("Available processors: {}", cpuCount);
+
+        ExecutorService executor = new ThreadPoolExecutor(
+                cpuCount,
+                cpuCount,
+                0L,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>()
         );
 
         int port = 0;
