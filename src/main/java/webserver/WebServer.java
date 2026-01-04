@@ -20,7 +20,7 @@ public class WebServer {
         int cpuCount = Runtime.getRuntime().availableProcessors();
         logger.info("Available processors: {}", cpuCount);
 
-        ExecutorService executor = new ThreadPoolExecutor(
+        executor = new ThreadPoolExecutor(
                 cpuCount,
                 cpuCount,
                 0L,
