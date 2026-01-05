@@ -22,7 +22,7 @@ public class WebException extends RuntimeException{
         }
     }
 
-    HTTPStatus statusCode;
+    public HTTPStatus statusCode;
 
     WebException(HTTPStatus statusCode, String message){
         super(message);

@@ -3,6 +3,7 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
+import customException.WebException;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,47 +31,58 @@ public class RequestHandler implements Runnable {
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
-
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            String req = getReq(in);
-            logger.debug(req);
-
-            SimpleReq simpleReq = new SimpleReq(req);
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = router.route(simpleReq);
-            if(body == null) {
-                if(simpleReq.method == SimpleReq.Method.GET){
-                    body = Response.processReq(simpleReq);
+            try {
+                String req = getReq(in);
+                logger.debug(req);
+                SimpleReq simpleReq = new SimpleReq(req);
+
+                byte[] body = router.route(simpleReq);
+                if (body == null) {
+                    if (simpleReq.method == SimpleReq.Method.GET) {
+                        body = Response.processReq(simpleReq);
+                    } else {
+                        body = "".getBytes();
+                    }
+                    response200HeaderByType(dos, body.length, simpleReq);
+                } else {
+                    response200Header(dos, body.length);
                 }
-                else{
-                    body = "".getBytes();
-                }
-                response200HeaderByType(dos, body.length, simpleReq);
+                responseBody(dos, body);
             }
-            else{
-                response200Header(dos, body.length);
+            catch (WebException e){
+                byte[] body = e.getMessage()
+                        .getBytes();
+
+                responseHeaderByStatusAndType(
+                        dos,
+                        body.length,
+                        e.statusCode,
+                        "text/plain; charset=utf-8"
+                );
+                responseBody(dos, body);
             }
-            responseBody(dos, body);
+        }
+        catch (IOException e) {
+            logger.debug("Connection closed", e);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Unhandled error", e);
         }
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+        responseHeaderByStatusAndType(dos, lengthOfBodyContent, WebException.HTTPStatus.OK, "text/html;charset=utf-8");
     }
 
     private void response200HeaderByType(DataOutputStream dos, int lengthOfBodyContent, SimpleReq simpleReq) {
+        responseHeaderByStatusAndType(dos, lengthOfBodyContent, WebException.HTTPStatus.OK, contentType(simpleReq.path));
+    }
+
+    private void responseHeaderByStatusAndType(DataOutputStream dos, int lengthOfBodyContent, WebException.HTTPStatus status, String contentType) {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: "+contentType(simpleReq.path)+"\r\n");
+            dos.writeBytes("HTTP/1.1 "+status.getHttpStatus()+" "+status.name()+" \r\n");
+            dos.writeBytes("Content-Type: "+contentType+"\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
