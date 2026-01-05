@@ -17,6 +17,7 @@ class SimpleReq{
     Method method;
     String path;
     Map<String, String> queryParam = new HashMap<>();
+    Map<String, String> header = new HashMap<>();
     SimpleReq(String req){
         if(req == null || req.isBlank()) throw WebStatusConverter.emptyRequest();
         String[] lines = req.split("\n");
@@ -36,9 +37,24 @@ class SimpleReq{
             path = pathSplit[0];
         }
     }
+
     SimpleReq(Method method, String path) {
         this.method = method;
         this.path = path;
+    }
+
+    private void addHeader(String line, Map<String, String> header){
+        if(line == null || line.isBlank()) return;
+        String[] words = line.trim().split(":");
+        if(words.length<2) return;
+        StringBuilder sb = new StringBuilder();
+        for(int i = 1;i<words.length;i++){
+            sb.append(words[i]);
+            if(i+1 < words.length){
+                sb.append(":");
+            }
+        }
+        header.put(words[0], sb.toString().trim());
     }
 
     private Method getMethod(String methodStr){
