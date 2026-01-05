@@ -279,3 +279,149 @@ Runnable 인터페이스는 반환 가능 타입이 void 로 실행하는데 중
 인자를 하나 입력할 수 있지만, req 데이터로부터 모든 필요 값이 나올 것이기 때문에 route 하는데 문제가 없다고 판단했습니다.
 
 ⇒ 현재는 구현 과정 중에 문제가 없다면 해당 구조를 이어갈 생각입니다.
+
+## 테스트의 정의
+
+### 종류
+
+**기준 - 코드의 범위**
+
+- 단위 테스트 (Unit Test)
+
+가장 작은 코드 조각(메서드, 클래스)이 예상대로 작동하는지 확인합니다. 개발 초기 단계에서 버그를 빠르게 잡는 데 유용하며, JUnit5와 같은 도구를 사용합니다.
+
+- 통합 테스트 (Integration Test)
+
+여러 단위 또는 모듈이 서로 연동될 때 문제없이 동작하는지 검증합니다.
+
+- 시스템 테스트 (System Test)
+
+전체 애플리케이션이 통합된 상태로 요구사항을 만족하는지 확인하는 테스트입니다.
+
+- 인수 테스트 (Acceptance Test)
+
+최종 사용자의 관점에서 소프트웨어가 비즈니스 요구사항을 충족하는지 확인하는 단계로, 종종 시스템 테스트와 함께 진행됩니다.
+
+**기준 - 목적**
+
+- 기능 테스트 (Functional Test / E2E)
+
+사용자의 시나리오에 따라 애플리케이션의 전체 흐름과 기능이 올바르게 동작하는지 검증합니다. 엔드투엔드(End-to-End) 테스트라고도 불립니다.
+
+- 성능 테스트 (Performance Test)
+
+애플리케이션의 속도, 응답성, 안정성 등을 측정합니다.
+
+- 회귀 테스트 (Regression Test)
+
+코드 변경 후 기존 기능에 문제가 발생하지 않았는지 확인하는 재현 테스트입니다.
+
+### 필요성
+
+https://www.ibm.com/kr-ko/think/topics/software-testing
+
+소프트웨어 테스트 : 소프트웨어 제품 또는 애플리케이션이 특정 요구 사항에 따라 정확하고 안전하며 효율적으로 작동하는지 평가하고 검증하는 프로세스
+
+초기 소프트웨어 테스트는 제품이 시장에 출시되기 전에 문제를 식별합니다. 개발 팀이 테스트 피드백을 빨리 받을수록 다음과 같은 심각한 문제를 더 신속하게 해결할 수 있습니다.
+
+⇒ 기업은 효과적인 테스트 기법과 QA 프로세스를 구현하여 개발 및 지원 비용 등을 절약할 수 있습니다.
+
+- 아키텍처 결함
+- 잘못된 설계 결정
+- 유효하지 않거나 잘못된 기능
+- 보안 취약점
+- 확장성 문제
+
+### JUnit과 AssertJ
+
+**JUnit**
+
+https://docs.junit.org/6.0.1/overview.html
+
+https://docs.gradle.org/current/userguide/java_testing.html#using_junit5
+
+JUnit은 자바 프로그래밍 언어용 유닛 테스트 프레임워크.
+
+
+```
+JUnit은 세 개의 하위 프로젝트에서 파생된 여러 모듈로 구성되어 있습니다.
+
+JUnit 6.0.1 = JUnit 플랫폼 + JUnit 주피터 + JUnit 빈티지
+
+JUnit 플랫폼은 JVM에서 테스트 프레임워크를 실행하기 위한 기반을 제공합니다 . 또한 TestEngine플랫폼에서 실행되는 테스트 프레임워크 개발을 위한 API를 정의합니다. 더 나아가, 명령줄에서 플랫폼을 실행할 수 있는 콘솔 런처 와 플랫폼에서 하나 이상의 테스트 엔진을 사용하여 사용자 지정 테스트 스위트를 실행할 수 있는 JUnit 플랫폼 스위트 엔진을 제공합니다 .
+
+JUnit Jupiter 는 JUnit 테스트 및 확장 기능을 작성하기 위한 프로그래밍 모델 과 확장 모델 의 조합입니다 . Jupiter 하위 프로젝트는 TestEngine플랫폼에서 Jupiter 기반 테스트를 실행하기 위한 도구를 제공합니다.
+
+JUnit Vintage는 JUnit 3 및 JUnit 4 기반 테스트를 플랫폼에서 실행할 수 있도록 지원합니다 TestEngine. 이를 위해서는 클래스 경로 또는 모듈 경로에 JUnit 4.12 이상 버전이 설치되어 있어야 합니다. 단, JUnit Vintage 엔진은 더 이상 사용되지 않으므로 JUnit Jupiter 또는 JUnit 플랫폼을 기본적으로 지원하는 다른 테스트 프레임워크로 테스트를 마이그레이션하는 동안에만 임시로 사용해야 합니다.
+```
+
+⇒ 테스트 엔진을 제공해주는 단위 테스트 프레임워크.
+
+### AssertJ
+
+https://xxeol.tistory.com/12
+
+JUnit에서 공식적으로 추천하는 서드파티 라이브러리. 가독성, 에러 확인, 다양한 검증 method 등 테스트 코드 작성에 도움을 줍니다.
+
+![img.png](screenshots/img2.png)
+
+- 가독성
+
+    ```java
+    // 1. Plain JUnit
+    assertEquals(a, b);
+    
+    // 2. AssertJ + JUnit
+    assertThat(a).isEqualTo(b);
+    ```
+
+  `테스트한 값`과 `비교하는 정답 값`이 어떤 값인지 파악 가능.
+
+    ```java
+    // 1. Plain JUnit
+    assertThat("[TITLE] Hello, My Name is ash")
+            .isNotEmpty()
+            .contains("[TITLE]")
+            .containsOnlyOnce("ash")
+            .doesNotStartWith("[ERROR]");
+            
+    // 2. AssertJ + JUnit
+    assertThat(score)
+            .isPositive()
+            .isGreaterThan(60)
+            .isLessThanOrEqualTo(75);
+    ```
+
+  메소드 체이닝도 제공함으로써, 가독성 향
+
+- 실패 원인 체크
+
+    ```java
+    // 1. Plain JUnit 결과
+    expected: <true> but was: <false>
+    Expected :true
+    Actual   :false
+    
+    // 2. AssertJ + JUnit 결과
+    java.lang.AssertionError:
+    Expecting actual:
+      "ash"
+    to contain:
+      "o"
+    ```
+
+  실제 출력 값을 비교해볼 수 있음.
+
+- 다양한 검증 메소드 제공
+
+    ```java
+    //  1. Plain JUnit
+    assertTrue(winners.containsAll(List.of("애쉬", "스플릿")) && winners.size() == 2);
+    assertArrayEquals(winners.toArray(), new String[]{"애쉬", "스플릿"});
+    assertTrue(winners.containsAll(List.of("애쉬", "스플릿")));
+    
+    // 2. AssertJ + JUnit
+    assertThat(winners).containsExactlyInAnyOrder("애쉬", "스플릿");
+    assertThat(winners).containsExactly("애쉬", "스플릿");
+    assertThat(winners).contains("애쉬", "스플릿");
+    ```
