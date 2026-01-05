@@ -466,3 +466,50 @@ HTTP 메시지의 시작 줄과 HTTP 헤더를 묶어서 '요청 헤드(head)' �
   Via와 같은 General 헤더는 메시지 전체에 적용됩니다.
 Vary와 Accept-Ranges와 같은 Response 헤더는 상태 줄에 포함되지 않은 서버에 대한 추가 정보를 제공합니다.
 메시지 데이터의 원래 형식과 적용된 인코딩을 설명하는 Content-Type와 같은 Representation 헤더(메시지에 본문이 있는 경우에만 존재합니다).
+
+
+### Post 요청 구조
+
+https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/POST
+
+https://httpwg.org/specs/rfc9110.html#POST
+
+POST 요청은 보통 HTML 양식을 통해 서버에 전송하며, 서버에 변경사항을 만듭니다. 이 경우의 콘텐츠 유형(Content-Type)은 `<form>` 요소의 enctype 특성이나 `<input>`, `<button>` 요소의 formenctype 특성 안에 적당한 문자열을 넣어 결정합니다.
+
+application/x-www-form-urlencoded: &으로 분리되고, "=" 기호로 값과 키를 연결하는 key-value tuple로 인코딩되는 값입니다. 영어 알파벳이 아닌 문자들은 percent encoded 으로 인코딩됩니다. 따라서, 이 content type은 바이너리 데이터에 사용하기에는 적절치 않습니다. (바이너리 데이터에는 use multipart/form-data 를 사용해 주세요.)_
+multipart/form-data
+text/plain
+POST 요청을 HTML 양식 외의 다른 방법(XMLHttpRequest 등)으로 전송할 땐 요청의 본문이 어떤 형태도 취할 수 있습니다. HTTP 1.1 규격에 정의된 바와 같이, POST는 다음의 기능을 포함하는 균일한 메서드를 허용하도록 설계되었습니다.
+
+- 기존 리소스에 주석달기
+- 게시판, 뉴스 그룹, 메일링 리스트나 이와 유사한 시스템에 글 올리기
+- 회원가입 모달로 새로운 사용자 추가하기
+- 양식 전송 결과 등 데이터 블록을 데이터 처리 프로세스에 보내기
+- 이어붙이기 연산을 통한 데이터베이스 확장
+
+```java
+POST / HTTP/1.1
+Host: foo.com
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+
+say=Hi&to=Mom
+```
+
+```java
+POST /test.html HTTP/1.1
+Host: example.org
+Content-Type: multipart/form-data;boundary="boundary"
+
+--boundary
+Content-Disposition: form-data; name="field1"
+
+value1
+--boundary
+Content-Disposition: form-data; name="field2"; filename="example.txt"
+
+value2
+--boundary--
+```
+
+위 예제를 보면, depth가 있는 형태의 입력가 가능하다는 것을 볼 수 있습니다.

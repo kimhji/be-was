@@ -62,6 +62,10 @@ class SimpleReq{
         }
     }
 
+    private void addBodyParam(String line){
+
+    }
+
     private void addHeader(String line){
         if(line == null || line.isBlank()) return;
         String[] words = line.trim().split(":");
