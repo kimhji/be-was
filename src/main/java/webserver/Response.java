@@ -1,5 +1,7 @@
 package webserver;
 
+import customException.WebStatusConverter;
+
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -21,7 +23,7 @@ public class Response {
 
         String wholePath = "./src/main/resources/static"+path;
         File file = new File(wholePath);
-        if(!file.exists()) throw new RuntimeException("해당 static 파일이 존재하지 않습니다.");
+        if(!file.exists()) throw WebStatusConverter.inexistenceStaticFile();
         try {
             FileInputStream fr = new FileInputStream(wholePath);
 
