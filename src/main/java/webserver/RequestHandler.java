@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static Router router = new Router();
 
     private Socket connection;
 
@@ -15,20 +16,43 @@ public class RequestHandler implements Runnable {
         this.connection = connectionSocket;
     }
 
+    public static void init() {
+        SimpleReq req = new SimpleReq(SimpleReq.Method.GET, "/registration");
+        SimpleReq res = new SimpleReq(SimpleReq.Method.GET, "/registration/index.html");
+        router.register(req, K ->
+                {
+                    try {
+                        return Response.processReq(res);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+    }
+
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             String req = getReq(in);
             logger.debug(req);
 
             SimpleReq simpleReq = new SimpleReq(req);
-
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = Response.processReq(simpleReq);
-            response200HeaderByType(dos, body.length, simpleReq);
+            byte[] body = router.route(simpleReq);
+            if(body == null) {
+                if(simpleReq.method == SimpleReq.Method.GET){
+                    body = Response.processReq(simpleReq);
+                }
+                else{
+                    body = "".getBytes();
+                }
+                response200HeaderByType(dos, body.length, simpleReq);
+            }
+            else{
+                response200Header(dos, body.length);
+            }
             responseBody(dos, body);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -86,4 +110,5 @@ public class RequestHandler implements Runnable {
         }
         return req;
     }
+
 }

@@ -24,6 +24,10 @@ class SimpleReq{
 
         if(method == Method.NONE) throw new Exception("알맞지 않은 method입니다.");
     }
+    SimpleReq(Method method, String path) {
+        this.method = method;
+        this.path = path;
+    }
 
     private Method getMethod(String methodStr){
         if(methodStr==null || methodStr.isBlank()) return Method.NONE;
