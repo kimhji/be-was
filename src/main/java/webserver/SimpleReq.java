@@ -1,5 +1,6 @@
 package webserver;
 
+import common.UtilFunc;
 import customException.WebStatusConverter;
 
 import java.util.HashMap;
@@ -18,23 +19,22 @@ class SimpleReq{
     String path;
     Map<String, String> queryParam = new HashMap<>();
     Map<String, String> header = new HashMap<>();
+    Map<String, String> bodyParam = new HashMap<>();
     SimpleReq(String req){
         if(req == null || req.isBlank()) throw WebStatusConverter.emptyRequest();
         String[] lines = req.split("\n");
-        String[] firstHeader = lines[0].trim().split(" ");
-        if(firstHeader.length < 3){
-            throw WebStatusConverter.invalidFirstHeaderRequest();
-        }
-        method = getMethod(firstHeader[0]);
-        path = firstHeader[1];
-        String[] pathSplit = firstHeader[1].split("\\?");
-        if(pathSplit.length>1){
-            for(String param: pathSplit[1].split("&")){
-                String[] keyAndValue = param.split("=");
-                if(keyAndValue.length<=1) continue;
-                queryParam.put(keyAndValue[0],keyAndValue[1]);
+        getReqStartLine(lines[0]);
+        boolean isFindEmptyLine = false;
+        for(int i = 1;i<lines.length;i++){
+            if(lines[i].trim().isBlank()){
+                isFindEmptyLine = true;
             }
-            path = pathSplit[0];
+            if(!isFindEmptyLine || method != Method.POST){
+                addHeader(lines[i]);
+            }
+            else{
+
+            }
         }
     }
 
@@ -43,18 +43,31 @@ class SimpleReq{
         this.path = path;
     }
 
-    private void addHeader(String line, Map<String, String> header){
+    private void getReqStartLine(String startLine){
+        String[] firstHeader = startLine.trim().split(" ");
+        if(firstHeader.length < 3){
+            throw WebStatusConverter.invalidFirstHeaderRequest();
+        }
+        method = getMethod(firstHeader[0]);
+        path = firstHeader[1];
+        String[] pathSplit = firstHeader[1].split("\\?");
+        if(pathSplit.length>1){
+            String paramStr = UtilFunc.getRestStr(firstHeader[1], "\\?", 1).trim();
+            for(String param: paramStr.split("&")){
+                String[] keyAndValue = param.split("=");
+                if(keyAndValue.length<=1) continue;
+                queryParam.put(keyAndValue[0],keyAndValue[1]);
+            }
+            path = pathSplit[0];
+        }
+    }
+
+    private void addHeader(String line){
         if(line == null || line.isBlank()) return;
         String[] words = line.trim().split(":");
         if(words.length<2) return;
-        StringBuilder sb = new StringBuilder();
-        for(int i = 1;i<words.length;i++){
-            sb.append(words[i]);
-            if(i+1 < words.length){
-                sb.append(":");
-            }
-        }
-        header.put(words[0], sb.toString().trim());
+        String value = UtilFunc.getRestStr(line, ":", 1).trim();
+        header.put(words[0], value);
     }
 
     private Method getMethod(String methodStr){
