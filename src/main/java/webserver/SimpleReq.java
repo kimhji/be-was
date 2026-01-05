@@ -1,5 +1,7 @@
 package webserver;
 
+import customException.WebStatusConverter;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,11 +18,11 @@ class SimpleReq{
     String path;
     Map<String, String> queryParam = new HashMap<>();
     SimpleReq(String req){
-        if(req == null || req.isBlank()) throw new RuntimeException("요청이 비어있습니다.");
+        if(req == null || req.isBlank()) throw WebStatusConverter.emptyRequest();
         String[] lines = req.split("\n");
         String[] firstHeader = lines[0].trim().split(" ");
         if(firstHeader.length < 3){
-            throw new RuntimeException("헤더의 첫 줄이 예상하지 못한 형식으로 들어왔습니다.");
+            throw WebStatusConverter.invalidFirstHeaderRequest();
         }
         method = getMethod(firstHeader[0]);
         path = firstHeader[1];
@@ -40,7 +42,7 @@ class SimpleReq{
     }
 
     private Method getMethod(String methodStr){
-        if(methodStr==null || methodStr.isBlank()) throw new RuntimeException("알맞지 않은 method입니다.");
+        if(methodStr==null || methodStr.isBlank()) throw WebStatusConverter.invalidMethod();
         switch(methodStr.trim().toUpperCase()){
             case "GET":
                 return Method.GET;
@@ -53,7 +55,7 @@ class SimpleReq{
             case "PATCH":
                 return Method.PATCH;
             default:
-                throw new RuntimeException("알맞지 않은 method입니다.");
+                throw WebStatusConverter.invalidMethod();
         }
     }
 }

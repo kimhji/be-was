@@ -31,7 +31,7 @@ public class Response {
             return buffer;
         }
         catch (Exception e) {
-            throw new RuntimeException("파일을 읽는 과정 중에 예상치 못한 에러가 발생했습니다.");
+            throw WebStatusConverter.fileReadError();
         }
     }
 }
