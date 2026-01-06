@@ -1,5 +1,7 @@
 package webserver;
 
+import customException.WebStatusConverter;
+
 import java.util.function.Function;
 
 public class Router {
@@ -30,7 +32,10 @@ public class Router {
         }
 
         Function<SimpleReq, byte[]> func = curNode.funcs.get(req.method);
-        if(func == null) return null;
+        if (func == null) {
+            if (req.method == SimpleReq.Method.GET) return null;
+            throw WebStatusConverter.notAllowedMethod();
+        }
         return func.apply(req);
     }
 }

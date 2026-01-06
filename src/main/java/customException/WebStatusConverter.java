@@ -35,4 +35,11 @@ public class WebStatusConverter {
                 "알맞지 않은 method입니다."
         );
     }
+
+    public static WebException notAllowedMethod(){
+        return new WebException(
+                WebException.HTTPStatus.METHOD_NOT_ALLOWED,
+                "해당 method는 기능이 등록되어있지 않습니다."
+        );
+    }
 }
