@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 public class StaticFileProcessor {
     private static String basePath = "./src/main/resources/static";
 
-    static byte[] processReq(SimpleReq simpleReq) {
+    public static byte[] processReq(SimpleReq simpleReq) {
         byte[] result = "".getBytes();
         switch (simpleReq.method) {
             case GET:
