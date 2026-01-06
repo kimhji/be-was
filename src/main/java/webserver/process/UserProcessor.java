@@ -7,7 +7,7 @@ import webserver.SimpleReq;
 
 public class UserProcessor {
     public byte[] createUser(SimpleReq request){
-        User user = new User(request.queryParam.get("userId"), request.queryParam.get("password"), request.queryParam.get("name"), request.queryParam.get("email"));
+        User user = new User(request.bodyParam.get("userId"), request.bodyParam.get("password"), request.bodyParam.get("name"), request.bodyParam.get("email"));
 
         if(Database.findUserById(user.getUserId() ) != null) throw UserExceptionConverter.conflictUser();
         Database.addUser(user);

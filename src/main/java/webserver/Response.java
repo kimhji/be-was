@@ -4,6 +4,8 @@ import customException.WebException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Response {
     enum ContentType{
@@ -27,6 +29,7 @@ public class Response {
     WebException.HTTPStatus statusCode;
     ContentType contentType;
     byte[] body;
+    Map<String, String> header = new HashMap<>();
 
     public Response(WebException.HTTPStatus status,
                         byte[] body,
@@ -36,26 +39,16 @@ public class Response {
         this.contentType = contentType;
     }
 
-
-
-    public void response200Header(DataOutputStream dos, int lengthOfBodyContent) throws IOException{
-        responseHeaderByStatusAndType(dos, lengthOfBodyContent, WebException.HTTPStatus.OK, ContentType.HTML);
-    }
-
-    public void response200HeaderByType(DataOutputStream dos, int lengthOfBodyContent, SimpleReq simpleReq) throws IOException{
-        responseHeaderByStatusAndType(dos, lengthOfBodyContent, WebException.HTTPStatus.OK, contentType(simpleReq.path));
-    }
-
-    public void responseHeaderByStatusAndType(DataOutputStream dos, int lengthOfBodyContent, WebException.HTTPStatus status, ContentType contentType) throws IOException{
-        dos.writeBytes("HTTP/1.1 " + status.getHttpStatus() + " " + status.name() + " \r\n");
-        dos.writeBytes("Content-Type: " + contentType.contentType + "\r\n");
-        dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-    }
-
     public void setResponseHeader(DataOutputStream dos) throws IOException{
         dos.writeBytes("HTTP/1.1 " + statusCode.getHttpStatus() + " " + statusCode.name() + " \r\n");
         dos.writeBytes("Content-Type: " + contentType.contentType + "\r\n");
         dos.writeBytes("Content-Length: " + (body!=null?body.length:0) + "\r\n");
+        for(String key: this.header.keySet()){
+            dos.writeBytes(key+": "+header.get(key)+"\r\n");
+        }
+    }
+    public void addHeader(String key, String value){
+        header.put(key, value);
     }
 
     public static ContentType contentType(String path) {
