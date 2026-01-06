@@ -9,11 +9,13 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.process.StaticFileProcessor;
+import webserver.process.UserProcessor;
 import webserver.route.Router;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static Router router = new Router();
+    private static final Router router = new Router();
+    private static final UserProcessor userProcessor = new UserProcessor();
 
     private Socket connection;
 
@@ -31,8 +33,7 @@ public class RequestHandler implements Runnable {
                 }
         );
         router.register(new SimpleReq(SimpleReq.Method.GET, "/create"), value -> {
-            byte[] body = new User(value.queryParam.get("userId"), value.queryParam.get("password"), value.queryParam.get("name"), value.queryParam.get("email"))
-                    .toString().getBytes();
+            byte[] body = userProcessor.createUser(value);
             return new Response(WebException.HTTPStatus.OK, body, Response.ContentType.HTML);
         });
 

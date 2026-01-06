@@ -18,7 +18,7 @@ public class Response {
         PLAIN_TEXT("text/plain; charset=utf-8")
         ;
 
-        public String contentType;
+        public final String contentType;
 
         ContentType(String contentType){
             this.contentType = contentType;
