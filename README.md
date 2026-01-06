@@ -513,3 +513,72 @@ value2
 ```
 
 위 예제를 보면, depth가 있는 형태의 입력가 가능하다는 것을 볼 수 있습니다.
+
+
+## http redirect
+
+https://developer.mozilla.org/ko/docs/Web/HTTP/Guides/Redirections
+
+### 원칙
+
+HTTP에서, 리다이렉션은 요청에 대해 특별한 응답(*리다이렉트*)을 전송함으로써 촉발됩니다. HTTP 리다이렉트는 `3xx` 상태 코드를 지닌 응답입니다. 리다이렉트 응답을 수신한 브라우저는, 제공된 새로운 URL을 사용하며 그것을 즉시 로드합니다: 대부분의 경우, 리다이렉션은 사용자에게는 보이지 않는데다가, 적은 성능 저하를 일으킵니다.
+
+### 구조
+
+- 영속적 리다이렉션
+
+  이 리다이렉션은 영원히 지속됩니다. 원래의 URL이 더 이상 사용되지 않고 새로운 URL로 넘어가야 하는 상황에 사용합니다. 검색 엔진 로봇은 그들의 인덱스 내에서 리소스에 대한 연관 URL의 갱신을 촉발시킵니다.
+
+  | 코드 | 텍스트 | 메서드 핸들링 | 일반적인 유스케이스 |
+      | --- | --- | --- | --- |
+  | `301` | `Moved Permanently` | [`GET`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/GET) 메서드는 변경되지 않습니다. 다른 메서드들은 [`GET`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/GET)로 변하거나 변하지 않을수도 있습니다.[[1]](https://developer.mozilla.org/ko/docs/Web/HTTP/Guides/Redirections#attr1) | 웹 사이트의 재편성. |
+  | `308` | `Permanent Redirect` | 메서드와 본문은 변하지 않습니다. | GET이 아닌 링크/동작을 지닌, 웹 사이트의 재편성. |
+
+  [1] 명세는 메서드 변경을 허용할 의도가 없으나, 사실 상 사용자 에이전트들이 그렇게 하고 있습니다. `308` 은 `GET`이 아닌 메서드를 사용할 때 동작의 애매모호함을 제거하고자 만들어졌습니다.
+
+- 일시적 리다이렉션
+
+  때때로 요청된 리소스는 그것의 표준 위치에서 접근할 수 없고 다른 위치에서 접근 가능한 경우가 있습니다. 이런 경우 일시적인 리다이렉트가 사용될 수 있습니다. 검색 엔진 로봇은 새로운, 일시적인 링크를 기억하지 못합니다. 일시적인 리다이렉션은 일시적인 진행율 페이지를 표시하고자 리소스를 만들고 갱신하며 삭제할 때 사용될 수 도 있습니다.
+
+  | 코드 | 텍스트 | 메서드 핸들링 | 일반적인 유스 케이스 |
+      | --- | --- | --- | --- |
+  | `302` | `Found` | [`GET`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/GET) 메서드는 변경되지 않습니다. 다른 메서드들은 [`GET`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/GET)로 변하거나 변하지 않을수도 있습니다.[[2]](https://developer.mozilla.org/ko/docs/Web/HTTP/Guides/Redirections#attr2) | 웹 페이지가 예측하지 못한 이유로 일시적으로 이용 불가능할 때 가 있습니다. 그런 이유로, 검색 엔진은 그들의 링크를 갱신하지 않습니다. |
+  | `303` | `See Other` | [`GET`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/GET) 메서드는 변경되지 않습니다. 다른 메서들은 `GET` 메서드로 *변경됩니다*(본문을 잃게 됩니다). | 동작을 다시 촉발시키는 페이지 리프레시를 막기 위해 [`PUT`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/PUT) 혹은 [`POST`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/POST) 뒤에 사용됩니다. |
+  | `307` | `Temporary Redirect` | 메서드와 본문은 변경되지 않습니다. | 웹 페이지가 예측하지 못한 이유로 일시적으로 이용 불가능할 때 가 있습니다. 그런 이유로, 검색 엔진은 그들의 링크를 갱신하지 않습니다. GET이 아닌 링크/동작이 사이트에서 이용 가능할 때 `302`보다 더 좋습니다. |
+
+  [2] 명세에는 메서드 변경을 허용할 의도가 없으나, 실질적으로 사용자 에이전트들이 그렇게 하고 있습니다. `307` 은 `GET`이 아닌 메서드들을 사용하는 경우 동작의 애매모호함을 제거하기 위해 만들어집니다.
+
+  - 302
+
+    Indicates that the resource is accessible via an alternate URL indicated in the [Location](https://en.wikipedia.org/wiki/HTTP_location) header field. 
+        
+        Location header의 값으로 접근 시에도 접근이 가능함을 나타냅니다.
+
+- 특수 리다이렉션
+
+  이런 보통 리다이렉션과 더불어, 특별한 두 가지 리다이렉션이 더 있습니다. [`304`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Status/304) (수정되지 않음)은 (오랜된)로컬에 캐시된 복사본으로 페이지를 리다이렉트시키며, [`300`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Status/300) (다중 선택)은 수동 리다이렉션입니다:브라우저에 의해 웹 페이지로 표현되는 분문은 가능한 리다이렉션을 나열하며 사용자는 그 중 하나를 선택하기 위해 클릭합니다.
+
+  | 코드 | 텍스트 | 일반적인 유스케이스 |
+      | --- | --- | --- |
+  | `300` | `Multiple Choice` | 이런 경우가 많지는 않습니다: 본문의 HTML 페이지 내에 선택지가 나열됩니다. [`200`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Status/200) `OK` 상태와 함께 서브될 수 있습니다. |
+  | `304` | `Not Modified` | 캐시 리프레시: 캐시 값이 여전히 사용 가능할 정도로 신선함을 가리킵니다. |
+
+### location header
+
+https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Headers/Location
+
+**`Location`** 응답 헤더는 리다이렉트 할 페이지의 URL을 나타냅니다. 이 헤더는 `3xx` (redirection) 또는 `201` (created) 응답 상태와 함께 제공됩니다.
+
+리다이렉션의 경우, `Location`이 가리키는 페이지를 가져오기 위해 새 요청을 만드는데 사용하는 HTTP 메서드는 원본 메서드와 리다이렉션의 종류에 따라 달라집니다.
+
+- [`303`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Status/303) (See Other) 응답 코드는 항상 [`GET`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/GET) 메서드를 사용합니다.
+- [`307`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Status/307) (Temporary Redirect), [`308`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Status/308) (Permanent Redirect)은 원본 요청에서 사용한 메서드를 변경하지 않습니다.
+- [`301`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Status/301) (Moved Permanently), [`302`](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Status/302) (Found)는 대부분 메서드를 변경하지 않지만, 오래된 사용자 에이전트는 변경할 수도 있습니다.
+
+위의 상태 코드 중 하나가 포함된 모든 응답은 `Location` 헤더를 보냅니다.
+
+리소스 생성의 경우, 새로 만들어진 리소스의 URL을 나타냅니다.
+
+```java
+Location: /index.html
+```
