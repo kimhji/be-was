@@ -20,13 +20,12 @@ public class RequestHandler implements Runnable {
     }
 
     public static void init() {
-        SimpleReq req = new SimpleReq(SimpleReq.Method.GET, "/registration");
-        SimpleReq res = new SimpleReq(SimpleReq.Method.GET, "/registration/index.html");
-        router.register(req, (K) ->
+        router.register(new SimpleReq(SimpleReq.Method.GET, "/registration"), (K) ->
                 {
-                    byte[] body = StaticFileProcessor.processReq(res);
+                    SimpleReq realReq = new SimpleReq(SimpleReq.Method.GET, "/registration/index.html");
+                    byte[] body = StaticFileProcessor.processReq(realReq);
                     if(body == null) throw WebStatusConverter.inexistenceStaticFile();
-                    return new Response(WebException.HTTPStatus.OK, body, contentType(res.path));
+                    return new Response(WebException.HTTPStatus.OK, body, contentType(realReq.path));
                 }
         );
         router.register(new SimpleReq(SimpleReq.Method.GET, "/create"), value-> {
