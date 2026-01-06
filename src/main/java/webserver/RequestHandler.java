@@ -34,12 +34,18 @@ public class RequestHandler implements Runnable {
         );
         router.register(new SimpleReq(SimpleReq.Method.GET, "/create"), value -> {
             byte[] body = userProcessor.createUser(value);
-            return new Response(WebException.HTTPStatus.OK, body, Response.ContentType.HTML);
+            return new Response(WebException.HTTPStatus.CREATED, body, Response.ContentType.HTML);
         });
 
         router.register(new SimpleReq(SimpleReq.Method.GET, "/"), dummy -> {
             return new Response(WebException.HTTPStatus.OK, "<h1>Hello World</h1>".getBytes(), Response.ContentType.HTML);
 
+        });
+
+        router.register(new SimpleReq(SimpleReq.Method.POST, "/user/create"), request -> {
+            byte[] body = userProcessor.createUser(request);
+            return new Response(WebException.HTTPStatus.OK, body, Response.ContentType.HTML);
+            //return new Response(WebException.HTTPStatus.CREATED, )
         });
     }
 
