@@ -24,18 +24,18 @@ public class RequestHandler implements Runnable {
                 {
                     SimpleReq realReq = new SimpleReq(SimpleReq.Method.GET, "/registration/index.html");
                     byte[] body = StaticFileProcessor.processReq(realReq);
-                    if(body == null) throw WebStatusConverter.inexistenceStaticFile();
+                    if (body == null) throw WebStatusConverter.inexistenceStaticFile();
                     return new Response(WebException.HTTPStatus.OK, body, contentType(realReq.path));
                 }
         );
-        router.register(new SimpleReq(SimpleReq.Method.GET, "/create"), value-> {
-            byte[] body = new User(value.queryParam.get("userId"), value.queryParam.get("password"),value.queryParam.get("name"),value.queryParam.get("email"))
+        router.register(new SimpleReq(SimpleReq.Method.GET, "/create"), value -> {
+            byte[] body = new User(value.queryParam.get("userId"), value.queryParam.get("password"), value.queryParam.get("name"), value.queryParam.get("email"))
                     .toString().getBytes();
             return new Response(WebException.HTTPStatus.OK, body, "text/html;charset=utf-8");
         });
 
-        router.register(new SimpleReq(SimpleReq.Method.GET, "/"), dummy->{
-            return new Response(WebException.HTTPStatus.OK,"<h1>Hello World</h1>".getBytes(), "text/html;charset=utf-8");
+        router.register(new SimpleReq(SimpleReq.Method.GET, "/"), dummy -> {
+            return new Response(WebException.HTTPStatus.OK, "<h1>Hello World</h1>".getBytes(), "text/html;charset=utf-8");
 
         });
     }
@@ -52,7 +52,7 @@ public class RequestHandler implements Runnable {
                 Response response = null;
                 if (simpleReq.method == SimpleReq.Method.GET) {
                     byte[] body = StaticFileProcessor.processReq(simpleReq);
-                    if(body != null) {
+                    if (body != null) {
                         response = new Response(WebException.HTTPStatus.OK, body, contentType(simpleReq.path));
                     }
                 }
@@ -63,8 +63,7 @@ public class RequestHandler implements Runnable {
                 responseHeaderByStatusAndType(dos, response.body.length, response.statusCode, response.contentType);
 
                 responseBody(dos, response.body);
-            }
-            catch (WebException e){
+            } catch (WebException e) {
                 byte[] body = e.getMessage()
                         .getBytes();
 
@@ -76,8 +75,7 @@ public class RequestHandler implements Runnable {
                 );
                 responseBody(dos, body);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.debug("Connection closed", e);
         } catch (Exception e) {
             logger.error("Unhandled error", e);
@@ -94,8 +92,8 @@ public class RequestHandler implements Runnable {
 
     private void responseHeaderByStatusAndType(DataOutputStream dos, int lengthOfBodyContent, WebException.HTTPStatus status, String contentType) {
         try {
-            dos.writeBytes("HTTP/1.1 "+status.getHttpStatus()+" "+status.name()+" \r\n");
-            dos.writeBytes("Content-Type: "+contentType+"\r\n");
+            dos.writeBytes("HTTP/1.1 " + status.getHttpStatus() + " " + status.name() + " \r\n");
+            dos.writeBytes("Content-Type: " + contentType + "\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
@@ -113,20 +111,16 @@ public class RequestHandler implements Runnable {
         return "application/octet-stream";
     }
 
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    private void responseBody(DataOutputStream dos, byte[] body) throws IOException{
+        dos.write(body, 0, body.length);
+        dos.flush();
     }
 
-    private String getReq(InputStream in) throws IOException{
+    private String getReq(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String line = br.readLine();
         String req = "";
-        while(line != null && !line.isEmpty()){
+        while (line != null && !line.isEmpty()) {
             req += line + "\n";
             line = br.readLine();
         }

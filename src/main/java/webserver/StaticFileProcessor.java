@@ -8,9 +8,9 @@ import java.io.FileInputStream;
 public class StaticFileProcessor {
     private static String basePath = "./src/main/resources/static";
 
-    static byte[] processReq(SimpleReq simpleReq){
+    static byte[] processReq(SimpleReq simpleReq) {
         byte[] result = "".getBytes();
-        switch(simpleReq.method){
+        switch (simpleReq.method) {
             case GET:
                 result = getStaticSources(simpleReq.path);
                 break;
@@ -20,19 +20,18 @@ public class StaticFileProcessor {
         return result;
     }
 
-    static public void setBasePath(String basePath){
+    static public void setBasePath(String basePath) {
         StaticFileProcessor.basePath = basePath;
     }
 
-    static private byte[] getStaticSources(String path){
-        String wholePath = basePath+path;
+    static private byte[] getStaticSources(String path) {
+        String wholePath = basePath + path;
         File file = new File(wholePath);
-        if(!file.exists()) return null;
-        if(!file.isFile()) return null;
-        try (FileInputStream fr = new FileInputStream(wholePath)){
+        if (!file.exists()) return null;
+        if (!file.isFile()) return null;
+        try (FileInputStream fr = new FileInputStream(wholePath)) {
             return fr.readAllBytes();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw WebStatusConverter.fileReadError();
         }
     }

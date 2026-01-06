@@ -8,7 +8,7 @@ public class Router {
 
     private final RouterNode root = new RouterNode();
 
-    public void register(SimpleReq req, Function<SimpleReq,Response> func) {
+    public void register(SimpleReq req, Function<SimpleReq, Response> func) {
         String[] parts = req.path.split("/");
         RouterNode curNode = root;
 

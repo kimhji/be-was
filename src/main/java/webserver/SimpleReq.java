@@ -33,7 +33,7 @@ public class SimpleReq{
                 addHeader(lines[i]);
             }
             else{
-
+                addBodyParam(lines[i]);
             }
         }
     }
@@ -63,7 +63,13 @@ public class SimpleReq{
     }
 
     private void addBodyParam(String line){
-
+        if(line == null || line.isBlank()) return;
+        String[] cases = line.split("&");
+        for(String keyValue: cases){
+            String[] splited = keyValue.split("=");
+            if(splited.length <2) continue;
+            bodyParam.put(splited[0].trim(), splited[1].trim());
+        }
     }
 
     private void addHeader(String line){
