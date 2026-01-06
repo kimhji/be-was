@@ -1,5 +1,6 @@
 package db;
 
+import customException.UserExceptionConverter;
 import model.User;
 
 import java.util.Collection;
@@ -14,6 +15,7 @@ public class Database {
     }
 
     public static User findUserById(String userId) {
+        if(userId == null || userId.isBlank()) throw UserExceptionConverter.needUserId();
         return users.get(userId);
     }
 

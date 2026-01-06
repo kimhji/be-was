@@ -14,7 +14,7 @@ public class Auth {
 
     static Map<String, User> session = new HashMap<>();
 
-    static String addSession(User user){
+    public static String addSession(User user){
         Random random = new Random();
         random.setSeed(System.currentTimeMillis());
         long value = (long)(random.nextDouble() * 1_000_000_000L);
@@ -27,7 +27,7 @@ public class Auth {
         return keyData;
     }
 
-    static User getSession(String keyData){
+    public static User getSession(String keyData){
         return session.get(keyData);
     }
 
