@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleReq{
-    enum Method{
+    public enum Method{
         GET,
         POST,
         PUT,
@@ -15,11 +15,11 @@ public class SimpleReq{
         PATCH
     }
 
-    Method method;
-    String path;
-    Map<String, String> queryParam = new HashMap<>();
-    Map<String, String> header = new HashMap<>();
-    Map<String, String> bodyParam = new HashMap<>();
+    public Method method;
+    public String path;
+    public Map<String, String> queryParam = new HashMap<>();
+    public Map<String, String> header = new HashMap<>();
+    public Map<String, String> bodyParam = new HashMap<>();
     SimpleReq(String req){
         if(req == null || req.isBlank()) throw WebStatusConverter.emptyRequest();
         String[] lines = req.split("\n");
@@ -42,6 +42,7 @@ public class SimpleReq{
         this.method = method;
         this.path = path;
     }
+
 
     private void getReqStartLine(String startLine){
         String[] firstHeader = startLine.trim().split(" ");

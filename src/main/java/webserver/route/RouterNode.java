@@ -1,4 +1,7 @@
-package webserver;
+package webserver.route;
+
+import webserver.Response;
+import webserver.SimpleReq;
 
 import java.util.HashMap;
 import java.util.Map;

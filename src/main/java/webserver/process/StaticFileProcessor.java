@@ -1,6 +1,7 @@
-package webserver;
+package webserver.process;
 
 import customException.WebStatusConverter;
+import webserver.SimpleReq;
 
 import java.io.File;
 import java.io.FileInputStream;
