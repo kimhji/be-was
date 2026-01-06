@@ -6,7 +6,7 @@ import customException.WebStatusConverter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimpleReq{
+public class Request {
     public enum Method{
         GET,
         POST,
@@ -20,7 +20,7 @@ public class SimpleReq{
     public Map<String, String> queryParam = new HashMap<>();
     public Map<String, String> header = new HashMap<>();
     public Map<String, String> bodyParam = new HashMap<>();
-    SimpleReq(String req){
+    Request(String req){
         if(req == null || req.isBlank()) throw WebStatusConverter.emptyRequest();
         String[] lines = req.split("\n");
         getReqStartLine(lines[0]);
@@ -38,7 +38,7 @@ public class SimpleReq{
         }
     }
 
-    SimpleReq(Method method, String path) {
+    Request(Method method, String path) {
         this.method = method;
         this.path = path;
     }

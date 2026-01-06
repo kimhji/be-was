@@ -5,7 +5,6 @@ import java.net.Socket;
 
 import customException.WebException;
 import customException.WebStatusConverter;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.process.StaticFileProcessor;
@@ -24,25 +23,25 @@ public class RequestHandler implements Runnable {
     }
 
     public static void init() {
-        router.register(new SimpleReq(SimpleReq.Method.GET, "/registration"), (K) ->
+        router.register(new Request(Request.Method.GET, "/registration"), (K) ->
                 {
-                    SimpleReq realReq = new SimpleReq(SimpleReq.Method.GET, "/registration/index.html");
+                    Request realReq = new Request(Request.Method.GET, "/registration/index.html");
                     byte[] body = StaticFileProcessor.processReq(realReq);
                     if (body == null) throw WebStatusConverter.inexistenceStaticFile();
                     return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
                 }
         );
-        router.register(new SimpleReq(SimpleReq.Method.GET, "/create"), value -> {
+        router.register(new Request(Request.Method.GET, "/create"), value -> {
             byte[] body = userProcessor.createUser(value);
             return new Response(WebException.HTTPStatus.CREATED, body, Response.ContentType.HTML);
         });
 
-        router.register(new SimpleReq(SimpleReq.Method.GET, "/"), dummy -> {
+        router.register(new Request(Request.Method.GET, "/"), dummy -> {
             return new Response(WebException.HTTPStatus.OK, "<h1>Hello World</h1>".getBytes(), Response.ContentType.HTML);
 
         });
 
-        router.register(new SimpleReq(SimpleReq.Method.POST, "/user/create"), request -> {
+        router.register(new Request(Request.Method.POST, "/user/create"), request -> {
             byte[] body = userProcessor.createUser(request);
             Response response = new Response(WebException.HTTPStatus.MOVED_TEMPORALLY, body, Response.ContentType.HTML);
             response.addHeader("Location", "http://localhost:8080/index.html");
@@ -58,9 +57,9 @@ public class RequestHandler implements Runnable {
             try {
                 String req = getReq(in);
                 logger.debug(req);
-                SimpleReq simpleReq = new SimpleReq(req);
+                Request simpleReq = new Request(req);
                 Response response = null;
-                if (simpleReq.method == SimpleReq.Method.GET) {
+                if (simpleReq.method == Request.Method.GET) {
                     byte[] body = StaticFileProcessor.processReq(simpleReq);
                     if (body != null) {
                         response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));

@@ -2,7 +2,7 @@ package webserver.route;
 
 import customException.WebStatusConverter;
 import webserver.Response;
-import webserver.SimpleReq;
+import webserver.Request;
 
 import java.util.function.Function;
 
@@ -10,7 +10,7 @@ public class Router {
 
     private final RouterNode root = new RouterNode();
 
-    public void register(SimpleReq req, Function<SimpleReq, Response> func) {
+    public void register(Request req, Function<Request, Response> func) {
         String[] parts = req.path.split("/");
         RouterNode curNode = root;
 
@@ -23,7 +23,7 @@ public class Router {
                 .put(req.method, func);
     }
 
-    public Response route(SimpleReq req) {
+    public Response route(Request req) {
         String[] parts = req.path.split("/");
         RouterNode curNode = root;
 
@@ -33,7 +33,7 @@ public class Router {
             if (curNode == null) throw WebStatusConverter.notAllowedPath();
         }
 
-        Function<SimpleReq, Response> func = curNode.funcs.get(req.method);
+        Function<Request, Response> func = curNode.funcs.get(req.method);
         if (func == null)
             throw WebStatusConverter.notAllowedMethod();
         return func.apply(req);

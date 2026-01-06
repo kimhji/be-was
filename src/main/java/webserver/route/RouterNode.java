@@ -1,7 +1,7 @@
 package webserver.route;
 
 import webserver.Response;
-import webserver.SimpleReq;
+import webserver.Request;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,5 +9,5 @@ import java.util.function.Function;
 
 public class RouterNode {
     Map<String, RouterNode> children = new HashMap<>();
-    Map<SimpleReq.Method, Function<SimpleReq, Response>> funcs = new HashMap<>();
+    Map<Request.Method, Function<Request, Response>> funcs = new HashMap<>();
 }

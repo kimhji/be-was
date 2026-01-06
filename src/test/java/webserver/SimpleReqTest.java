@@ -20,10 +20,10 @@ class SimpleReqTest {
                         "Host: localhost:8080\n";
 
         // when
-        SimpleReq simpleReq = new SimpleReq(req);
+        Request simpleReq = new Request(req);
 
         // then
-        assertThat(simpleReq.method).isEqualTo(SimpleReq.Method.GET);
+        assertThat(simpleReq.method).isEqualTo(Request.Method.GET);
         assertThat(simpleReq.path).isEqualTo("/test/path");
         assertThat(simpleReq.queryParam)
                 .containsEntry("name", "kim")
@@ -38,10 +38,10 @@ class SimpleReqTest {
                         "Host: localhost\n";
 
         // when
-        SimpleReq simpleReq = new SimpleReq(req);
+        Request simpleReq = new Request(req);
 
         // then
-        assertThat(simpleReq.method).isEqualTo(SimpleReq.Method.POST);
+        assertThat(simpleReq.method).isEqualTo(Request.Method.POST);
         assertThat(simpleReq.path).isEqualTo("/login");
         assertThat(simpleReq.queryParam).isEmpty();
     }
@@ -49,10 +49,10 @@ class SimpleReqTest {
     @DisplayName("Method와 Path 생성자로 SimpleReq를 생성한다")
     void createWithMethodAndPath() {
         // when
-        SimpleReq simpleReq = new SimpleReq(SimpleReq.Method.PUT, "/resource");
+        Request simpleReq = new Request(Request.Method.PUT, "/resource");
 
         // then
-        assertThat(simpleReq.method).isEqualTo(SimpleReq.Method.PUT);
+        assertThat(simpleReq.method).isEqualTo(Request.Method.PUT);
         assertThat(simpleReq.path).isEqualTo("/resource");
         assertThat(simpleReq.queryParam).isEmpty();
     }
@@ -60,7 +60,7 @@ class SimpleReqTest {
     @Test
     @DisplayName("요청 문자열이 null이면 예외를 던진다")
     void throwExceptionWhenRequestIsNull() {
-        assertThatThrownBy(() -> new SimpleReq(null))
+        assertThatThrownBy(() -> new Request(null))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("요청이 비어있습니다.");
     }
@@ -68,7 +68,7 @@ class SimpleReqTest {
     @Test
     @DisplayName("요청 문자열이 blank이면 예외를 던진다")
     void throwExceptionWhenRequestIsBlank() {
-        assertThatThrownBy(() -> new SimpleReq("   "))
+        assertThatThrownBy(() -> new Request("   "))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("요청이 비어있습니다.");
     }
@@ -79,7 +79,7 @@ class SimpleReqTest {
         String req = "GET /only-two-parts\n";
 
         // when & then
-        assertThatThrownBy(() -> new SimpleReq(req))
+        assertThatThrownBy(() -> new Request(req))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("헤더의 첫 줄이 예상하지 못한 형식으로 들어왔습니다.");
     }
@@ -92,7 +92,7 @@ class SimpleReqTest {
                         "Host: localhost\n";
 
         // when & then
-        assertThatThrownBy(() -> new SimpleReq(req))
+        assertThatThrownBy(() -> new Request(req))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("알맞지 않은 method입니다.");
     }

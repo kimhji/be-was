@@ -1,7 +1,7 @@
 package webserver.process;
 
 import customException.WebStatusConverter;
-import webserver.SimpleReq;
+import webserver.Request;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 public class StaticFileProcessor {
     private static String basePath = "./src/main/resources/static";
 
-    public static byte[] processReq(SimpleReq simpleReq) {
+    public static byte[] processReq(Request simpleReq) {
         byte[] result = "".getBytes();
         switch (simpleReq.method) {
             case GET:
