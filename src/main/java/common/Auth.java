@@ -12,7 +12,7 @@ import java.util.Random;
 public class Auth {
     static String key = System.getenv("JWT_TOKEN");
 
-    static Map<String, String> session = new HashMap<>();
+    static Map<String, User> session = new HashMap<>();
 
     static String addSession(User user){
         Random random = new Random();
@@ -23,11 +23,13 @@ public class Auth {
             value = (long)(random.nextDouble() * 1_000_000_000L);
             keyData = String.format("%09d", value);
         }
-        session.put(keyData, user.getUserId());
+        session.put(keyData, user);
         return keyData;
     }
 
-
+    static User getSession(String keyData){
+        return session.get(keyData);
+    }
 
 //    public static String aesCBCEncode(String plainText) throws Exception {
 //
