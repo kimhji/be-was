@@ -31,6 +31,14 @@ public class RequestHandler implements Runnable {
                     return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
                 }
         );
+        router.register(new Request(Request.Method.GET, "/login"), (K) ->
+                {
+                    Request realReq = new Request(Request.Method.GET, "/login/index.html");
+                    byte[] body = StaticFileProcessor.processReq(realReq);
+                    if (body == null) throw WebStatusConverter.inexistenceStaticFile();
+                    return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
+                }
+        );
         router.register(new Request(Request.Method.GET, "/create"), value -> {
             byte[] body = userProcessor.createUser(value);
             return new Response(WebException.HTTPStatus.CREATED, body, Response.ContentType.HTML);
