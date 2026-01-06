@@ -29,12 +29,9 @@ public class Response {
 
         String wholePath = basePath+path;
         File file = new File(wholePath);
-        if(!file.exists()) throw WebStatusConverter.inexistenceStaticFile();
-        try {
-            FileInputStream fr = new FileInputStream(wholePath);
-
-            byte[] buffer = fr.readAllBytes();
-            return buffer;
+        if(!file.exists()) return null;
+        try (FileInputStream fr = new FileInputStream(wholePath)){
+            return fr.readAllBytes();
         }
         catch (Exception e) {
             throw WebStatusConverter.fileReadError();

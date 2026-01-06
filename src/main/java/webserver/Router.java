@@ -28,14 +28,12 @@ public class Router {
         for (String part : parts) {
             if (part.isEmpty()) continue;
             curNode = curNode.children.get(part);
-            if (curNode == null) return null;
+            if (curNode == null) throw WebStatusConverter.notAllowedPath();
         }
 
         Function<SimpleReq, byte[]> func = curNode.funcs.get(req.method);
-        if (func == null) {
-            if (req.method == SimpleReq.Method.GET) return null;
+        if (func == null)
             throw WebStatusConverter.notAllowedMethod();
-        }
         return func.apply(req);
     }
 }

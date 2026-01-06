@@ -38,17 +38,15 @@ public class RequestHandler implements Runnable {
                 String req = getReq(in);
                 logger.debug(req);
                 SimpleReq simpleReq = new SimpleReq(req);
-
-                byte[] body = router.route(simpleReq);
+                byte[] body = null;
+                if (simpleReq.method == SimpleReq.Method.GET) {
+                    body = Response.processReq(simpleReq);
+                }
                 if (body == null) {
-                    if (simpleReq.method == SimpleReq.Method.GET) {
-                        body = Response.processReq(simpleReq);
-                    } else {
-                        body = "".getBytes();
-                    }
+                    body = router.route(simpleReq);
                     response200HeaderByType(dos, body.length, simpleReq);
                 } else {
-                    response200Header(dos, body.length);
+                    response200HeaderByType(dos, body.length, simpleReq);
                 }
                 responseBody(dos, body);
             }
