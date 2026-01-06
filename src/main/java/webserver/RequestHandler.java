@@ -44,9 +44,8 @@ public class RequestHandler implements Runnable {
 
         router.register(new SimpleReq(SimpleReq.Method.POST, "/user/create"), request -> {
             byte[] body = userProcessor.createUser(request);
-            Response response = new Response(WebException.HTTPStatus.MOVED_PERMANENTLY, body, Response.ContentType.HTML);
+            Response response = new Response(WebException.HTTPStatus.MOVED_TEMPORALLY, body, Response.ContentType.HTML);
             response.addHeader("Location", "http://localhost:8080/index.html");
-            //return new Response(WebException.HTTPStatus.CREATED, )
             return response;
         });
     }
