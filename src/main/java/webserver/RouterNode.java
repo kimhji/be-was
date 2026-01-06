@@ -6,5 +6,5 @@ import java.util.function.Function;
 
 public class RouterNode {
     Map<String, RouterNode> children = new HashMap<>();
-    Map<SimpleReq.Method, Function<SimpleReq, byte[]>> funcs = new HashMap<>();
+    Map<SimpleReq.Method, Function<SimpleReq, Response>> funcs = new HashMap<>();
 }

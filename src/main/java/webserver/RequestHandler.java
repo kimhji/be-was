@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 
 import customException.WebException;
+import customException.WebStatusConverter;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +22,23 @@ public class RequestHandler implements Runnable {
     public static void init() {
         SimpleReq req = new SimpleReq(SimpleReq.Method.GET, "/registration");
         SimpleReq res = new SimpleReq(SimpleReq.Method.GET, "/registration/index.html");
-        router.register(req, K ->
-                Response.processReq(res)
+        router.register(req, (K) ->
+                {
+                    byte[] body = StaticFileProcessor.processReq(res);
+                    if(body == null) throw WebStatusConverter.inexistenceStaticFile();
+                    return new Response(WebException.HTTPStatus.OK, body, contentType(res.path));
+                }
         );
-        router.register(new SimpleReq(SimpleReq.Method.GET, "/create"), value-> new User(value.queryParam.get("userId"), value.queryParam.get("password"),value.queryParam.get("name"),value.queryParam.get("email"))
-                .toString().getBytes());
+        router.register(new SimpleReq(SimpleReq.Method.GET, "/create"), value-> {
+            byte[] body = new User(value.queryParam.get("userId"), value.queryParam.get("password"),value.queryParam.get("name"),value.queryParam.get("email"))
+                    .toString().getBytes();
+            return new Response(WebException.HTTPStatus.OK, body, "text/html;charset=utf-8");
+        });
 
+        router.register(new SimpleReq(SimpleReq.Method.GET, "/"), dummy->{
+            return new Response(WebException.HTTPStatus.OK,"<h1>Hello World</h1>".getBytes(), "text/html;charset=utf-8");
+
+        });
     }
 
     public void run() {
@@ -38,17 +50,20 @@ public class RequestHandler implements Runnable {
                 String req = getReq(in);
                 logger.debug(req);
                 SimpleReq simpleReq = new SimpleReq(req);
-                byte[] body = null;
+                Response response = null;
                 if (simpleReq.method == SimpleReq.Method.GET) {
-                    body = Response.processReq(simpleReq);
+                    byte[] body = StaticFileProcessor.processReq(simpleReq);
+                    if(body != null) {
+                        response = new Response(WebException.HTTPStatus.OK, body, contentType(simpleReq.path));
+                    }
                 }
-                if (body == null) {
-                    body = router.route(simpleReq);
-                    response200HeaderByType(dos, body.length, simpleReq);
-                } else {
-                    response200HeaderByType(dos, body.length, simpleReq);
+                if (response == null) {
+                    response = router.route(simpleReq);
                 }
-                responseBody(dos, body);
+
+                responseHeaderByStatusAndType(dos, response.body.length, response.statusCode, response.contentType);
+
+                responseBody(dos, response.body);
             }
             catch (WebException e){
                 byte[] body = e.getMessage()
@@ -89,7 +104,7 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private String contentType(String path) {
+    private static String contentType(String path) {
         if (path.endsWith(".html")) return "text/html;charset=utf-8";
         if (path.endsWith(".css")) return "text/css";
         if (path.endsWith(".js")) return "application/javascript";

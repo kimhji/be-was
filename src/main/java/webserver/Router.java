@@ -8,7 +8,7 @@ public class Router {
 
     private final RouterNode root = new RouterNode();
 
-    public void register(SimpleReq req, Function<SimpleReq,byte[]> func) {
+    public void register(SimpleReq req, Function<SimpleReq,Response> func) {
         String[] parts = req.path.split("/");
         RouterNode curNode = root;
 
@@ -21,7 +21,7 @@ public class Router {
                 .put(req.method, func);
     }
 
-    public byte[] route(SimpleReq req) {
+    public Response route(SimpleReq req) {
         String[] parts = req.path.split("/");
         RouterNode curNode = root;
 
@@ -31,7 +31,7 @@ public class Router {
             if (curNode == null) throw WebStatusConverter.notAllowedPath();
         }
 
-        Function<SimpleReq, byte[]> func = curNode.funcs.get(req.method);
+        Function<SimpleReq, Response> func = curNode.funcs.get(req.method);
         if (func == null)
             throw WebStatusConverter.notAllowedMethod();
         return func.apply(req);

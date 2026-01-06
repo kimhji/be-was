@@ -6,7 +6,7 @@ import customException.WebStatusConverter;
 import java.util.HashMap;
 import java.util.Map;
 
-class SimpleReq{
+public class SimpleReq{
     enum Method{
         GET,
         POST,
