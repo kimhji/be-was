@@ -124,6 +124,8 @@ public class RequestHandler implements Runnable {
         if (contentLength != null) {
             int len = Integer.parseInt(contentLength);
 
+            if(len <= 0) return req;
+
             char[] bodyChars = new char[len];
             int read = 0;
             while (read < len) {
