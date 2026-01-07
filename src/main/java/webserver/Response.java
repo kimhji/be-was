@@ -46,6 +46,7 @@ public class Response {
         for(String key: this.header.keySet()){
             dos.writeBytes(key+": "+header.get(key)+"\r\n");
         }
+        dos.writeBytes("\r\n");
     }
     public void addHeader(String key, String value){
         header.put(key, value);

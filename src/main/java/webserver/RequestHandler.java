@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 import customException.WebException;
 import customException.WebStatusConverter;
@@ -55,6 +56,16 @@ public class RequestHandler implements Runnable {
             response.addHeader("Location", "http://localhost:8080/index.html");
             return response;
         });
+
+        router.register(new Request(Request.Method.POST, "/user/login"), request -> {
+            StringBuilder sb = new StringBuilder("SID=");
+            String token = userProcessor.loginUser(request);
+            sb.append(token);
+            Response response = new Response(WebException.HTTPStatus.MOVED_TEMPORALLY, null, Response.ContentType.HTML);
+            response.addHeader("Location", "http://localhost:8080/index.html");
+            response.addHeader("set-cookie", sb.toString());
+            return response;
+        });
     }
 
     public void run() {
@@ -63,9 +74,8 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             DataOutputStream dos = new DataOutputStream(out);
             try {
-                String req = getReq(in);
-                logger.debug(req);
-                Request simpleReq = new Request(req);
+                Request simpleReq = getReq(in);
+                logger.debug(simpleReq.toString());
                 Response response = null;
                 if (simpleReq.method == Request.Method.GET) {
                     byte[] body = StaticFileProcessor.processReq(simpleReq);
@@ -93,20 +103,39 @@ public class RequestHandler implements Runnable {
     }
 
     private void responseBody(DataOutputStream dos, byte[] body) throws IOException{
-        dos.writeBytes("\r\n");
         dos.write(body, 0, body.length);
         dos.flush();
     }
 
-    private String getReq(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String line = br.readLine();
-        String req = "";
-        while (line != null && !line.isEmpty()) {
-            req += line + "\n";
-            line = br.readLine();
+    private Request getReq(InputStream in) throws IOException {
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader(in, StandardCharsets.UTF_8)
+        );
+
+        String line;
+        StringBuilder headerPart = new StringBuilder();
+
+        while ((line = br.readLine()) != null && !line.isEmpty()) {
+            headerPart.append(line).append("\r\n");
         }
+        Request req = new Request(headerPart.toString());
+
+        String contentLength = req.header.get("Content-Length");
+        if (contentLength != null) {
+            int len = Integer.parseInt(contentLength);
+
+            char[] bodyChars = new char[len];
+            int read = 0;
+            while (read < len) {
+                read += br.read(bodyChars, read, len - read);
+            }
+
+            String body = new String(bodyChars);
+            req.addBodyParam(body);
+        }
+
         return req;
     }
+
 
 }
