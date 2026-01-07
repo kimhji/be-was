@@ -61,7 +61,7 @@ public class RequestHandler implements Runnable {
             String token = userProcessor.loginUser(request);
             Response response = new Response(WebException.HTTPStatus.MOVED_TEMPORALLY, null, Response.ContentType.HTML);
             response.addHeader("Location", "http://localhost:8080/index.html");
-            response.addHeader("Set-Cookie", "SID=" + token + "; Path=/");
+            response.addHeader("set-cookie", "SID=" + token + "; Path=/");
             return response;
         });
     }
