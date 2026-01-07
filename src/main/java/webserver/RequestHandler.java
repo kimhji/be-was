@@ -58,12 +58,10 @@ public class RequestHandler implements Runnable {
         });
 
         router.register(new Request(Request.Method.POST, "/user/login"), request -> {
-            StringBuilder sb = new StringBuilder("SID=");
             String token = userProcessor.loginUser(request);
-            sb.append(token);
             Response response = new Response(WebException.HTTPStatus.MOVED_TEMPORALLY, null, Response.ContentType.HTML);
             response.addHeader("Location", "http://localhost:8080/index.html");
-            response.addHeader("set-cookie", sb.toString());
+            response.addHeader("Set-Cookie", "SID=" + token + "; Path=/");
             return response;
         });
     }

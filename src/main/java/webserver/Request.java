@@ -61,7 +61,7 @@ public class Request {
         sb.append("\r\n");
 
         if (!bodyParam.isEmpty()) {
-            sb.append(buildBody());
+            sb.append(UtilFunc.parseMapToQueryString(bodyParam));
         }
 
         return sb.toString();
@@ -72,31 +72,9 @@ public class Request {
         StringBuilder sb = new StringBuilder(path);
         sb.append("?");
 
-        boolean first = true;
-        for (Map.Entry<String, String> entry : queryParam.entrySet()) {
-            if (!first) sb.append("&");
-            sb.append(entry.getKey())
-                    .append("=")
-                    .append(entry.getValue());
-            first = false;
-        }
+        sb.append(UtilFunc.parseMapToQueryString(queryParam));
         return sb.toString();
     }
-
-    private String buildBody() {
-        StringBuilder sb = new StringBuilder();
-
-        boolean first = true;
-        for (Map.Entry<String, String> entry : bodyParam.entrySet()) {
-            if (!first) sb.append("&");
-            sb.append(entry.getKey())
-                    .append("=")
-                    .append(entry.getValue());
-            first = false;
-        }
-        return sb.toString();
-    }
-
 
 
     private void getReqStartLine(String startLine){

@@ -1,5 +1,7 @@
 package common;
 
+import java.util.Map;
+
 public class UtilFunc {
     public static String getRestStr(String wholeStr, String splitParam, int idx){
         if(wholeStr == null || splitParam == null || wholeStr.isBlank() || splitParam.isBlank()) return "";
@@ -12,6 +14,20 @@ public class UtilFunc {
             if(i+1< strs.length){
                 sb.append(splitParam);
             }
+        }
+        return sb.toString();
+    }
+
+    public static String parseMapToQueryString(Map<String, String> queryParam) {
+        StringBuilder sb = new StringBuilder();
+
+        boolean first = true;
+        for (Map.Entry<String, String> entry : queryParam.entrySet()) {
+            if (!first) sb.append("&");
+            sb.append(entry.getKey())
+                    .append("=")
+                    .append(entry.getValue());
+            first = false;
         }
         return sb.toString();
     }
