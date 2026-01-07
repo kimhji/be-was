@@ -23,7 +23,7 @@
       </header>
       <div class="page">
         <h2 class="page-title">로그인</h2>
-        <form class="form" action='/user/login' method="post">
+        <form id="login" class="form" action='/user/login' method="post">
           <div class="textfield textfield_size_s">
             <p class="title_textfield">아이디</p>
             <input
@@ -31,6 +31,7 @@
               placeholder="아이디를 입력해주세요"
               autocomplete="username"
               name="userId"
+              id="userId"
             />
           </div>
           <div class="textfield textfield_size_s">
@@ -41,6 +42,7 @@
               placeholder="비밀번호를 입력해주세요"
               autocomplete="current-password"
               name="password"
+              id="password"
             />
           </div>
           <button
@@ -54,5 +56,7 @@
         </form>
       </div>
     </div>
+    <script src="../script/alert.js"></script>
   </body>
 </html>
+
