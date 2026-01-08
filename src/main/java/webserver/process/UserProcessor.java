@@ -1,6 +1,7 @@
 package webserver.process;
 
 import common.Auth;
+import common.UtilFunc;
 import customException.UserExceptionConverter;
 import db.Database;
 import model.User;
@@ -24,5 +25,12 @@ public class UserProcessor {
         if(reqPassword.compareTo(user.getPassword()) != 0) throw UserExceptionConverter.unAuthorized();
 
         return Auth.addSession(user);
+    }
+
+    public User getUser(Request request){
+        String cookie = request.header.get("Cookie");
+        if(cookie==null) return null;
+        String SID = UtilFunc.getRestStr(cookie, "=", 1);
+        return Auth.getSession(SID);
     }
 }

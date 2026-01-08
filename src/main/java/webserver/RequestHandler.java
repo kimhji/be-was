@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 
 import customException.WebException;
 import customException.WebStatusConverter;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.process.StaticFileProcessor;
@@ -78,6 +79,8 @@ public class RequestHandler implements Runnable {
                 if (simpleReq.method == Request.Method.GET) {
                     byte[] body = StaticFileProcessor.processReq(simpleReq);
                     if (body != null) {
+                        User user = userProcessor.getUser(simpleReq);
+                        body = StaticFileProcessor.addUserData(body, user);
                         response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));
                     }
                 }
