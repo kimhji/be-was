@@ -16,13 +16,13 @@ public class UserProcessor {
         return user.toString().getBytes();
     }
 
-    public byte[] loginUser(Request request){
+    public String loginUser(Request request){
         String reqPassword = request.bodyParam.get("password");
         if(reqPassword == null || reqPassword.isBlank()) throw UserExceptionConverter.needUserData();
         User user = Database.findUserById(request.bodyParam.get("userId"));
         if(user == null) throw UserExceptionConverter.notFoundUser();
         if(reqPassword.compareTo(user.getPassword()) != 0) throw UserExceptionConverter.unAuthorized();
 
-        return Auth.addSession(user).getBytes();
+        return Auth.addSession(user);
     }
 }

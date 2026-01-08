@@ -43,6 +43,39 @@ public class Request {
         this.path = path;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(method.name())
+                .append(" ")
+                .append(buildPathWithQuery())
+                .append(" HTTP/1.1\r\n");
+
+        for (Map.Entry<String, String> entry : header.entrySet()) {
+            sb.append(entry.getKey())
+                    .append(": ")
+                    .append(entry.getValue())
+                    .append("\r\n");
+        }
+
+        sb.append("\r\n");
+
+        if (!bodyParam.isEmpty()) {
+            sb.append(UtilFunc.parseMapToQueryString(bodyParam));
+        }
+
+        return sb.toString();
+    }
+    private String buildPathWithQuery() {
+        if (queryParam.isEmpty()) return path;
+
+        StringBuilder sb = new StringBuilder(path);
+        sb.append("?");
+
+        sb.append(UtilFunc.parseMapToQueryString(queryParam));
+        return sb.toString();
+    }
+
 
     private void getReqStartLine(String startLine){
         String[] firstHeader = startLine.trim().split(" ");
@@ -63,7 +96,7 @@ public class Request {
         }
     }
 
-    private void addBodyParam(String line){
+    public void addBodyParam(String line){
         if(line == null || line.isBlank()) return;
         String[] cases = line.split("&");
         for(String keyValue: cases){
