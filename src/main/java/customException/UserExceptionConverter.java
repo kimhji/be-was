@@ -38,8 +38,9 @@ public class UserExceptionConverter {
 
     public static WebException needToLogin(){
         return new WebException(
-                WebException.HTTPStatus.UNAUTHORIZED,
-                "로그인이 필요합니다."
+                WebException.HTTPStatus.MOVED_TEMPORALLY,
+                "로그인이 필요합니다.",
+                "/login"
         );
     }
 }

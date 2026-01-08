@@ -109,6 +109,8 @@ public class RequestHandler implements Runnable {
             } catch (WebException e) {
                 Response response = new Response(e.statusCode, e.getMessage().getBytes(), Response.ContentType.PLAIN_TEXT);
                 response.setResponseHeader(dos);
+                if(e.path != null && !e.path.isBlank())
+                    response.addHeader("Location", e.path);
                 response.responseBody(dos);
             }
         } catch (IOException e) {

@@ -58,7 +58,7 @@ public class StaticFileProcessor {
                             "</ul>";
         } else {
             userDataHtml =
-                    "<a href=\"/mypage\">"+
+                    "<div id=link_to_mypage>"+
                     "<ul class=\"header__menu\">" +
                             "  <li class=\"header__menu__item\">" +
                             "    <img class=\"post__account__img\" />" +
@@ -67,7 +67,7 @@ public class StaticFileProcessor {
                             "    <p class=\"post__account__nickname\">{{user.name}}</p>" +
                             "  </li>" +
                             "</ul>"+
-                            "</a>";
+                            "</div>";
         }
         int idx = sb.indexOf("{{userData}}");
         if (idx != -1) {

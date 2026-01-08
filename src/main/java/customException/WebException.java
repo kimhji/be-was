@@ -27,9 +27,17 @@ public class WebException extends RuntimeException{
     }
 
     public HTTPStatus statusCode;
+    public String path;
 
     WebException(HTTPStatus statusCode, String message){
         super(message);
         this.statusCode = statusCode;
+        this.path = "";
+    }
+
+    WebException(HTTPStatus statusCode, String message, String path){
+        super(message);
+        this.statusCode = statusCode;
+        this.path = path;
     }
 }
