@@ -40,44 +40,4 @@ public class StaticFileProcessor {
         }
     }
 
-    static public byte[] addUserData(byte[] staticFile, boolean isLogin) {
-        String html = new String(staticFile, StandardCharsets.UTF_8);
-        StringBuilder sb = new StringBuilder(html);
-
-        String userDataHtml;
-
-        if (!isLogin) {
-            userDataHtml =
-                    "<ul class=\"header__menu\">" +
-                            "  <li class=\"header__menu__item\">" +
-                            "    <a class=\"btn btn_contained btn_size_s\" href=\"/login\">로그인</a>" +
-                            "  </li>" +
-                            "  <li class=\"header__menu__item\">" +
-                            "    <a class=\"btn btn_ghost btn_size_s\" href=\"/registration\">회원 가입</a>" +
-                            "  </li>" +
-                            "</ul>";
-        } else {
-            userDataHtml =
-                    "<div id=link_to_mypage>"+
-                    "<ul class=\"header__menu\">" +
-                            "  <li class=\"header__menu__item\">" +
-                            "    <img class=\"post__account__img\" />" +
-                            "  </li>" +
-                            "  <li class=\"header__menu__item\">" +
-                            "    <p class=\"post__account__nickname\">{{user.name}}</p>" +
-                            "  </li>" +
-                            "</ul>"+
-                            "</div>";
-        }
-        int idx = sb.indexOf("{{userData}}");
-        if (idx != -1) {
-            sb.replace(
-                    idx,
-                    idx + "{{userData}}".length(),
-                    userDataHtml
-            );
-        }
-
-        return sb.toString().getBytes(StandardCharsets.UTF_8);
-    }
 }

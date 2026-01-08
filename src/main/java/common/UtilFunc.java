@@ -31,4 +31,12 @@ public class UtilFunc {
         }
         return sb.toString();
     }
+
+    public static void replaceAll(StringBuilder sb, String target, String replacement) {
+        int index;
+        if(replacement == null) replacement = "";
+        while ((index = sb.indexOf(target)) != -1) {
+            sb.replace(index, index + target.length(), replacement);
+        }
+    }
 }

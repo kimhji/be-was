@@ -10,6 +10,7 @@ import customException.WebStatusConverter;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.parser.PageReplacer;
 import webserver.parser.Replacer;
 import webserver.process.StaticFileProcessor;
 import webserver.process.UserProcessor;
@@ -20,6 +21,7 @@ public class RequestHandler implements Runnable {
     private static final Router router = new Router();
     private static final UserProcessor userProcessor = new UserProcessor();
     private static final Replacer userReplacer = new Replacer("user");
+    private static final PageReplacer pageReplacer = new PageReplacer();
 
     private Socket connection;
 
@@ -93,8 +95,9 @@ public class RequestHandler implements Runnable {
                     byte[] body = StaticFileProcessor.processReq(simpleReq);
 
                     if (body != null) {
-                        body = StaticFileProcessor.addUserData(body, user != null);
-                        body = userReplacer.replace(user, new String(body)).getBytes();
+                        String template = pageReplacer.getWholePage(new String(body), simpleReq.path, user!=null);
+                        //body = StaticFileProcessor.addUserData(body, user != null);
+                        body = userReplacer.replace(user, template).getBytes();
 
                         response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));
                     }
