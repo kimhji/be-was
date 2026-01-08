@@ -87,22 +87,17 @@ public class RequestHandler implements Runnable {
 
                 response.setResponseHeader(dos);
 
-                responseBody(dos, response.body);
+                response.responseBody(dos);
             } catch (WebException e) {
                 Response response = new Response(e.statusCode, e.getMessage().getBytes(), Response.ContentType.PLAIN_TEXT);
                 response.setResponseHeader(dos);
-                responseBody(dos, response.body);
+                response.responseBody(dos);
             }
         } catch (IOException e) {
             logger.debug("Connection closed", e);
         } catch (Exception e) {
             logger.error("Unhandled error", e);
         }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) throws IOException{
-        dos.write(body, 0, body.length);
-        dos.flush();
     }
 
     private Request getReq(InputStream in) throws IOException {

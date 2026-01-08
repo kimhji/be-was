@@ -62,4 +62,9 @@ public class Response {
         if (path.endsWith(".txt")) return ContentType.PLAIN_TEXT;
         return ContentType.OCTET;
     }
+
+    public void responseBody(DataOutputStream dos) throws IOException{
+        dos.write(body, 0, body.length);
+        dos.flush();
+    }
 }
