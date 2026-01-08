@@ -33,7 +33,7 @@ public class PageReplacer {
 
     private String getParsedPage(String path, boolean isLogin){
         PageType pageType = getPageType(path);
-        return (pageType!=null&isLogin)?afterLogin.get(pageType):notLogin.get(pageType);
+        return (pageType!=null && isLogin)?afterLogin.get(pageType):notLogin.get(pageType);
     }
 
     private PageType getPageType(String path){
