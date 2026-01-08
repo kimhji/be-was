@@ -1,18 +1,41 @@
-async function formResponseProcess(response) {
+async function formResponseProcessToMain(response) {
+    await formResponseProcess(response, "./index.html")
+}
+
+async function formResponseProcess(response, nextPath) {
+    if(await alertCall(response)) return;
+
+    // 성공
+    if (response.status >= 200 && response.status < 300 && nextPath != null && nextPath.length > 0) {
+        window.location.href = nextPath;
+    }
+}
+
+async function getView(response) {
+    if(await alertCall(response)) return;
+
+
+    const html = await response.text();
+    document.open();
+    document.write(html);
+    document.close();
+}
+
+async function alertCall(response){
     if (response.status >= 400 && response.status < 500) {
         const msg = await response.text();
         alert("에러 발생: " + msg);
-        return;
+        return true;
     }
     if (response.status >= 300 && response.status < 400) {
-        window.location.href = response.headers.get("Location");
-        return;
+        const msg = await response.text();
+        if(msg != null)
+            alert(msg);
+        if(response.headers.get("Location"))
+            window.location.href = response.headers.get("Location");
+        return true;
     }
-
-    // 성공
-    if (response.status >= 200 && response.status < 300) {
-        window.location.href = "/index.html";
-    }
+    return false;
 }
 
 document.getElementById("login")?.addEventListener("submit", async (e) => {
@@ -31,7 +54,7 @@ document.getElementById("login")?.addEventListener("submit", async (e) => {
         })
     });
 
-    await formResponseProcess(response);
+    await formResponseProcessToMain(response);
 });
 
 document.getElementById("registration")?.addEventListener("submit", async (e) => {
@@ -54,5 +77,15 @@ document.getElementById("registration")?.addEventListener("submit", async (e) =>
         })
     });
 
-    await formResponseProcess(response);
+    await formResponseProcessToMain(response);
+});
+
+document.getElementById("link_to_mypage")?.addEventListener("click", async (e) => {
+    e.preventDefault(); // 기본 submit 막기
+
+    const response = await fetch("/mypage", {
+        method: "GET"
+    });
+
+    await getView(response);
 });

@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class Auth {
-    static String key = System.getenv("JWT_TOKEN");
+    //tatic String key = System.getenv("JWT_TOKEN");
 
     static Map<String, User> session = new HashMap<>();
 

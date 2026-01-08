@@ -4,10 +4,15 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import common.Config;
+import customException.UserExceptionConverter;
 import customException.WebException;
 import customException.WebStatusConverter;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.parse.PageReplacer;
+import webserver.parse.Replacer;
 import webserver.process.StaticFileProcessor;
 import webserver.process.UserProcessor;
 import webserver.route.Router;
@@ -16,6 +21,8 @@ public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final Router router = new Router();
     private static final UserProcessor userProcessor = new UserProcessor();
+    private static final Replacer userReplacer = new Replacer("user");
+    private static final PageReplacer pageReplacer = new PageReplacer();
 
     private Socket connection;
 
@@ -40,10 +47,18 @@ public class RequestHandler implements Runnable {
                     return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
                 }
         );
-        router.register(new Request(Request.Method.GET, "/create"), value -> {
-            byte[] body = userProcessor.createUser(value);
-            return new Response(WebException.HTTPStatus.CREATED, body, Response.ContentType.HTML);
-        });
+        router.register(new Request(Request.Method.GET, "/mypage"), (K) ->
+                {
+                    Request realReq = new Request(Request.Method.GET, "/mypage/index.html");
+                    byte[] body = StaticFileProcessor.processReq(realReq);
+                    if (body == null) throw WebStatusConverter.inexistenceStaticFile();
+                    return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
+                }
+        );
+//        router.register(new Request(Request.Method.GET, "/create"), value -> {
+//            byte[] body = userProcessor.createUser(value);
+//            return new Response(WebException.HTTPStatus.CREATED, body, Response.ContentType.HTML);
+//        });
 
         router.register(new Request(Request.Method.GET, "/"), dummy -> {
             return new Response(WebException.HTTPStatus.OK, "<h1>Hello World</h1>".getBytes(), Response.ContentType.HTML);
@@ -75,9 +90,15 @@ public class RequestHandler implements Runnable {
                 Request simpleReq = getReq(in);
                 logger.debug(simpleReq.toString());
                 Response response = null;
+                User user = userProcessor.getUser(simpleReq);
+                if(Router.needLogin(simpleReq.path) && user == null) throw UserExceptionConverter.needToLogin();
                 if (simpleReq.method == Request.Method.GET) {
                     byte[] body = StaticFileProcessor.processReq(simpleReq);
+
                     if (body != null) {
+                        String template = pageReplacer.getWholePage(new String(body), simpleReq.path, user!=null);
+                        body = userReplacer.replace(user, template).getBytes();
+
                         response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));
                     }
                 }
@@ -87,22 +108,19 @@ public class RequestHandler implements Runnable {
 
                 response.setResponseHeader(dos);
 
-                responseBody(dos, response.body);
+                response.responseBody(dos);
             } catch (WebException e) {
                 Response response = new Response(e.statusCode, e.getMessage().getBytes(), Response.ContentType.PLAIN_TEXT);
                 response.setResponseHeader(dos);
-                responseBody(dos, response.body);
+                if(e.path != null && !e.path.isBlank())
+                    response.addHeader("Location", e.path);
+                response.responseBody(dos);
             }
         } catch (IOException e) {
             logger.debug("Connection closed", e);
         } catch (Exception e) {
             logger.error("Unhandled error", e);
         }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) throws IOException{
-        dos.write(body, 0, body.length);
-        dos.flush();
     }
 
     private Request getReq(InputStream in) throws IOException {
@@ -114,7 +132,7 @@ public class RequestHandler implements Runnable {
         StringBuilder headerPart = new StringBuilder();
 
         while ((line = br.readLine()) != null && !line.isEmpty()) {
-            headerPart.append(line).append("\r\n");
+            headerPart.append(line).append(Config.CRLF);
         }
         Request req = new Request(headerPart.toString());
 

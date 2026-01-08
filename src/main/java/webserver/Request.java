@@ -1,5 +1,6 @@
 package webserver;
 
+import common.Config;
 import common.UtilFunc;
 import customException.WebStatusConverter;
 
@@ -49,16 +50,17 @@ public class Request {
         sb.append(method.name())
                 .append(" ")
                 .append(buildPathWithQuery())
-                .append(" HTTP/1.1\r\n");
+                .append(" HTTP/1.1")
+                .append(Config.CRLF);
 
         for (Map.Entry<String, String> entry : header.entrySet()) {
             sb.append(entry.getKey())
                     .append(": ")
                     .append(entry.getValue())
-                    .append("\r\n");
+                    .append(Config.CRLF);
         }
 
-        sb.append("\r\n");
+        sb.append(Config.CRLF);
 
         if (!bodyParam.isEmpty()) {
             sb.append(UtilFunc.parseMapToQueryString(bodyParam));
@@ -100,9 +102,9 @@ public class Request {
         if(line == null || line.isBlank()) return;
         String[] cases = line.split("&");
         for(String keyValue: cases){
-            String[] splited = keyValue.split("=");
-            if(splited.length <2) continue;
-            bodyParam.put(splited[0].trim(), splited[1].trim());
+            String[] split = keyValue.split("=");
+            if(split.length <2) continue;
+            bodyParam.put(split[0].trim(), split[1].trim());
         }
     }
 

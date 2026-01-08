@@ -10,6 +10,10 @@ public class Router {
 
     private final RouterNode root = new RouterNode();
 
+    public static boolean needLogin(String path){
+        return (path.compareTo("/mypage/index.html") == 0) || (path.compareTo("/mypage") == 0);
+    }
+
     public void register(Request req, Function<Request, Response> func) {
         String[] parts = req.path.split("/");
         RouterNode curNode = root;

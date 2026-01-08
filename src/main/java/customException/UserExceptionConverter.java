@@ -35,4 +35,12 @@ public class UserExceptionConverter {
                 "로그인에 실패했습니다."
         );
     }
+
+    public static WebException needToLogin(){
+        return new WebException(
+                WebException.HTTPStatus.MOVED_TEMPORALLY,
+                "로그인이 필요합니다.",
+                "/login"
+        );
+    }
 }

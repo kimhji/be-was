@@ -1,5 +1,6 @@
 package webserver;
 
+import common.Config;
 import customException.WebException;
 
 import java.io.DataOutputStream;
@@ -40,13 +41,13 @@ public class Response {
     }
 
     public void setResponseHeader(DataOutputStream dos) throws IOException{
-        dos.writeBytes("HTTP/1.1 " + statusCode.getHttpStatus() + " " + statusCode.name() + " \r\n");
-        dos.writeBytes("Content-Type: " + contentType.contentType + "\r\n");
-        dos.writeBytes("Content-Length: " + (body!=null?body.length:0) + "\r\n");
+        dos.writeBytes("HTTP/1.1 " + statusCode.getHttpStatus() + " " + statusCode.name() + " "+ Config.CRLF);
+        dos.writeBytes("Content-Type: " + contentType.contentType + Config.CRLF);
+        dos.writeBytes("Content-Length: " + (body!=null?body.length:0) + Config.CRLF);
         for(String key: this.header.keySet()){
-            dos.writeBytes(key+": "+header.get(key)+"\r\n");
+            dos.writeBytes(key+": "+header.get(key)+Config.CRLF);
         }
-        dos.writeBytes("\r\n");
+        dos.writeBytes(Config.CRLF);
     }
     public void addHeader(String key, String value){
         header.put(key, value);
@@ -61,5 +62,10 @@ public class Response {
         if (path.endsWith(".svg")) return ContentType.SVG;
         if (path.endsWith(".txt")) return ContentType.PLAIN_TEXT;
         return ContentType.OCTET;
+    }
+
+    public void responseBody(DataOutputStream dos) throws IOException{
+        dos.write(body, 0, body==null?0:body.length);
+        dos.flush();
     }
 }

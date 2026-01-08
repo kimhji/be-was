@@ -1,10 +1,13 @@
 package webserver.process;
 
+import common.UtilFunc;
 import customException.WebStatusConverter;
+import model.User;
 import webserver.Request;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
 
 public class StaticFileProcessor {
     private static String basePath = "./src/main/resources/static";
@@ -36,4 +39,5 @@ public class StaticFileProcessor {
             throw WebStatusConverter.fileReadError();
         }
     }
+
 }
