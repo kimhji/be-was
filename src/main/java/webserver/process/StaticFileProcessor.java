@@ -58,7 +58,7 @@ public class StaticFileProcessor {
                             "</ul>";
         } else {
             userDataHtml =
-                    "<a href=\"/mypage/index.html\">"+
+                    "<a href=\"/mypage\">"+
                     "<ul class=\"header__menu\">" +
                             "  <li class=\"header__menu__item\">" +
                             "    <img class=\"post__account__img\" />" +
