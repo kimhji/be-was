@@ -1,9 +1,7 @@
-package webserver.parser;
+package webserver.parse;
 
 import common.Config;
 import common.UtilFunc;
-import customException.WebStatusConverter;
-import webserver.process.StaticFileProcessor;
 
 import java.util.HashMap;
 import java.util.Map;

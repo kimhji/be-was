@@ -1,4 +1,4 @@
-package webserver.parser;
+package webserver.parse;
 
 import common.UtilFunc;
 
