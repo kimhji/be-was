@@ -1,5 +1,7 @@
 package model;
 
+import customException.UserExceptionConverter;
+
 public class User {
     private String userId;
     private String password;
@@ -7,6 +9,8 @@ public class User {
     private String email;
 
     public User(String userId, String password, String name, String email) {
+        if(userId == null || password == null || name == null || email == null
+        || userId.isBlank() || password.isBlank() || name.isBlank() || email.isBlank()) throw UserExceptionConverter.needUserData();
         this.userId = userId;
         this.password = password;
         this.name = name;

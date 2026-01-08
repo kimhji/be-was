@@ -6,8 +6,8 @@ import customException.WebStatusConverter;
 import java.util.HashMap;
 import java.util.Map;
 
-class SimpleReq{
-    enum Method{
+public class Request {
+    public enum Method{
         GET,
         POST,
         PUT,
@@ -15,12 +15,12 @@ class SimpleReq{
         PATCH
     }
 
-    Method method;
-    String path;
-    Map<String, String> queryParam = new HashMap<>();
-    Map<String, String> header = new HashMap<>();
-    Map<String, String> bodyParam = new HashMap<>();
-    SimpleReq(String req){
+    public Method method;
+    public String path;
+    public Map<String, String> queryParam = new HashMap<>();
+    public Map<String, String> header = new HashMap<>();
+    public Map<String, String> bodyParam = new HashMap<>();
+    Request(String req){
         if(req == null || req.isBlank()) throw WebStatusConverter.emptyRequest();
         String[] lines = req.split("\n");
         getReqStartLine(lines[0]);
@@ -33,15 +33,16 @@ class SimpleReq{
                 addHeader(lines[i]);
             }
             else{
-
+                addBodyParam(lines[i]);
             }
         }
     }
 
-    SimpleReq(Method method, String path) {
+    Request(Method method, String path) {
         this.method = method;
         this.path = path;
     }
+
 
     private void getReqStartLine(String startLine){
         String[] firstHeader = startLine.trim().split(" ");
@@ -63,7 +64,13 @@ class SimpleReq{
     }
 
     private void addBodyParam(String line){
-
+        if(line == null || line.isBlank()) return;
+        String[] cases = line.split("&");
+        for(String keyValue: cases){
+            String[] splited = keyValue.split("=");
+            if(splited.length <2) continue;
+            bodyParam.put(splited[0].trim(), splited[1].trim());
+        }
     }
 
     private void addHeader(String line){

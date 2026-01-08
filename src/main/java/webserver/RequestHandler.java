@@ -4,13 +4,17 @@ import java.io.*;
 import java.net.Socket;
 
 import customException.WebException;
-import model.User;
+import customException.WebStatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.process.StaticFileProcessor;
+import webserver.process.UserProcessor;
+import webserver.route.Router;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static Router router = new Router();
+    private static final Router router = new Router();
+    private static final UserProcessor userProcessor = new UserProcessor();
 
     private Socket connection;
 
@@ -19,14 +23,38 @@ public class RequestHandler implements Runnable {
     }
 
     public static void init() {
-        SimpleReq req = new SimpleReq(SimpleReq.Method.GET, "/registration");
-        SimpleReq res = new SimpleReq(SimpleReq.Method.GET, "/registration/index.html");
-        router.register(req, K ->
-                Response.processReq(res)
+        router.register(new Request(Request.Method.GET, "/registration"), (K) ->
+                {
+                    Request realReq = new Request(Request.Method.GET, "/registration/index.html");
+                    byte[] body = StaticFileProcessor.processReq(realReq);
+                    if (body == null) throw WebStatusConverter.inexistenceStaticFile();
+                    return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
+                }
         );
-        router.register(new SimpleReq(SimpleReq.Method.GET, "/create"), value-> new User(value.queryParam.get("userId"), value.queryParam.get("password"),value.queryParam.get("name"),value.queryParam.get("email"))
-                .toString().getBytes());
+        router.register(new Request(Request.Method.GET, "/login"), (K) ->
+                {
+                    Request realReq = new Request(Request.Method.GET, "/login/index.html");
+                    byte[] body = StaticFileProcessor.processReq(realReq);
+                    if (body == null) throw WebStatusConverter.inexistenceStaticFile();
+                    return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
+                }
+        );
+        router.register(new Request(Request.Method.GET, "/create"), value -> {
+            byte[] body = userProcessor.createUser(value);
+            return new Response(WebException.HTTPStatus.CREATED, body, Response.ContentType.HTML);
+        });
 
+        router.register(new Request(Request.Method.GET, "/"), dummy -> {
+            return new Response(WebException.HTTPStatus.OK, "<h1>Hello World</h1>".getBytes(), Response.ContentType.HTML);
+
+        });
+
+        router.register(new Request(Request.Method.POST, "/user/create"), request -> {
+            byte[] body = userProcessor.createUser(request);
+            Response response = new Response(WebException.HTTPStatus.MOVED_TEMPORALLY, body, Response.ContentType.HTML);
+            response.addHeader("Location", "http://localhost:8080/index.html");
+            return response;
+        });
     }
 
     public void run() {
@@ -37,84 +65,44 @@ public class RequestHandler implements Runnable {
             try {
                 String req = getReq(in);
                 logger.debug(req);
-                SimpleReq simpleReq = new SimpleReq(req);
-
-                byte[] body = router.route(simpleReq);
-                if (body == null) {
-                    if (simpleReq.method == SimpleReq.Method.GET) {
-                        body = Response.processReq(simpleReq);
-                    } else {
-                        body = "".getBytes();
+                Request simpleReq = new Request(req);
+                Response response = null;
+                if (simpleReq.method == Request.Method.GET) {
+                    byte[] body = StaticFileProcessor.processReq(simpleReq);
+                    if (body != null) {
+                        response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));
                     }
-                    response200HeaderByType(dos, body.length, simpleReq);
-                } else {
-                    response200Header(dos, body.length);
                 }
-                responseBody(dos, body);
-            }
-            catch (WebException e){
-                byte[] body = e.getMessage()
-                        .getBytes();
+                if (response == null) {
+                    response = router.route(simpleReq);
+                }
 
-                responseHeaderByStatusAndType(
-                        dos,
-                        body.length,
-                        e.statusCode,
-                        "text/plain; charset=utf-8"
-                );
-                responseBody(dos, body);
+                response.setResponseHeader(dos);
+
+                responseBody(dos, response.body);
+            } catch (WebException e) {
+                Response response = new Response(e.statusCode, e.getMessage().getBytes(), Response.ContentType.PLAIN_TEXT);
+                response.setResponseHeader(dos);
+                responseBody(dos, response.body);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.debug("Connection closed", e);
         } catch (Exception e) {
             logger.error("Unhandled error", e);
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        responseHeaderByStatusAndType(dos, lengthOfBodyContent, WebException.HTTPStatus.OK, "text/html;charset=utf-8");
+    private void responseBody(DataOutputStream dos, byte[] body) throws IOException{
+        dos.writeBytes("\r\n");
+        dos.write(body, 0, body.length);
+        dos.flush();
     }
 
-    private void response200HeaderByType(DataOutputStream dos, int lengthOfBodyContent, SimpleReq simpleReq) {
-        responseHeaderByStatusAndType(dos, lengthOfBodyContent, WebException.HTTPStatus.OK, contentType(simpleReq.path));
-    }
-
-    private void responseHeaderByStatusAndType(DataOutputStream dos, int lengthOfBodyContent, WebException.HTTPStatus status, String contentType) {
-        try {
-            dos.writeBytes("HTTP/1.1 "+status.getHttpStatus()+" "+status.name()+" \r\n");
-            dos.writeBytes("Content-Type: "+contentType+"\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private String contentType(String path) {
-        if (path.endsWith(".html")) return "text/html;charset=utf-8";
-        if (path.endsWith(".css")) return "text/css";
-        if (path.endsWith(".js")) return "application/javascript";
-        if (path.endsWith(".png")) return "image/png";
-        if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return "image/jpeg";
-        if (path.endsWith(".svg")) return "image/svg+xml";
-        return "application/octet-stream";
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private String getReq(InputStream in) throws IOException{
+    private String getReq(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String line = br.readLine();
         String req = "";
-        while(line != null && !line.isEmpty()){
+        while (line != null && !line.isEmpty()) {
             req += line + "\n";
             line = br.readLine();
         }

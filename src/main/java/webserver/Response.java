@@ -1,43 +1,64 @@
 package webserver;
 
-import customException.WebStatusConverter;
+import customException.WebException;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Response {
-    private static String basePath = "./src/main/resources/static";
+    enum ContentType{
+        HTML("text/html;charset=utf-8"),
+        CSS("text/css"),
+        JS("application/javascript"),
+        PNG("image/png"),
+        JPG("image/png"),
+        JPEG("image/jpeg"),
+        SVG("image/svg+xml"),
+        OCTET("application/octet-stream"),
+        PLAIN_TEXT("text/plain; charset=utf-8")
+        ;
 
-    static byte[] processReq(SimpleReq simpleReq){
-        byte[] result = "".getBytes();
-        switch(simpleReq.method){
-            case GET:
-                result = getStaticSources(simpleReq.path);
-                break;
-            default:
-                break;
+        public final String contentType;
+
+        ContentType(String contentType){
+            this.contentType = contentType;
         }
-        return result;
+    }
+    WebException.HTTPStatus statusCode;
+    ContentType contentType;
+    byte[] body;
+    Map<String, String> header = new HashMap<>();
+
+    public Response(WebException.HTTPStatus status,
+                        byte[] body,
+                    ContentType contentType) {
+        this.statusCode = status;
+        this.body = body;
+        this.contentType = contentType;
     }
 
-    static public void setBasePath(String basePath){
-        Response.basePath = basePath;
+    public void setResponseHeader(DataOutputStream dos) throws IOException{
+        dos.writeBytes("HTTP/1.1 " + statusCode.getHttpStatus() + " " + statusCode.name() + " \r\n");
+        dos.writeBytes("Content-Type: " + contentType.contentType + "\r\n");
+        dos.writeBytes("Content-Length: " + (body!=null?body.length:0) + "\r\n");
+        for(String key: this.header.keySet()){
+            dos.writeBytes(key+": "+header.get(key)+"\r\n");
+        }
+    }
+    public void addHeader(String key, String value){
+        header.put(key, value);
     }
 
-    static private byte[] getStaticSources(String path){
-        if(path.compareTo("/")==0) return "<h1>Hello World</h1>".getBytes();
-
-        String wholePath = basePath+path;
-        File file = new File(wholePath);
-        if(!file.exists()) throw WebStatusConverter.inexistenceStaticFile();
-        try {
-            FileInputStream fr = new FileInputStream(wholePath);
-
-            byte[] buffer = fr.readAllBytes();
-            return buffer;
-        }
-        catch (Exception e) {
-            throw WebStatusConverter.fileReadError();
-        }
+    public static ContentType contentType(String path) {
+        if (path.endsWith(".html")) return ContentType.HTML;
+        if (path.endsWith(".css")) return ContentType.CSS;
+        if (path.endsWith(".js")) return ContentType.JS;
+        if (path.endsWith(".png")) return ContentType.PNG;
+        if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return ContentType.JPEG;
+        if (path.endsWith(".svg")) return ContentType.SVG;
+        if (path.endsWith(".txt")) return ContentType.PLAIN_TEXT;
+        return ContentType.OCTET;
     }
 }
