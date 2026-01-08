@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import customException.UserExceptionConverter;
 import customException.WebException;
 import customException.WebStatusConverter;
 import model.User;
@@ -86,10 +87,12 @@ public class RequestHandler implements Runnable {
                 Request simpleReq = getReq(in);
                 logger.debug(simpleReq.toString());
                 Response response = null;
+                User user = userProcessor.getUser(simpleReq);
+                if(Router.needLogin(simpleReq.path) && user == null) throw UserExceptionConverter.needToLogin();
                 if (simpleReq.method == Request.Method.GET) {
                     byte[] body = StaticFileProcessor.processReq(simpleReq);
+
                     if (body != null) {
-                        User user = userProcessor.getUser(simpleReq);
                         body = StaticFileProcessor.addUserData(body, user != null);
                         body = userReplacer.replace(user, new String(body)).getBytes();
 
