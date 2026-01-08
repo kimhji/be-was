@@ -41,10 +41,10 @@ public class RequestHandler implements Runnable {
                     return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
                 }
         );
-        router.register(new Request(Request.Method.GET, "/create"), value -> {
-            byte[] body = userProcessor.createUser(value);
-            return new Response(WebException.HTTPStatus.CREATED, body, Response.ContentType.HTML);
-        });
+//        router.register(new Request(Request.Method.GET, "/create"), value -> {
+//            byte[] body = userProcessor.createUser(value);
+//            return new Response(WebException.HTTPStatus.CREATED, body, Response.ContentType.HTML);
+//        });
 
         router.register(new Request(Request.Method.GET, "/"), dummy -> {
             return new Response(WebException.HTTPStatus.OK, "<h1>Hello World</h1>".getBytes(), Response.ContentType.HTML);
