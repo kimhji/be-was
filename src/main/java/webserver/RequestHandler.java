@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import common.Config;
 import customException.UserExceptionConverter;
 import customException.WebException;
 import customException.WebStatusConverter;
@@ -132,7 +133,7 @@ public class RequestHandler implements Runnable {
         StringBuilder headerPart = new StringBuilder();
 
         while ((line = br.readLine()) != null && !line.isEmpty()) {
-            headerPart.append(line).append("\r\n");
+            headerPart.append(line).append(Config.CRLF);
         }
         Request req = new Request(headerPart.toString());
 
