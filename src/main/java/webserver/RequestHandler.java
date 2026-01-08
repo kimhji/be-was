@@ -9,6 +9,7 @@ import customException.WebStatusConverter;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.parser.Replacer;
 import webserver.process.StaticFileProcessor;
 import webserver.process.UserProcessor;
 import webserver.route.Router;
@@ -17,6 +18,7 @@ public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private static final Router router = new Router();
     private static final UserProcessor userProcessor = new UserProcessor();
+    private static final Replacer userReplacer = new Replacer("user");
 
     private Socket connection;
 
@@ -88,7 +90,9 @@ public class RequestHandler implements Runnable {
                     byte[] body = StaticFileProcessor.processReq(simpleReq);
                     if (body != null) {
                         User user = userProcessor.getUser(simpleReq);
-                        body = StaticFileProcessor.addUserData(body, user);
+                        body = StaticFileProcessor.addUserData(body, user != null);
+                        body = userReplacer.replace(user, new String(body)).getBytes();
+
                         response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));
                     }
                 }

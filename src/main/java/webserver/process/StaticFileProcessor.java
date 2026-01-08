@@ -40,13 +40,13 @@ public class StaticFileProcessor {
         }
     }
 
-    static public byte[] addUserData(byte[] staticFile, User user) {
+    static public byte[] addUserData(byte[] staticFile, boolean isLogin) {
         String html = new String(staticFile, StandardCharsets.UTF_8);
         StringBuilder sb = new StringBuilder(html);
 
         String userDataHtml;
 
-        if (user == null) {
+        if (!isLogin) {
             userDataHtml =
                     "<ul class=\"header__menu\">" +
                             "  <li class=\"header__menu__item\">" +
@@ -64,7 +64,7 @@ public class StaticFileProcessor {
                             "    <img class=\"post__account__img\" />" +
                             "  </li>" +
                             "  <li class=\"header__menu__item\">" +
-                            "    <p class=\"post__account__nickname\">" + user.getName() + "</p>" +
+                            "    <p class=\"post__account__nickname\">{{user.name}}</p>" +
                             "  </li>" +
                             "</ul>"+
                             "</a>";
