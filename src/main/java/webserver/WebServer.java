@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.process.Processor;
 
 public class WebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
@@ -34,7 +35,7 @@ public class WebServer {
         } else {
             port = Integer.parseInt(args[0]);
         }
-        RequestHandler.init();
+        Processor.init();
 
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);
