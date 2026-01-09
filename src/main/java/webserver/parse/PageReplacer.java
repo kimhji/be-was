@@ -1,7 +1,7 @@
 package webserver.parse;
 
 import common.Config;
-import common.UtilFunc;
+import common.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class PageReplacer {
         StringBuilder sb = new StringBuilder(template);
 
         String placeholder = "{{" + Config.REPLACE_PLACEHOLDER + "}}";
-        UtilFunc.replaceAll(sb, placeholder, getParsedPage(path, isLogin));
+        Utils.replaceAll(sb, placeholder, getParsedPage(path, isLogin));
         return sb.toString();
     }
 

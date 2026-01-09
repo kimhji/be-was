@@ -2,7 +2,7 @@ package webserver.process;
 
 import common.Auth;
 import common.Config;
-import common.UtilFunc;
+import common.Utils;
 import customException.UserExceptionConverter;
 import db.Database;
 import model.User;
@@ -31,7 +31,7 @@ public class UserProcessor {
     public User getUser(Request request) {
         String cookie = request.header.get(Config.HEADER_COOKIE);
         if (cookie == null) return null;
-        String SID = UtilFunc.getRestStr(cookie, "=", 1);
+        String SID = Utils.getRestStr(cookie, "=", 1);
         return Auth.getSession(SID);
     }
 
@@ -44,7 +44,7 @@ public class UserProcessor {
     public void deleteUserSession(Request request) {
         String cookie = request.header.get(Config.HEADER_COOKIE);
         if (cookie == null) return;
-        String SID = UtilFunc.getRestStr(cookie, "=", 1);
+        String SID = Utils.getRestStr(cookie, "=", 1);
 
         Auth.deleteSession(SID);
     }

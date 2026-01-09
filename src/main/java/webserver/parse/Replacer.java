@@ -1,6 +1,6 @@
 package webserver.parse;
 
-import common.UtilFunc;
+import common.Utils;
 
 import java.lang.reflect.Field;
 
@@ -23,7 +23,7 @@ public class Replacer {
                 if (value == null) continue;
 
                 String placeholder = "{{" + this.replacerName + "." + field.getName() + "}}";
-                UtilFunc.replaceAll(sb, placeholder, value.toString());
+                Utils.replaceAll(sb, placeholder, value.toString());
 
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);

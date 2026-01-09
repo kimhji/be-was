@@ -1,7 +1,7 @@
 package webserver.http;
 
 import common.Config;
-import common.UtilFunc;
+import common.Utils;
 import customException.WebStatusConverter;
 
 import java.util.HashMap;
@@ -63,7 +63,7 @@ public class Request {
         sb.append(Config.CRLF);
 
         if (!bodyParam.isEmpty()) {
-            sb.append(UtilFunc.parseMapToQueryString(bodyParam));
+            sb.append(Utils.parseMapToQueryString(bodyParam));
         }
 
         return sb.toString();
@@ -75,7 +75,7 @@ public class Request {
         StringBuilder sb = new StringBuilder(path);
         sb.append("?");
 
-        sb.append(UtilFunc.parseMapToQueryString(queryParam));
+        sb.append(Utils.parseMapToQueryString(queryParam));
         return sb.toString();
     }
 
@@ -89,7 +89,7 @@ public class Request {
         path = firstHeader[1];
         String[] pathSplit = firstHeader[1].split("\\?");
         if (pathSplit.length > 1) {
-            String paramStr = UtilFunc.getRestStr(firstHeader[1], "\\?", 1).trim();
+            String paramStr = Utils.getRestStr(firstHeader[1], "\\?", 1).trim();
             for (String param : paramStr.split("&")) {
                 String[] keyAndValue = param.split("=");
                 if (keyAndValue.length <= 1) continue;
@@ -113,7 +113,7 @@ public class Request {
         if (line == null || line.isBlank()) return;
         String[] words = line.trim().split(":");
         if (words.length < 2) return;
-        String value = UtilFunc.getRestStr(line, ":", 1).trim();
+        String value = Utils.getRestStr(line, ":", 1).trim();
         header.put(words[0].trim().toLowerCase(), value);
     }
 

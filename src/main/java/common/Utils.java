@@ -2,7 +2,7 @@ package common;
 
 import java.util.Map;
 
-public class UtilFunc {
+public class Utils {
     public static String getRestStr(String wholeStr, String splitParam, int idx) {
         if (wholeStr == null || splitParam == null || wholeStr.isBlank() || splitParam.isBlank()) return "";
         String[] strs = wholeStr.split(splitParam);
