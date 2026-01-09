@@ -33,4 +33,11 @@ public class UserProcessor {
         String SID = UtilFunc.getRestStr(cookie, "=", 1);
         return Auth.getSession(SID);
     }
+
+    public User getUserOrException(Request request){
+        User user = getUser(request);
+        if(user == null) throw UserExceptionConverter.needToLogin();
+        return user;
+    }
 }
+

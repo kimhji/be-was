@@ -35,7 +35,6 @@ public class WebServer {
         } else {
             port = Integer.parseInt(args[0]);
         }
-        Processor.init();
 
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);

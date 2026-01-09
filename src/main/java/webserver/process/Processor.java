@@ -18,37 +18,27 @@ public class Processor {
     private static final Replacer userReplacer = new Replacer("user");
     private static final PageReplacer pageReplacer = new PageReplacer();
 
+    public Processor(){
+        init();
+    }
 
-    public static void init() {
+    public void init() {
         router.register(new Request(Request.Method.GET, "/registration"), (request) ->
                 {
-                    Request realReq = new Request(Request.Method.GET, "/registration/index.html");
-                    byte[] body = StaticFileProcessor.processReq(realReq);
-                    if (body == null) throw WebStatusConverter.inexistenceStaticFile();
-                    return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
+                    request.path = Config.REGISTRATION_PAGE_PATH;
+                    return process(request);
                 }
         );
         router.register(new Request(Request.Method.GET, "/login"), (request) ->
                 {
-                    Request realReq = new Request(Request.Method.GET, "/login/index.html");
-                    byte[] body = StaticFileProcessor.processReq(realReq);
-                    if (body == null) throw WebStatusConverter.inexistenceStaticFile();
-                    return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
+                    request.path = Config.LOGIN_PAGE_PATH;
+                    return process(request);
                 }
         );
         router.register(new Request(Request.Method.GET, "/mypage"), (request) ->
                 {
-                    Request realReq = new Request(Request.Method.GET, Config.MY_PAGE_PAGE_PATH);
-
-                    byte[] body = StaticFileProcessor.processReq(realReq);
-                    if (body == null) throw WebStatusConverter.inexistenceStaticFile();
-                    User user = userProcessor.getUser(request);
-                    if(user == null) throw UserExceptionConverter.needToLogin();
-
-                    String template = pageReplacer.getWholePage(new String(body), Config.MY_PAGE_PAGE_PATH, true);
-                    body = userReplacer.replace(user, template).getBytes();
-
-                    return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
+                    request.path = Config.MY_PAGE_PAGE_PATH;
+                    return process(request);
                 }
         );
 //        router.register(new Request(Request.Method.GET, "/create"), value -> {
@@ -79,8 +69,9 @@ public class Processor {
 
     public Response process(Request simpleReq){
         Response response = null;
-        User user = userProcessor.getUser(simpleReq);
-        if(Router.needLogin(simpleReq.path) && user == null) throw UserExceptionConverter.needToLogin();
+        User user = (Router.needLogin(simpleReq.path))?
+                userProcessor.getUserOrException(simpleReq)
+                : userProcessor.getUser(simpleReq);
         if (simpleReq.method == Request.Method.GET) {
             byte[] body = StaticFileProcessor.processReq(simpleReq);
 
