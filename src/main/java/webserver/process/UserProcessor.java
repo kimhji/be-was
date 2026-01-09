@@ -39,5 +39,13 @@ public class UserProcessor {
         if(user == null) throw UserExceptionConverter.needToLogin();
         return user;
     }
+
+    public void deleteUserSession(Request request){
+        String cookie = request.header.get("Cookie");
+        if(cookie==null) return;
+        String SID = UtilFunc.getRestStr(cookie, "=", 1);
+
+        Auth.deleteSession(SID);
+    }
 }
 

@@ -31,6 +31,11 @@ public class Auth {
         return session.get(keyData);
     }
 
+    public static void deleteSession(String key){
+        if(key == null) return;
+        session.remove(key);
+    }
+
 //    public static String aesCBCEncode(String plainText) throws Exception {
 //
 //        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");

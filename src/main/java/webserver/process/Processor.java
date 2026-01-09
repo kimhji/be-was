@@ -65,6 +65,13 @@ public class Processor {
             response.addHeader("set-cookie", "SID=" + token + "; Path=/");
             return response;
         });
+
+        router.register(new Request(Request.Method.POST, "/user/logout"), request -> {
+            userProcessor.deleteUserSession(request);
+            Response response = new Response(WebException.HTTPStatus.OK, null, Response.ContentType.HTML);
+            response.addHeader("Location", "http://localhost:8080/index.html");
+            return response;
+        });
     }
 
     public Response process(Request simpleReq){

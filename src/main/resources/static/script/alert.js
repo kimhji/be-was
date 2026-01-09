@@ -81,3 +81,13 @@ document.getElementById("link_to_mypage")?.addEventListener("click", async (e) =
 
     await getView(response);
 });
+
+document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
+    e.preventDefault(); // 기본 submit 막기
+
+    const response = await fetch("/user/logout", {
+        method: "POST"
+    });
+
+    await formResponseProcessToMain(response);
+});

@@ -65,7 +65,8 @@ public class Response {
     }
 
     public void responseBody(DataOutputStream dos) throws IOException{
-        dos.write(body, 0, body==null?0:body.length);
+        if(body != null)
+            dos.write(body, 0, body.length);
         dos.flush();
     }
 }
