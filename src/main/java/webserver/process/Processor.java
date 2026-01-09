@@ -1,5 +1,6 @@
 package webserver.process;
 
+import common.Config;
 import customException.UserExceptionConverter;
 import customException.WebException;
 import customException.WebStatusConverter;
@@ -19,7 +20,7 @@ public class Processor {
 
 
     public static void init() {
-        router.register(new Request(Request.Method.GET, "/registration"), (K) ->
+        router.register(new Request(Request.Method.GET, "/registration"), (request) ->
                 {
                     Request realReq = new Request(Request.Method.GET, "/registration/index.html");
                     byte[] body = StaticFileProcessor.processReq(realReq);
@@ -27,7 +28,7 @@ public class Processor {
                     return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
                 }
         );
-        router.register(new Request(Request.Method.GET, "/login"), (K) ->
+        router.register(new Request(Request.Method.GET, "/login"), (request) ->
                 {
                     Request realReq = new Request(Request.Method.GET, "/login/index.html");
                     byte[] body = StaticFileProcessor.processReq(realReq);
@@ -35,11 +36,18 @@ public class Processor {
                     return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
                 }
         );
-        router.register(new Request(Request.Method.GET, "/mypage"), (K) ->
+        router.register(new Request(Request.Method.GET, "/mypage"), (request) ->
                 {
-                    Request realReq = new Request(Request.Method.GET, "/mypage/index.html");
+                    Request realReq = new Request(Request.Method.GET, Config.MY_PAGE_PAGE_PATH);
+
                     byte[] body = StaticFileProcessor.processReq(realReq);
                     if (body == null) throw WebStatusConverter.inexistenceStaticFile();
+                    User user = userProcessor.getUser(request);
+                    if(user == null) throw UserExceptionConverter.needToLogin();
+
+                    String template = pageReplacer.getWholePage(new String(body), Config.MY_PAGE_PAGE_PATH, true);
+                    body = userReplacer.replace(user, template).getBytes();
+
                     return new Response(WebException.HTTPStatus.OK, body, Response.contentType(realReq.path));
                 }
         );
