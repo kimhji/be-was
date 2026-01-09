@@ -114,7 +114,7 @@ public class Request {
         String[] words = line.trim().split(":");
         if (words.length < 2) return;
         String value = UtilFunc.getRestStr(line, ":", 1).trim();
-        header.put(words[0], value);
+        header.put(words[0].trim().toLowerCase(), value);
     }
 
     private Method getMethod(String methodStr) {

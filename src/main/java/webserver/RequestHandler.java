@@ -45,7 +45,7 @@ public class RequestHandler implements Runnable {
             } catch (WebException e) {
                 Response response = new Response(e.statusCode, e.getMessage().getBytes(), Response.ContentType.PLAIN_TEXT);
                 if (e.path != null && !e.path.isBlank())
-                    response.addHeader("Location", e.path);
+                    response.addHeader(Config.HEADER_LOCATION, e.path);
                 response.setResponseHeader(dos);
                 response.responseBody(dos);
             }
@@ -69,7 +69,7 @@ public class RequestHandler implements Runnable {
         }
         Request req = new Request(headerPart.toString());
 
-        String contentLength = req.header.get("Content-Length");
+        String contentLength = req.header.get(Config.HEADER_CONTENT_LENGTH);
         if (contentLength != null) {
             int len = Integer.parseInt(contentLength);
 

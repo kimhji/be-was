@@ -54,22 +54,22 @@ public class Processor {
         router.register(new Request(Request.Method.POST, "/user/create"), request -> {
             byte[] body = userProcessor.createUser(request);
             Response response = new Response(WebException.HTTPStatus.MOVED_TEMPORALLY, body, Response.ContentType.HTML);
-            response.addHeader("Location", "http://localhost:8080/index.html");
+            response.addHeader(Config.HEADER_LOCATION, "http://localhost:8080/index.html");
             return response;
         });
 
         router.register(new Request(Request.Method.POST, "/user/login"), request -> {
             String token = userProcessor.loginUser(request);
             Response response = new Response(WebException.HTTPStatus.MOVED_TEMPORALLY, null, Response.ContentType.HTML);
-            response.addHeader("Location", "http://localhost:8080/index.html");
-            response.addHeader("set-cookie", "SID=" + token + "; Path=/");
+            response.addHeader(Config.HEADER_LOCATION, "http://localhost:8080/index.html");
+            response.addHeader(Config.HEADER_SET_COOKIE, "SID=" + token + "; Path=/");
             return response;
         });
 
         router.register(new Request(Request.Method.POST, "/user/logout"), request -> {
             userProcessor.deleteUserSession(request);
             Response response = new Response(WebException.HTTPStatus.OK, null, Response.ContentType.HTML);
-            response.addHeader("Location", "http://localhost:8080/index.html");
+            response.addHeader(Config.HEADER_LOCATION, "http://localhost:8080/index.html");
             return response;
         });
     }
