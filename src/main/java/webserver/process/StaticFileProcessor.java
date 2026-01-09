@@ -11,12 +11,10 @@ public class StaticFileProcessor {
     private static String basePath = "./src/main/resources/static";
 
     public static byte[] processReq(Request simpleReq) {
-        byte[] result = null;
+        byte[] result = "".getBytes();
         if (simpleReq != null && simpleReq.method== Request.Method.GET) {
             result = getStaticSources(simpleReq.path);
         }
-        if(result == null)
-            result = "".getBytes();
         return result;
     }
 
