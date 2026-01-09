@@ -5,20 +5,12 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 import common.Config;
-import customException.UserExceptionConverter;
 import customException.WebException;
-import customException.WebStatusConverter;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.parse.PageReplacer;
-import webserver.parse.Replacer;
 import webserver.process.Processor;
-import webserver.process.StaticFileProcessor;
-import webserver.process.UserProcessor;
 import webserver.http.Response;
 import webserver.http.Request;
-import webserver.route.Router;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);

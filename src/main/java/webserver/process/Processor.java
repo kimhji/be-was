@@ -1,21 +1,19 @@
 package webserver.process;
 
 import common.Config;
-import customException.UserExceptionConverter;
 import customException.WebException;
-import customException.WebStatusConverter;
 import model.User;
 import webserver.http.Request;
 import webserver.http.Response;
 import webserver.parse.PageReplacer;
-import webserver.parse.Replacer;
+import webserver.parse.DataReplacer;
 import webserver.route.Router;
 
 public class Processor {
 
     private static final Router router = new Router();
     private static final UserProcessor userProcessor = new UserProcessor();
-    private static final Replacer userReplacer = new Replacer("user");
+    private static final DataReplacer userReplacer = new DataReplacer("user");
     private static final PageReplacer pageReplacer = new PageReplacer();
 
     public Processor() {

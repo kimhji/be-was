@@ -4,10 +4,10 @@ import common.Utils;
 
 import java.lang.reflect.Field;
 
-public class Replacer {
+public class DataReplacer {
     String replacerName;
 
-    public Replacer(String replacerName) {
+    public DataReplacer(String replacerName) {
         this.replacerName = replacerName;
     }
 
