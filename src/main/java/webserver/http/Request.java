@@ -122,19 +122,13 @@ public class Request {
 
     private Method getMethod(String methodStr) {
         if (methodStr == null || methodStr.isBlank()) throw WebStatusConverter.invalidMethod();
-        switch (methodStr.trim().toUpperCase()) {
-            case "GET":
-                return Method.GET;
-            case "POST":
-                return Method.POST;
-            case "PUT":
-                return Method.PUT;
-            case "DELETE":
-                return Method.DELETE;
-            case "PATCH":
-                return Method.PATCH;
-            default:
-                throw WebStatusConverter.invalidMethod();
-        }
+        return switch (methodStr.trim().toUpperCase()) {
+            case "GET" -> Method.GET;
+            case "POST" -> Method.POST;
+            case "PUT" -> Method.PUT;
+            case "DELETE" -> Method.DELETE;
+            case "PATCH" -> Method.PATCH;
+            default -> throw WebStatusConverter.invalidMethod();
+        };
     }
 }

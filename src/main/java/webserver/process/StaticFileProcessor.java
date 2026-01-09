@@ -5,19 +5,18 @@ import webserver.http.Request;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Objects;
 
 public class StaticFileProcessor {
     private static String basePath = "./src/main/resources/static";
 
     public static byte[] processReq(Request simpleReq) {
-        byte[] result = "".getBytes();
-        switch (simpleReq.method) {
-            case GET:
-                result = getStaticSources(simpleReq.path);
-                break;
-            default:
-                break;
+        byte[] result = null;
+        if (simpleReq != null && simpleReq.method== Request.Method.GET) {
+            result = getStaticSources(simpleReq.path);
         }
+        if(result == null)
+            result = "".getBytes();
         return result;
     }
 
