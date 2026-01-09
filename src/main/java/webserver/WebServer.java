@@ -46,8 +46,7 @@ public class WebServer {
                     new RequestHandler(currentConnection).run();
                 });
             }
-        }
-        finally {
+        } finally {
             executor.shutdown();
         }
     }

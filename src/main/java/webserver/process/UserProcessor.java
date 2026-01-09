@@ -8,41 +8,41 @@ import model.User;
 import webserver.http.Request;
 
 public class UserProcessor {
-    public byte[] createUser(Request request){
+    public byte[] createUser(Request request) {
         User user = new User(request.bodyParam.get("userId"), request.bodyParam.get("password"), request.bodyParam.get("name"), request.bodyParam.get("email"));
 
-        if(Database.findUserById(user.getUserId() ) != null) throw UserExceptionConverter.conflictUser();
+        if (Database.findUserById(user.getUserId()) != null) throw UserExceptionConverter.conflictUser();
         Database.addUser(user);
 
         return user.toString().getBytes();
     }
 
-    public String loginUser(Request request){
+    public String loginUser(Request request) {
         String reqPassword = request.bodyParam.get("password");
-        if(reqPassword == null || reqPassword.isBlank()) throw UserExceptionConverter.needUserData();
+        if (reqPassword == null || reqPassword.isBlank()) throw UserExceptionConverter.needUserData();
         User user = Database.findUserById(request.bodyParam.get("userId"));
-        if(user == null) throw UserExceptionConverter.notFoundUser();
-        if(reqPassword.compareTo(user.getPassword()) != 0) throw UserExceptionConverter.unAuthorized();
+        if (user == null) throw UserExceptionConverter.notFoundUser();
+        if (reqPassword.compareTo(user.getPassword()) != 0) throw UserExceptionConverter.unAuthorized();
 
         return Auth.addSession(user);
     }
 
-    public User getUser(Request request){
+    public User getUser(Request request) {
         String cookie = request.header.get("Cookie");
-        if(cookie==null) return null;
+        if (cookie == null) return null;
         String SID = UtilFunc.getRestStr(cookie, "=", 1);
         return Auth.getSession(SID);
     }
 
-    public User getUserOrException(Request request){
+    public User getUserOrException(Request request) {
         User user = getUser(request);
-        if(user == null) throw UserExceptionConverter.needToLogin();
+        if (user == null) throw UserExceptionConverter.needToLogin();
         return user;
     }
 
-    public void deleteUserSession(Request request){
+    public void deleteUserSession(Request request) {
         String cookie = request.header.get("Cookie");
-        if(cookie==null) return;
+        if (cookie == null) return;
         String SID = UtilFunc.getRestStr(cookie, "=", 1);
 
         Auth.deleteSession(SID);

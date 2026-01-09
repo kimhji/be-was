@@ -18,7 +18,7 @@ public class Processor {
     private static final Replacer userReplacer = new Replacer("user");
     private static final PageReplacer pageReplacer = new PageReplacer();
 
-    public Processor(){
+    public Processor() {
         init();
     }
 
@@ -74,16 +74,16 @@ public class Processor {
         });
     }
 
-    public Response process(Request simpleReq){
+    public Response process(Request simpleReq) {
         Response response = null;
-        User user = (Router.needLogin(simpleReq.path))?
+        User user = (Router.needLogin(simpleReq.path)) ?
                 userProcessor.getUserOrException(simpleReq)
                 : userProcessor.getUser(simpleReq);
         if (simpleReq.method == Request.Method.GET) {
             byte[] body = StaticFileProcessor.processReq(simpleReq);
 
             if (body != null) {
-                String template = pageReplacer.getWholePage(new String(body), simpleReq.path, user!=null);
+                String template = pageReplacer.getWholePage(new String(body), simpleReq.path, user != null);
                 body = userReplacer.replace(user, template).getBytes();
 
                 response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));

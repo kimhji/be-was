@@ -8,35 +8,35 @@ public class UserExceptionConverter {
         );
     }
 
-    public static WebException needUserId(){
+    public static WebException needUserId() {
         return new WebException(
                 WebException.HTTPStatus.BAD_REQUEST,
                 "사용자 아이디를 요청에 포함해야 합니다."
         );
     }
 
-    public static WebException needUserData(){
+    public static WebException needUserData() {
         return new WebException(
                 WebException.HTTPStatus.BAD_REQUEST,
                 "사용자 데이터가 충분히 요청에 포함되지 않았습니다."
         );
     }
 
-    public static WebException notFoundUser(){
+    public static WebException notFoundUser() {
         return new WebException(
                 WebException.HTTPStatus.NOT_FOUND,
                 "사용자 데이터가 존재하지 않습니다."
         );
     }
 
-    public static WebException unAuthorized(){
+    public static WebException unAuthorized() {
         return new WebException(
                 WebException.HTTPStatus.UNAUTHORIZED,
                 "로그인에 실패했습니다."
         );
     }
 
-    public static WebException needToLogin(){
+    public static WebException needToLogin() {
         return new WebException(
                 WebException.HTTPStatus.MOVED_TEMPORALLY,
                 "로그인이 필요합니다.",

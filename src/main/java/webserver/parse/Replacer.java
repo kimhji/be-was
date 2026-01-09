@@ -12,7 +12,7 @@ public class Replacer {
     }
 
     public String replace(Object data, String template) {
-        if(data == null) return template;
+        if (data == null) return template;
         StringBuilder sb = new StringBuilder(template);
         Class<?> clazz = data.getClass();
         for (Field field : clazz.getDeclaredFields()) {

@@ -44,7 +44,7 @@ public class RequestHandler implements Runnable {
                 response.responseBody(dos);
             } catch (WebException e) {
                 Response response = new Response(e.statusCode, e.getMessage().getBytes(), Response.ContentType.PLAIN_TEXT);
-                if(e.path != null && !e.path.isBlank())
+                if (e.path != null && !e.path.isBlank())
                     response.addHeader("Location", e.path);
                 response.setResponseHeader(dos);
                 response.responseBody(dos);
@@ -73,7 +73,7 @@ public class RequestHandler implements Runnable {
         if (contentLength != null) {
             int len = Integer.parseInt(contentLength);
 
-            if(len <= 0) return req;
+            if (len <= 0) return req;
 
             char[] bodyChars = new char[len];
             int read = 0;

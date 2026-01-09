@@ -1,7 +1,7 @@
 package customException;
 
 
-public class WebException extends RuntimeException{
+public class WebException extends RuntimeException {
     public enum HTTPStatus {
         OK(200),
         CREATED(201),
@@ -17,7 +17,7 @@ public class WebException extends RuntimeException{
 
         private final int httpStatus;
 
-        public int getHttpStatus(){
+        public int getHttpStatus() {
             return this.httpStatus;
         }
 
@@ -29,13 +29,13 @@ public class WebException extends RuntimeException{
     public HTTPStatus statusCode;
     public String path;
 
-    WebException(HTTPStatus statusCode, String message){
+    WebException(HTTPStatus statusCode, String message) {
         super(message);
         this.statusCode = statusCode;
         this.path = "";
     }
 
-    WebException(HTTPStatus statusCode, String message, String path){
+    WebException(HTTPStatus statusCode, String message, String path) {
         super(message);
         this.statusCode = statusCode;
         this.path = path;
