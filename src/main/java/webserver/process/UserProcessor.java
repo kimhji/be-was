@@ -5,7 +5,7 @@ import common.UtilFunc;
 import customException.UserExceptionConverter;
 import db.Database;
 import model.User;
-import webserver.Request;
+import webserver.http.Request;
 
 public class UserProcessor {
     public byte[] createUser(Request request){

@@ -1,4 +1,4 @@
-package webserver;
+package webserver.http;
 
 import common.Config;
 import common.UtilFunc;
@@ -21,7 +21,7 @@ public class Request {
     public Map<String, String> queryParam = new HashMap<>();
     public Map<String, String> header = new HashMap<>();
     public Map<String, String> bodyParam = new HashMap<>();
-    Request(String req){
+    public Request(String req){
         if(req == null || req.isBlank()) throw WebStatusConverter.emptyRequest();
         String[] lines = req.split("\n");
         getReqStartLine(lines[0]);
@@ -39,7 +39,7 @@ public class Request {
         }
     }
 
-    Request(Method method, String path) {
+    public Request(Method method, String path) {
         this.method = method;
         this.path = path;
     }

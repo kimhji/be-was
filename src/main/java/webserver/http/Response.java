@@ -1,4 +1,4 @@
-package webserver;
+package webserver.http;
 
 import common.Config;
 import customException.WebException;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Response {
-    enum ContentType{
+    public enum ContentType{
         HTML("text/html;charset=utf-8"),
         CSS("text/css"),
         JS("application/javascript"),

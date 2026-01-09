@@ -27,14 +27,6 @@ async function alertCall(response){
         alert("에러 발생: " + msg);
         return true;
     }
-    if (response.status >= 300 && response.status < 400) {
-        const msg = await response.text();
-        if(msg != null)
-            alert(msg);
-        if(response.headers.get("Location"))
-            window.location.href = response.headers.get("Location");
-        return true;
-    }
     return false;
 }
 

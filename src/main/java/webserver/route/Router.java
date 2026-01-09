@@ -1,8 +1,8 @@
 package webserver.route;
 
 import customException.WebStatusConverter;
-import webserver.Response;
-import webserver.Request;
+import webserver.http.Response;
+import webserver.http.Request;
 
 import java.util.function.Function;
 

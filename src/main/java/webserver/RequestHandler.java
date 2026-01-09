@@ -15,6 +15,8 @@ import webserver.parse.PageReplacer;
 import webserver.parse.Replacer;
 import webserver.process.StaticFileProcessor;
 import webserver.process.UserProcessor;
+import webserver.http.Response;
+import webserver.http.Request;
 import webserver.route.Router;
 
 public class RequestHandler implements Runnable {
@@ -111,9 +113,9 @@ public class RequestHandler implements Runnable {
                 response.responseBody(dos);
             } catch (WebException e) {
                 Response response = new Response(e.statusCode, e.getMessage().getBytes(), Response.ContentType.PLAIN_TEXT);
-                response.setResponseHeader(dos);
                 if(e.path != null && !e.path.isBlank())
                     response.addHeader("Location", e.path);
+                response.setResponseHeader(dos);
                 response.responseBody(dos);
             }
         } catch (IOException e) {
