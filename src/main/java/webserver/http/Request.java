@@ -4,8 +4,11 @@ import common.Config;
 import common.Utils;
 import customException.WebStatusConverter;
 
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Request {
     public enum Method {
@@ -93,7 +96,7 @@ public class Request {
             for (String param : paramStr.split("&")) {
                 String[] keyAndValue = param.split("=");
                 if (keyAndValue.length <= 1) continue;
-                queryParam.put(keyAndValue[0], keyAndValue[1]);
+                queryParam.put(URLDecoder.decode(keyAndValue[0], UTF_8), URLDecoder.decode(keyAndValue[1], UTF_8));
             }
             path = pathSplit[0];
         }
@@ -105,7 +108,7 @@ public class Request {
         for (String keyValue : cases) {
             String[] split = keyValue.split("=");
             if (split.length < 2) continue;
-            bodyParam.put(split[0].trim(), split[1].trim());
+            bodyParam.put(URLDecoder.decode(split[0].trim(), UTF_8), URLDecoder.decode(split[1].trim(), UTF_8));
         }
     }
 
@@ -114,7 +117,7 @@ public class Request {
         String[] words = line.trim().split(":");
         if (words.length < 2) return;
         String value = Utils.getRestStr(line, ":", 1).trim();
-        header.put(words[0].trim().toLowerCase(), value);
+        header.put(words[0].trim().toLowerCase(), URLDecoder.decode(value, UTF_8));
     }
 
     private Method getMethod(String methodStr) {
