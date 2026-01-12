@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Database {
     private static Map<String, User> users = new HashMap<>();
-    private static Map<String, User> posts = new HashMap<>();
+    private static Map<String, Post> posts = new HashMap<>();
 
     public static void addUser(User user) {
         users.put(user.getUserId(), user);
@@ -27,6 +27,6 @@ public class Database {
 
 
     public static void addPost(Post post) {
-        posts.put(post.getPostId(), post);
+        posts.put(post.postId(), post);
     }
 }
