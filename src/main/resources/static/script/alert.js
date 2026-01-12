@@ -91,3 +91,20 @@ document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
 
     await formResponseProcessToMain(response);
 });
+
+document.getElementById("post")?.addEventListener("submit", async (e) => {
+    e.preventDefault(); // 기본 submit 막기
+
+    const content = document.querySelector("#content").value;
+    const response = await fetch("/post/create", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+            content
+        })
+    });
+
+    await formResponseProcessToMain(response);
+});
