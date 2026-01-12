@@ -39,10 +39,10 @@ public class Processor {
                     return process(request);
                 }
         );
-//        router.register(new Request(Request.Method.GET, "/create"), value -> {
-//            byte[] body = userProcessor.createUser(value);
-//            return new Response(WebException.HTTPStatus.CREATED, body, Response.ContentType.HTML);
-//        });
+        router.register(new Request(Request.Method.GET, "/write"), request -> {
+            request.path = Config.ARTICLE_PAGE_PATH;
+            return process(request);
+        });
 
         router.register(new Request(Request.Method.GET, "/"), dummy -> {
             return new Response(WebException.HTTPStatus.OK, "<h1>Hello World</h1>".getBytes(), Response.ContentType.HTML);
