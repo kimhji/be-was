@@ -2,6 +2,9 @@ package common;
 
 import webserver.http.RequestBody;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class Utils {
@@ -52,5 +55,69 @@ public class Utils {
         while ((index = sb.indexOf(target)) != -1) {
             sb.replace(index, index + target.length(), replacement);
         }
+    }
+
+    public static List<byte[]> splitBytesExceptFirst(byte[] origin, byte[] splitter){
+        List<byte[]> result = splitBytes(origin, splitter);
+        if(result.size() <= 1) return new LinkedList<>();
+        return result.subList(1, result.size());
+    }
+    public static List<byte[]> splitBytes(byte[] origin, byte[] splitter){
+        int idx = -1;
+        int count = 0;
+        int firstIdx = 0;
+        List<byte[]> result = new LinkedList<>() ;
+        for(byte oneByte: origin){
+            idx++;
+            if(oneByte != splitter[count]){
+                count = 0;
+                continue;
+            }
+            count++;
+            if(count == splitter.length){
+                count = 0;
+                byte[] part = Arrays.copyOfRange(origin, firstIdx, idx+1-splitter.length);
+                result.add(part);
+                firstIdx = idx+1;
+            }
+        }
+        return result;
+    }
+
+    public static byte[] getFirstSplit (byte[] origin, byte[] splitter){
+        int idx = -1;
+        int count = 0;
+        for(byte oneByte: origin){
+            idx++;
+            if(oneByte != splitter[count]){
+                count = 0;
+                continue;
+            }
+            count++;
+            if(count == splitter.length){
+                return Arrays.copyOfRange(origin, idx+1, origin.length);
+            }
+        }
+        return null;
+    }
+
+    public static List<byte[]> getBothSplit (byte[] origin, byte[] splitter){
+        int idx = -1;
+        int count = 0;
+        List<byte[]> result = new LinkedList<>();
+        for(byte oneByte: origin){
+            idx++;
+            if(oneByte != splitter[count]){
+                count = 0;
+                continue;
+            }
+            count++;
+            if(count == splitter.length){
+                result.add(Arrays.copyOfRange(origin, 0, idx+1 - splitter.length));
+                result.add(Arrays.copyOfRange(origin, idx+1, origin.length));
+                return result;
+            }
+        }
+        return null;
     }
 }

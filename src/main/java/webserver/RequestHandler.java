@@ -73,7 +73,6 @@ public class RequestHandler implements Runnable {
         }
 
         Request req = new Request(headerBuf.toString(StandardCharsets.UTF_8));
-
         String contentLength = req.header.get(Config.HEADER_CONTENT_LENGTH);
         if (contentLength != null) {
             int length = Integer.parseInt(contentLength);

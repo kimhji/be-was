@@ -6,8 +6,7 @@ import customException.WebStatusConverter;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -122,7 +121,7 @@ public class Request {
 
             case MULTIPART_FORM_DATA:
             default:
-            // TODO: boundary 기반 파싱
+                parseBodyByMultipartForm(body);
                 break;
         }
     }
@@ -149,17 +148,29 @@ public class Request {
     }
 
     private void parseBodyByMultipartForm(byte[] body){
-        if (body == null) return;
-        String[] split = header.getOrDefault(Config.HEADER_CONTENT_TYPE, "").split(Config.HEADER_BOUNDARY);
-        if(split.length < 2) return;
-        header.put(Config.HEADER_BOUNDARY.toLowerCase(), split[1].trim());
+        if (body == null || body.length < 2) return;
 
-        byte[] splitter = split[1].trim().getBytes();
-//        for (String keyValue : cases) {
-//            String[] split = keyValue.split("=");
-//            if (split.length < 2) continue;
-//            bodyParam.put(URLDecoder.decode(split[0].trim(), UTF_8), new RequestBody(URLDecoder.decode(split[1].trim(), UTF_8)));
-//        }
+        String[] split2 = header.getOrDefault(Config.HEADER_CONTENT_TYPE, "").split(Config.HEADER_BOUNDARY+"=");
+        if(split2.length < 2) return;
+        header.put(Config.HEADER_BOUNDARY.toLowerCase(), split2[1].trim());
+
+        byte[] splitter = ("--"+split2[1]).trim().getBytes();
+        List<byte[]> parts = Utils.splitBytesExceptFirst(body, splitter)
+                .stream().map(part->Arrays.copyOfRange(part, 2,part.length)).toList();
+        for(byte[] part: parts){
+            String name = getNameBodyContent(part);
+            if(name == null) continue;
+            bodyParam.put(name, new RequestBody(part));
+        }
+
+    }
+    private String getNameBodyContent(byte[] body){
+        byte[] nameSplit = Utils.getFirstSplit(body, "name=\"".getBytes(UTF_8));
+        if(nameSplit == null) return null;
+        for(int i = 1;i<nameSplit.length;i++){
+            if(nameSplit[i-1] == '"'&&(nameSplit[i] == '\r' ||nameSplit[i] == '\n' || nameSplit[i] == ';')) return new String(Arrays.copyOfRange(nameSplit, 0, i-1));
+        }
+        return null;
     }
 
     private void addHeader(String line) {
