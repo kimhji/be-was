@@ -7,6 +7,7 @@ import db.Database;
 import model.Post;
 import model.User;
 import webserver.http.Request;
+import webserver.http.RequestBody;
 import webserver.http.Response;
 import webserver.parse.PageReplacer;
 import webserver.parse.DataReplacer;
@@ -76,12 +77,12 @@ public class Processor {
 
         router.register(new Request(Request.Method.POST, "/post/create"), request -> {
             User user = userProcessor.getUserOrException(request);
-            Post post = new Post(request.bodyParam.getOrDefault("image", "").getBytes(),
-                    user.getUserId(),
-                    request.bodyParam.getOrDefault("content", null));
-            if(post.content() == null){
+            if(request.bodyParam.getOrDefault("content", null)==null){
                 throw PostExceptionConverter.badContentPost();
             }
+            Post post = new Post(request.bodyParam.getOrDefault("image", new RequestBody("")).getContent(),
+                    user.getUserId(),
+                    request.bodyParam.get("content").toString());
             Database.addPost(post);
             return new Response(WebException.HTTPStatus.OK, null, Response.ContentType.PLAIN_TEXT);
         });

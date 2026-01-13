@@ -1,5 +1,7 @@
 package common;
 
+import webserver.http.RequestBody;
+
 import java.util.Map;
 
 public class Utils {
@@ -18,6 +20,19 @@ public class Utils {
         return sb.toString();
     }
 
+    public static String parseMapToQueryString_RequestBody(Map<String, RequestBody> queryParam) {
+        StringBuilder sb = new StringBuilder();
+
+        boolean first = true;
+        for (Map.Entry<String, RequestBody> entry : queryParam.entrySet()) {
+            if (!first) sb.append("&");
+            sb.append(entry.getKey())
+                    .append("=")
+                    .append(entry.getValue().toString());
+            first = false;
+        }
+        return sb.toString();
+    }
     public static String parseMapToQueryString(Map<String, String> queryParam) {
         StringBuilder sb = new StringBuilder();
 
@@ -31,7 +46,6 @@ public class Utils {
         }
         return sb.toString();
     }
-
     public static void replaceAll(StringBuilder sb, String target, String replacement) {
         int index;
         if (replacement == null) replacement = "";

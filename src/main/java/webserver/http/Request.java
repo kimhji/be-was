@@ -35,7 +35,7 @@ public class Request {
     public String path;
     public Map<String, String> queryParam = new HashMap<>();
     public Map<String, String> header = new HashMap<>();
-    public Map<String, String> bodyParam = new HashMap<>();
+    public Map<String, RequestBody> bodyParam = new HashMap<>();
 
     public Request(String req) {
         if (req == null || req.isBlank()) throw WebStatusConverter.emptyRequest();
@@ -78,7 +78,7 @@ public class Request {
         sb.append(Config.CRLF);
 
         if (!bodyParam.isEmpty()) {
-            sb.append(Utils.parseMapToQueryString(bodyParam));
+            sb.append(Utils.parseMapToQueryString_RequestBody(bodyParam));
         }
 
         return sb.toString();
@@ -127,7 +127,7 @@ public class Request {
         }
     }
     private ContentType getContentType() {
-        String ct = header.get("content-type");
+        String ct = header.get(Config.HEADER_CONTENT_TYPE);
         if (ct == null) return ContentType.APPLICATION_X_WWW_FORM_URLENCODED;
 
         if (ct.startsWith(ContentType.MULTIPART_FORM_DATA.typeStr)) {
@@ -136,7 +136,7 @@ public class Request {
         return ContentType.APPLICATION_X_WWW_FORM_URLENCODED;
     }
 
-    public void parseBodyByURLEncoded(byte[] body) {
+    private void parseBodyByURLEncoded(byte[] body) {
         if (body == null) return;
         String bodyStr = new String(body);
         if (bodyStr.isBlank()) return;
@@ -144,8 +144,22 @@ public class Request {
         for (String keyValue : cases) {
             String[] split = keyValue.split("=");
             if (split.length < 2) continue;
-            bodyParam.put(URLDecoder.decode(split[0].trim(), UTF_8), URLDecoder.decode(split[1].trim(), UTF_8));
+            bodyParam.put(URLDecoder.decode(split[0].trim(), UTF_8), new RequestBody(URLDecoder.decode(split[1].trim(), UTF_8)));
         }
+    }
+
+    private void parseBodyByMultipartForm(byte[] body){
+        if (body == null) return;
+        String[] split = header.getOrDefault(Config.HEADER_CONTENT_TYPE, "").split(Config.HEADER_BOUNDARY);
+        if(split.length < 2) return;
+        header.put(Config.HEADER_BOUNDARY.toLowerCase(), split[1].trim());
+
+        byte[] splitter = split[1].trim().getBytes();
+//        for (String keyValue : cases) {
+//            String[] split = keyValue.split("=");
+//            if (split.length < 2) continue;
+//            bodyParam.put(URLDecoder.decode(split[0].trim(), UTF_8), new RequestBody(URLDecoder.decode(split[1].trim(), UTF_8)));
+//        }
     }
 
     private void addHeader(String line) {

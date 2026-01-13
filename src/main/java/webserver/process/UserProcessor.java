@@ -7,10 +7,24 @@ import customException.UserExceptionConverter;
 import db.Database;
 import model.User;
 import webserver.http.Request;
+import webserver.http.RequestBody;
+
+import java.util.Optional;
 
 public class UserProcessor {
     public byte[] createUser(Request request) {
-        User user = new User(request.bodyParam.get("userId"), request.bodyParam.get("password"), request.bodyParam.get("name"), request.bodyParam.get("email"));
+        User user = new User(Optional.ofNullable(request.bodyParam.get("userId"))
+                .map(RequestBody::getContentString)
+                .orElseThrow(UserExceptionConverter::needUserData),
+                Optional.ofNullable(request.bodyParam.get("password"))
+                        .map(RequestBody::getContentString)
+                        .orElseThrow(UserExceptionConverter::needUserData),
+                Optional.ofNullable(request.bodyParam.get("name"))
+                        .map(RequestBody::getContentString)
+                        .orElseThrow(UserExceptionConverter::needUserData),
+                Optional.ofNullable(request.bodyParam.get("email"))
+                        .map(RequestBody::getContentString)
+                        .orElseThrow(UserExceptionConverter::needUserData));
 
         if (Database.findUserById(user.getUserId()) != null) throw UserExceptionConverter.conflictUser();
         Database.addUser(user);
@@ -19,9 +33,14 @@ public class UserProcessor {
     }
 
     public String loginUser(Request request) {
-        String reqPassword = request.bodyParam.get("password");
+        String reqPassword = Optional.ofNullable(request.bodyParam.get("password"))
+                .map(RequestBody::getContentString)
+                .orElseThrow(UserExceptionConverter::needUserData);
+
         if (reqPassword == null || reqPassword.isBlank()) throw UserExceptionConverter.needUserData();
-        User user = Database.findUserById(request.bodyParam.get("userId"));
+        User user = Database.findUserById(Optional.ofNullable(request.bodyParam.get("userId"))
+                .map(RequestBody::getContentString)
+                .orElseThrow(UserExceptionConverter::notFoundUser));
         if (user == null) throw UserExceptionConverter.notFoundUser();
         if (reqPassword.compareTo(user.getPassword()) != 0) throw UserExceptionConverter.unAuthorized();
 

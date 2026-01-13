@@ -16,4 +16,6 @@ public class Config {
     public static final String HEADER_LOCATION = "location";
     public static final String HEADER_SET_COOKIE = "set-cookie";
     public static final String HEADER_COOKIE = "cookie";
+    public static final String HEADER_CONTENT_TYPE = "content-type";
+    public static final String HEADER_BOUNDARY = "boundary";
 }
