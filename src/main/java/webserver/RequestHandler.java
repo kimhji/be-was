@@ -6,6 +6,8 @@ import java.nio.charset.StandardCharsets;
 
 import common.Config;
 import customException.WebException;
+import db.Database;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.process.Processor;
@@ -20,6 +22,10 @@ public class RequestHandler implements Runnable {
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
+    }
+
+    public static void addTestUser(){
+        Database.addUser(new User("tttt", "1234", "현지", "t@n.c"));
     }
 
     public void run() {

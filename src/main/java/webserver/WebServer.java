@@ -35,7 +35,8 @@ public class WebServer {
         } else {
             port = Integer.parseInt(args[0]);
         }
-
+        // 이후 삭제
+        RequestHandler.addTestUser();
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);
 
