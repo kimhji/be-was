@@ -95,18 +95,12 @@ document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
 document.getElementById("post")?.addEventListener("submit", async (e) => {
     e.preventDefault(); // 기본 submit 막기
 
-    const content = document.querySelector("#content").value;
-    const image = document.querySelector("#image").value;
+    const form = e.target;
+    const formData = new FormData(form);
 
     const response = await fetch("/post/create", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: new URLSearchParams({
-            content,
-            image
-        })
+        body: formData
     });
 
     await formResponseProcessToMain(response);

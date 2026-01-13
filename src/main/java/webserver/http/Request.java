@@ -5,6 +5,7 @@ import common.Utils;
 import customException.WebStatusConverter;
 
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,17 @@ public class Request {
         PUT,
         DELETE,
         PATCH
+    }
+
+     public enum ContentType {
+        MULTIPART_FORM_DATA("multipart/form-data"),
+        APPLICATION_X_WWW_FORM_URLENCODED("application/x-www-form-urlencoded");
+
+        public final String typeStr;
+
+        ContentType(String typeStr) {
+            this.typeStr = typeStr;
+        }
     }
 
     public Method method;
@@ -37,7 +49,7 @@ public class Request {
             if (!isFindEmptyLine || method != Method.POST) {
                 addHeader(lines[i]);
             } else {
-                addBodyParam(lines[i]);
+                addBodyParam(lines[i].getBytes(UTF_8));
             }
         }
     }
@@ -102,9 +114,33 @@ public class Request {
         }
     }
 
-    public void addBodyParam(String line) {
-        if (line == null || line.isBlank()) return;
-        String[] cases = line.split("&");
+    public void addBodyParam(byte[] body) {
+        switch (getContentType()) {
+            case APPLICATION_X_WWW_FORM_URLENCODED:
+                parseBodyByURLEncoded(body);
+                break;
+
+            case MULTIPART_FORM_DATA:
+            default:
+            // TODO: boundary 기반 파싱
+                break;
+        }
+    }
+    private ContentType getContentType() {
+        String ct = header.get("content-type");
+        if (ct == null) return ContentType.APPLICATION_X_WWW_FORM_URLENCODED;
+
+        if (ct.startsWith(ContentType.MULTIPART_FORM_DATA.typeStr)) {
+            return ContentType.MULTIPART_FORM_DATA;
+        }
+        return ContentType.APPLICATION_X_WWW_FORM_URLENCODED;
+    }
+
+    public void parseBodyByURLEncoded(byte[] body) {
+        if (body == null) return;
+        String bodyStr = new String(body);
+        if (bodyStr.isBlank()) return;
+        String[] cases = bodyStr.split("&");
         for (String keyValue : cases) {
             String[] split = keyValue.split("=");
             if (split.length < 2) continue;

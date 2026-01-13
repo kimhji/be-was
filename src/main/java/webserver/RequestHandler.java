@@ -55,36 +55,41 @@ public class RequestHandler implements Runnable {
     }
 
     private Request getReq(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(
-                new InputStreamReader(in, StandardCharsets.UTF_8)
-        );
+        ByteArrayOutputStream headerBuf = new ByteArrayOutputStream();
 
-        String line;
-        StringBuilder headerPart = new StringBuilder();
-
-        while ((line = br.readLine()) != null && !line.isEmpty()) {
-            headerPart.append(line).append(Config.CRLF);
+        int prev = -1, curr;
+        while ((curr = in.read()) != -1) {
+            headerBuf.write(curr);
+            if (prev == '\r' && curr == '\n') {
+                byte[] h = headerBuf.toByteArray();
+                int len = h.length;
+                if (len >= 4 &&
+                        h[len-4] == '\r' && h[len-3] == '\n' &&
+                        h[len-2] == '\r' && h[len-1] == '\n') {
+                    break;
+                }
+            }
+            prev = curr;
         }
-        Request req = new Request(headerPart.toString());
+
+        Request req = new Request(headerBuf.toString(StandardCharsets.UTF_8));
 
         String contentLength = req.header.get(Config.HEADER_CONTENT_LENGTH);
         if (contentLength != null) {
-            int len = Integer.parseInt(contentLength);
+            int length = Integer.parseInt(contentLength);
 
-            if (len <= 0) return req;
+            if (length <= 0) return req;
 
-            char[] bodyChars = new char[len];
+            byte[] body = new byte[length];
             int read = 0;
-            while (read < len) {
-                read += br.read(bodyChars, read, len - read);
+            while (read < length) {
+                int tnsRead = in.read(body, read, length - read);
+                if (tnsRead == -1) break;
+                read += tnsRead;
             }
-
-            String body = new String(bodyChars);
             req.addBodyParam(body);
         }
 
         return req;
     }
-
-
 }
