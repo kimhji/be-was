@@ -1,6 +1,8 @@
 package db;
 
+import customException.PostExceptionConverter;
 import customException.UserExceptionConverter;
+import model.Post;
 import model.User;
 
 import java.util.Collection;
@@ -9,6 +11,7 @@ import java.util.Map;
 
 public class Database {
     private static Map<String, User> users = new HashMap<>();
+    private static Map<String, Post> posts = new HashMap<>();
 
     public static void addUser(User user) {
         users.put(user.getUserId(), user);
@@ -21,5 +24,21 @@ public class Database {
 
     public static Collection<User> findAll() {
         return users.values();
+    }
+
+
+    public static void addPost(Post post) {
+        posts.put(post.postId(), post);
+    }
+
+    public static Post getRecentPost(){
+        Post recentPost = posts.getOrDefault(String.valueOf(Post.postNum), null);
+        int tnsPostNum = Post.postNum-1;
+        while(recentPost != null && tnsPostNum > 0){
+            recentPost = posts.getOrDefault(String.valueOf(Post.postNum--), null);
+        }
+        if(recentPost == null) throw PostExceptionConverter.notFoundPost();
+
+        return recentPost;
     }
 }

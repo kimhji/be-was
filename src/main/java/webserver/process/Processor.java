@@ -1,7 +1,10 @@
 package webserver.process;
 
 import common.Config;
+import customException.PostExceptionConverter;
 import customException.WebException;
+import db.Database;
+import model.Post;
 import model.User;
 import webserver.http.Request;
 import webserver.http.Response;
@@ -39,10 +42,10 @@ public class Processor {
                     return process(request);
                 }
         );
-//        router.register(new Request(Request.Method.GET, "/create"), value -> {
-//            byte[] body = userProcessor.createUser(value);
-//            return new Response(WebException.HTTPStatus.CREATED, body, Response.ContentType.HTML);
-//        });
+        router.register(new Request(Request.Method.GET, "/write"), request -> {
+            request.path = Config.ARTICLE_PAGE_PATH;
+            return process(request);
+        });
 
         router.register(new Request(Request.Method.GET, "/"), dummy -> {
             return new Response(WebException.HTTPStatus.OK, "<h1>Hello World</h1>".getBytes(), Response.ContentType.HTML);
@@ -69,6 +72,18 @@ public class Processor {
             Response response = new Response(WebException.HTTPStatus.OK, null, Response.ContentType.HTML);
             response.addHeader(Config.HEADER_LOCATION, "http://localhost:8080/index.html");
             return response;
+        });
+
+        router.register(new Request(Request.Method.POST, "/post/create"), request -> {
+            User user = userProcessor.getUserOrException(request);
+            Post post = new Post(request.bodyParam.getOrDefault("image", "").getBytes(),
+                    user.getUserId(),
+                    request.bodyParam.getOrDefault("content", null));
+            if(post.content() == null){
+                throw PostExceptionConverter.badContentPost();
+            }
+            Database.addPost(post);
+            return new Response(WebException.HTTPStatus.OK, null, Response.ContentType.PLAIN_TEXT);
         });
     }
 

@@ -68,5 +68,24 @@ public class PageReplacer {
                 "  </li>" +
                 "</ul>" +
                 "</div>");
+        notLogin.put(PageType.ARTICLE, "<ul class=\"header__menu\">" +
+                "  <li class=\"header__menu__item\">" +
+                "    <a class=\"btn btn_contained btn_size_s\" href=\"/login\">로그인</a>" +
+                "  </li>" +
+                "  <li class=\"header__menu__item\">" +
+                "    <a class=\"btn btn_ghost btn_size_s\" href=\"/registration\">회원 가입</a>" +
+                "  </li>" +
+                "</ul>");
+        afterLogin.put(PageType.ARTICLE, "<div id=link_to_mypage>" +
+                "<ul class=\"header__menu\">" +
+                "  <li class=\"header__menu__item\">" +
+                "    <img class=\"post__account__img\" />" +
+                "  </li>" +
+                "  <li class=\"header__menu__item\">" +
+                "    <p class=\"post__account__nickname\">{{user.name}}</p>" +
+                "  </li>" +
+                "<button id=\"logout-btn\" class=\"btn btn_ghost btn_size_s\">로그아웃 </button>"+
+                "</ul>" +
+                "</div>");
     }
 }

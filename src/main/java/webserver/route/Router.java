@@ -1,8 +1,10 @@
 package webserver.route;
 
+import common.Config;
 import customException.WebStatusConverter;
 import webserver.http.Response;
 import webserver.http.Request;
+import webserver.process.Processor;
 
 import java.util.function.Function;
 
@@ -11,7 +13,8 @@ public class Router {
     private final RouterNode root = new RouterNode();
 
     public static boolean needLogin(String path){
-        return (path.compareTo("/mypage/index.html") == 0) || (path.compareTo("/mypage") == 0);
+        return (path.compareTo(Config.MY_PAGE_PAGE_PATH) == 0) || (path.compareTo("/mypage") == 0)
+                || (path.compareTo("/write") ==0)|| (path.compareTo(Config.ARTICLE_PAGE_PATH)==0);
     }
 
     public void register(Request req, Function<Request, Response> func) {
