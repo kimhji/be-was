@@ -1,7 +1,7 @@
 package webserver.route;
 
-import webserver.Response;
-import webserver.Request;
+import webserver.http.Response;
+import webserver.http.Request;
 
 import java.util.HashMap;
 import java.util.Map;

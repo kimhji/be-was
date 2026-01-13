@@ -1,4 +1,4 @@
-package webserver;
+package webserver.http;
 
 import common.Config;
 import customException.WebException;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Response {
-    enum ContentType{
+    public enum ContentType {
         HTML("text/html;charset=utf-8"),
         CSS("text/css"),
         JS("application/javascript"),
@@ -18,38 +18,39 @@ public class Response {
         JPEG("image/jpeg"),
         SVG("image/svg+xml"),
         OCTET("application/octet-stream"),
-        PLAIN_TEXT("text/plain; charset=utf-8")
-        ;
+        PLAIN_TEXT("text/plain; charset=utf-8");
 
         public final String contentType;
 
-        ContentType(String contentType){
+        ContentType(String contentType) {
             this.contentType = contentType;
         }
     }
+
     WebException.HTTPStatus statusCode;
     ContentType contentType;
     byte[] body;
     Map<String, String> header = new HashMap<>();
 
     public Response(WebException.HTTPStatus status,
-                        byte[] body,
+                    byte[] body,
                     ContentType contentType) {
         this.statusCode = status;
         this.body = body;
         this.contentType = contentType;
     }
 
-    public void setResponseHeader(DataOutputStream dos) throws IOException{
-        dos.writeBytes("HTTP/1.1 " + statusCode.getHttpStatus() + " " + statusCode.name() + " "+ Config.CRLF);
+    public void setResponseHeader(DataOutputStream dos) throws IOException {
+        dos.writeBytes("HTTP/1.1 " + statusCode.getHttpStatus() + " " + statusCode.name() + " " + Config.CRLF);
         dos.writeBytes("Content-Type: " + contentType.contentType + Config.CRLF);
-        dos.writeBytes("Content-Length: " + (body!=null?body.length:0) + Config.CRLF);
-        for(String key: this.header.keySet()){
-            dos.writeBytes(key+": "+header.get(key)+Config.CRLF);
+        dos.writeBytes("Content-Length: " + (body != null ? body.length : 0) + Config.CRLF);
+        for (String key : this.header.keySet()) {
+            dos.writeBytes(key + ": " + header.get(key) + Config.CRLF);
         }
         dos.writeBytes(Config.CRLF);
     }
-    public void addHeader(String key, String value){
+
+    public void addHeader(String key, String value) {
         header.put(key, value);
     }
 
@@ -64,8 +65,9 @@ public class Response {
         return ContentType.OCTET;
     }
 
-    public void responseBody(DataOutputStream dos) throws IOException{
-        dos.write(body, 0, body==null?0:body.length);
+    public void responseBody(DataOutputStream dos) throws IOException {
+        if (body != null)
+            dos.write(body, 0, body.length);
         dos.flush();
     }
 }

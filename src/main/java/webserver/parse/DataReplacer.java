@@ -1,18 +1,18 @@
 package webserver.parse;
 
-import common.UtilFunc;
+import common.Utils;
 
 import java.lang.reflect.Field;
 
-public class Replacer {
+public class DataReplacer {
     String replacerName;
 
-    public Replacer(String replacerName) {
+    public DataReplacer(String replacerName) {
         this.replacerName = replacerName;
     }
 
     public String replace(Object data, String template) {
-        if(data == null) return template;
+        if (data == null) return template;
         StringBuilder sb = new StringBuilder(template);
         Class<?> clazz = data.getClass();
         for (Field field : clazz.getDeclaredFields()) {
@@ -23,7 +23,7 @@ public class Replacer {
                 if (value == null) continue;
 
                 String placeholder = "{{" + this.replacerName + "." + field.getName() + "}}";
-                UtilFunc.replaceAll(sb, placeholder, value.toString());
+                Utils.replaceAll(sb, placeholder, value.toString());
 
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);

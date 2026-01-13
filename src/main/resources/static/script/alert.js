@@ -27,14 +27,6 @@ async function alertCall(response){
         alert("에러 발생: " + msg);
         return true;
     }
-    if (response.status >= 300 && response.status < 400) {
-        const msg = await response.text();
-        if(msg != null)
-            alert(msg);
-        if(response.headers.get("Location"))
-            window.location.href = response.headers.get("Location");
-        return true;
-    }
     return false;
 }
 
@@ -88,4 +80,14 @@ document.getElementById("link_to_mypage")?.addEventListener("click", async (e) =
     });
 
     await getView(response);
+});
+
+document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
+    e.preventDefault(); // 기본 submit 막기
+
+    const response = await fetch("/user/logout", {
+        method: "POST"
+    });
+
+    await formResponseProcessToMain(response);
 });

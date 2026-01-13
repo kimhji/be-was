@@ -2,16 +2,16 @@ package common;
 
 import java.util.Map;
 
-public class UtilFunc {
-    public static String getRestStr(String wholeStr, String splitParam, int idx){
-        if(wholeStr == null || splitParam == null || wholeStr.isBlank() || splitParam.isBlank()) return "";
+public class Utils {
+    public static String getRestStr(String wholeStr, String splitParam, int idx) {
+        if (wholeStr == null || splitParam == null || wholeStr.isBlank() || splitParam.isBlank()) return "";
         String[] strs = wholeStr.split(splitParam);
-        if(strs.length <= idx) return "";
+        if (strs.length <= idx) return "";
 
         StringBuilder sb = new StringBuilder();
-        for(int i=idx;i< strs.length;i++){
+        for (int i = idx; i < strs.length; i++) {
             sb.append(strs[i]);
-            if(i+1< strs.length){
+            if (i + 1 < strs.length) {
                 sb.append(splitParam);
             }
         }
@@ -34,7 +34,7 @@ public class UtilFunc {
 
     public static void replaceAll(StringBuilder sb, String target, String replacement) {
         int index;
-        if(replacement == null) replacement = "";
+        if (replacement == null) replacement = "";
         while ((index = sb.indexOf(target)) != -1) {
             sb.replace(index, index + target.length(), replacement);
         }

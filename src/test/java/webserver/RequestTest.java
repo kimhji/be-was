@@ -2,10 +2,11 @@ package webserver;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import webserver.http.Request;
 
 import static org.assertj.core.api.Assertions.*;
 
-class SimpleReqTest {
+class RequestTest {
 //    @Test
 //    void shouldFail() {
 //        assertThat(1).isEqualTo(2);

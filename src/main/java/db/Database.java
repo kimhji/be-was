@@ -15,7 +15,7 @@ public class Database {
     }
 
     public static User findUserById(String userId) {
-        if(userId == null || userId.isBlank()) throw UserExceptionConverter.needUserId();
+        if (userId == null || userId.isBlank()) throw UserExceptionConverter.needUserId();
         return users.get(userId);
     }
 

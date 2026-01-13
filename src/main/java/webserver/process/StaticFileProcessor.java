@@ -1,25 +1,19 @@
 package webserver.process;
 
-import common.UtilFunc;
 import customException.WebStatusConverter;
-import model.User;
-import webserver.Request;
+import webserver.http.Request;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class StaticFileProcessor {
     private static String basePath = "./src/main/resources/static";
 
     public static byte[] processReq(Request simpleReq) {
         byte[] result = "".getBytes();
-        switch (simpleReq.method) {
-            case GET:
-                result = getStaticSources(simpleReq.path);
-                break;
-            default:
-                break;
+        if (simpleReq != null && simpleReq.method== Request.Method.GET) {
+            result = getStaticSources(simpleReq.path);
         }
         return result;
     }

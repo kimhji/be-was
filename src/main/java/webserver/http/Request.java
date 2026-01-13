@@ -1,14 +1,17 @@
-package webserver;
+package webserver.http;
 
 import common.Config;
-import common.UtilFunc;
+import common.Utils;
 import customException.WebStatusConverter;
 
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class Request {
-    public enum Method{
+    public enum Method {
         GET,
         POST,
         PUT,
@@ -21,25 +24,25 @@ public class Request {
     public Map<String, String> queryParam = new HashMap<>();
     public Map<String, String> header = new HashMap<>();
     public Map<String, String> bodyParam = new HashMap<>();
-    Request(String req){
-        if(req == null || req.isBlank()) throw WebStatusConverter.emptyRequest();
+
+    public Request(String req) {
+        if (req == null || req.isBlank()) throw WebStatusConverter.emptyRequest();
         String[] lines = req.split("\n");
         getReqStartLine(lines[0]);
         boolean isFindEmptyLine = false;
-        for(int i = 1;i<lines.length;i++){
-            if(lines[i].trim().isBlank()){
+        for (int i = 1; i < lines.length; i++) {
+            if (lines[i].trim().isBlank()) {
                 isFindEmptyLine = true;
             }
-            if(!isFindEmptyLine || method != Method.POST){
+            if (!isFindEmptyLine || method != Method.POST) {
                 addHeader(lines[i]);
-            }
-            else{
+            } else {
                 addBodyParam(lines[i]);
             }
         }
     }
 
-    Request(Method method, String path) {
+    public Request(Method method, String path) {
         this.method = method;
         this.path = path;
     }
@@ -63,74 +66,69 @@ public class Request {
         sb.append(Config.CRLF);
 
         if (!bodyParam.isEmpty()) {
-            sb.append(UtilFunc.parseMapToQueryString(bodyParam));
+            sb.append(Utils.parseMapToQueryString(bodyParam));
         }
 
         return sb.toString();
     }
+
     private String buildPathWithQuery() {
         if (queryParam.isEmpty()) return path;
 
         StringBuilder sb = new StringBuilder(path);
         sb.append("?");
 
-        sb.append(UtilFunc.parseMapToQueryString(queryParam));
+        sb.append(Utils.parseMapToQueryString(queryParam));
         return sb.toString();
     }
 
 
-    private void getReqStartLine(String startLine){
+    private void getReqStartLine(String startLine) {
         String[] firstHeader = startLine.trim().split(" ");
-        if(firstHeader.length < 3){
+        if (firstHeader.length < 3) {
             throw WebStatusConverter.invalidFirstHeaderRequest();
         }
         method = getMethod(firstHeader[0]);
         path = firstHeader[1];
         String[] pathSplit = firstHeader[1].split("\\?");
-        if(pathSplit.length>1){
-            String paramStr = UtilFunc.getRestStr(firstHeader[1], "\\?", 1).trim();
-            for(String param: paramStr.split("&")){
+        if (pathSplit.length > 1) {
+            String paramStr = Utils.getRestStr(firstHeader[1], "\\?", 1).trim();
+            for (String param : paramStr.split("&")) {
                 String[] keyAndValue = param.split("=");
-                if(keyAndValue.length<=1) continue;
-                queryParam.put(keyAndValue[0],keyAndValue[1]);
+                if (keyAndValue.length <= 1) continue;
+                queryParam.put(URLDecoder.decode(keyAndValue[0], UTF_8), URLDecoder.decode(keyAndValue[1], UTF_8));
             }
             path = pathSplit[0];
         }
     }
 
-    public void addBodyParam(String line){
-        if(line == null || line.isBlank()) return;
+    public void addBodyParam(String line) {
+        if (line == null || line.isBlank()) return;
         String[] cases = line.split("&");
-        for(String keyValue: cases){
+        for (String keyValue : cases) {
             String[] split = keyValue.split("=");
-            if(split.length <2) continue;
-            bodyParam.put(split[0].trim(), split[1].trim());
+            if (split.length < 2) continue;
+            bodyParam.put(URLDecoder.decode(split[0].trim(), UTF_8), URLDecoder.decode(split[1].trim(), UTF_8));
         }
     }
 
-    private void addHeader(String line){
-        if(line == null || line.isBlank()) return;
+    private void addHeader(String line) {
+        if (line == null || line.isBlank()) return;
         String[] words = line.trim().split(":");
-        if(words.length<2) return;
-        String value = UtilFunc.getRestStr(line, ":", 1).trim();
-        header.put(words[0], value);
+        if (words.length < 2) return;
+        String value = Utils.getRestStr(line, ":", 1).trim();
+        header.put(words[0].trim().toLowerCase(), URLDecoder.decode(value, UTF_8));
     }
 
-    private Method getMethod(String methodStr){
-        if(methodStr==null || methodStr.isBlank()) throw WebStatusConverter.invalidMethod();
-        switch(methodStr.trim().toUpperCase()){
-            case "GET":
-                return Method.GET;
-            case "POST":
-                return Method.POST;
-            case "PUT":
-                return Method.PUT;
-            case "DELETE":
-                return Method.DELETE;
-            case "PATCH":
-                return Method.PATCH;
-            default:
-                throw WebStatusConverter.invalidMethod();
-        }
+    private Method getMethod(String methodStr) {
+        if (methodStr == null || methodStr.isBlank()) throw WebStatusConverter.invalidMethod();
+        return switch (methodStr.trim().toUpperCase()) {
+            case "GET" -> Method.GET;
+            case "POST" -> Method.POST;
+            case "PUT" -> Method.PUT;
+            case "DELETE" -> Method.DELETE;
+            case "PATCH" -> Method.PATCH;
+            default -> throw WebStatusConverter.invalidMethod();
+        };
     }
 }
