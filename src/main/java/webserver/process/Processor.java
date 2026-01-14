@@ -115,10 +115,7 @@ public class Processor {
                 PostViewer postViewer = getPostViewer(simpleReq);
                 body = postReplacer.replace(postViewer, template).getBytes();
                 if(postViewer == null && Router.needPostData(simpleReq.path)){
-                    simpleReq.path = Config.NOPOST_PAGE_PATH;
-                    body = StaticFileProcessor.processReq(simpleReq);
-                    template = pageReplacer.replace(pageStruct, new String(body));
-                    body = userReplacer.replace(user, template).getBytes(StandardCharsets.UTF_8);
+                    body = getNoPostExceptionPage(simpleReq, user);
                 }
 
                 response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));
@@ -130,11 +127,13 @@ public class Processor {
         return response;
     }
 
-    private byte[] getNoPostExceptionPage(Request request){
+    private byte[] getNoPostExceptionPage(Request request, User user){
         request.path = Config.NOPOST_PAGE_PATH;
         byte[] body = StaticFileProcessor.processReq(request);
         if(body == null) throw WebStatusConverter.cannotFindNoPostPage();
-        return pageReplacer.replace(pageStruct, new String(body)).getBytes(StandardCharsets.UTF_8);
+
+        String template = pageReplacer.replace(pageStruct, new String(body));
+        return userReplacer.replace(user, template).getBytes(StandardCharsets.UTF_8);
     }
 
     private PostViewer getPostViewer(Request request){
