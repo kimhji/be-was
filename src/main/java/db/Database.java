@@ -138,7 +138,7 @@ public class Database {
             }
 
             return new Post(
-                    rs.getString("post_id"),
+                    rs.getInt("post_id"),
                     ImageManager.readImage(rs.getString("image_path")),
                     rs.getString("user_id"),
                     rs.getString("content")

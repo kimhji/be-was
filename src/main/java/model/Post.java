@@ -1,9 +1,7 @@
 package model;
 
-public record Post(String postId, byte[] image, String userId, String content){
-    public static int postNum = 0;
-
+public record Post(long postId, byte[] image, String userId, String content){
     public Post(byte[] image, String userId, String content) {
-        this(String.valueOf(++postNum), image, userId, content);
+        this(0L, image, userId, content);
     }
 }
