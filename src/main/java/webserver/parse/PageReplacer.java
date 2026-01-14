@@ -20,19 +20,15 @@ public class PageReplacer {
     Map<PageType, String> notLogin = new HashMap<>();
     Map<PageType, String> afterLogin = new HashMap<>();
 
-    public PageReplacer() {
-        init();
-    }
+//    public String getWholePage(String template, String path, boolean isLogin) {
+//        StringBuilder sb = new StringBuilder(template);
+//
+//        String placeholder = "{{" + Config.REPLACE_PLACEHOLDER + "}}";
+//        Utils.replaceAll(sb, placeholder, getParsedPage(path, isLogin));
+//        return sb.toString();
+//    }
 
-    public String getWholePage(String template, String path, boolean isLogin) {
-        StringBuilder sb = new StringBuilder(template);
-
-        String placeholder = "{{" + Config.REPLACE_PLACEHOLDER + "}}";
-        Utils.replaceAll(sb, placeholder, getParsedPage(path, isLogin));
-        return sb.toString();
-    }
-
-    private String getParsedPage(String path, boolean isLogin) {
+    public String getParsedPage(String path, boolean isLogin) {
         PageType pageType = getPageType(path);
         return (pageType != null && isLogin) ? afterLogin.get(pageType) : notLogin.get(pageType);
     }
@@ -49,43 +45,12 @@ public class PageReplacer {
         return null;
     }
 
-    private void init() {
-        notLogin.put(PageType.DEFAULT, "<ul class=\"header__menu\">" +
-                "  <li class=\"header__menu__item\">" +
-                "    <a class=\"btn btn_contained btn_size_s\" href=\"/login\">로그인</a>" +
-                "  </li>" +
-                "  <li class=\"header__menu__item\">" +
-                "    <a class=\"btn btn_ghost btn_size_s\" href=\"/registration\">회원 가입</a>" +
-                "  </li>" +
-                "</ul>");
-        afterLogin.put(PageType.DEFAULT, "<div id=link_to_mypage>" +
-                "<ul class=\"header__menu\">" +
-                "  <li class=\"header__menu__item\">" +
-                "    <img class=\"post__account__img\" />" +
-                "  </li>" +
-                "  <li class=\"header__menu__item\">" +
-                "    <p class=\"post__account__nickname\">{{user.name}}</p>" +
-                "  </li>" +
-                "</ul>" +
-                "</div>");
-        notLogin.put(PageType.ARTICLE, "<ul class=\"header__menu\">" +
-                "  <li class=\"header__menu__item\">" +
-                "    <a class=\"btn btn_contained btn_size_s\" href=\"/login\">로그인</a>" +
-                "  </li>" +
-                "  <li class=\"header__menu__item\">" +
-                "    <a class=\"btn btn_ghost btn_size_s\" href=\"/registration\">회원 가입</a>" +
-                "  </li>" +
-                "</ul>");
-        afterLogin.put(PageType.ARTICLE, "<div id=link_to_mypage>" +
-                "<ul class=\"header__menu\">" +
-                "  <li class=\"header__menu__item\">" +
-                "    <img class=\"post__account__img\" />" +
-                "  </li>" +
-                "  <li class=\"header__menu__item\">" +
-                "    <p class=\"post__account__nickname\">{{user.name}}</p>" +
-                "  </li>" +
-                "<button id=\"logout-btn\" class=\"btn btn_ghost btn_size_s\">로그아웃 </button>"+
-                "</ul>" +
-                "</div>");
+    public void setPage(boolean needLogin, PageType type, String pagePart){
+        if(needLogin){
+            afterLogin.put(type, pagePart);
+        }
+        else{
+            notLogin.put(type, pagePart);
+        }
     }
 }

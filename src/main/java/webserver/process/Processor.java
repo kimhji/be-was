@@ -11,6 +11,7 @@ import webserver.http.RequestBody;
 import webserver.http.Response;
 import webserver.parse.PageReplacer;
 import webserver.parse.DataReplacer;
+import webserver.parse.PageStruct;
 import webserver.route.Router;
 
 public class Processor {
@@ -18,7 +19,9 @@ public class Processor {
     private static final Router router = new Router();
     private static final UserProcessor userProcessor = new UserProcessor();
     private static final DataReplacer userReplacer = new DataReplacer("user");
-    private static final PageReplacer pageReplacer = new PageReplacer();
+    private static final DataReplacer pageReplacer = new DataReplacer("page");
+    private static final PageStruct pageStruct = new PageStruct();
+    //private static final PageReplacer pageReplacer = new PageReplacer();
 
     public Processor() {
         init();
@@ -97,7 +100,8 @@ public class Processor {
             byte[] body = StaticFileProcessor.processReq(simpleReq);
 
             if (body != null) {
-                String template = pageReplacer.getWholePage(new String(body), simpleReq.path, user != null);
+                pageStruct.setState(simpleReq.path, user != null);
+                String template = pageReplacer.replace(pageStruct, new String(body));
                 body = userReplacer.replace(user, template).getBytes();
 
                 response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));
