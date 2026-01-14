@@ -147,13 +147,14 @@ public class Database {
             if (!rs.next()) {
                 throw PostExceptionConverter.notFoundPost();
             }
-
+            String imagePath = rs.getString("image_path");
             return new Post(
                     rs.getLong("post_id"),
-                    ImageManager.readImage(rs.getString("image_path")),
+                    ImageManager.readImage(imagePath),
                     rs.getString("user_id"),
                     rs.getString("content"),
-                    rs.getInt("likes")
+                    rs.getInt("likes"),
+                    imagePath
             );
 
         } catch (SQLException e) {

@@ -1,7 +1,7 @@
 package model;
 
-public record Post(long postId, byte[] image, String userId, String content, int likes){
+public record Post(long postId, byte[] image, String userId, String content, int likes, String postImagePath){
     public Post(byte[] image, String userId, String content) {
-        this(0L, image, userId, content, 0);
+        this(0L, image, userId, content, 0, "");
     }
 }
