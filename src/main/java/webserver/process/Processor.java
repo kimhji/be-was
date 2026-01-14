@@ -37,6 +37,9 @@ public class Processor {
         router.register(new Request(Request.Method.GET, "/login"), (request) ->
                 {
                     request.path = Config.LOGIN_PAGE_PATH;
+                    if(userProcessor.getUser(request) != null){
+                        request.path = Config.DEFAULT_PAGE_PATH;
+                    }
                     return process(request);
                 }
         );
@@ -75,6 +78,7 @@ public class Processor {
             userProcessor.deleteUserSession(request);
             Response response = new Response(WebException.HTTPStatus.OK, null, Response.ContentType.HTML);
             response.addHeader(Config.HEADER_LOCATION, "http://localhost:8080/index.html");
+            response.addHeader(Config.HEADER_SET_COOKIE, "cookieName=; Max-Age=0;");
             return response;
         });
 
