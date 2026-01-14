@@ -1,6 +1,7 @@
 package db;
 
 import customException.*;
+import model.Comment;
 import model.Post;
 import model.User;
 
@@ -34,6 +35,15 @@ public class Database {
                     "    image_path VARCHAR(100),\n" +
                     "    content CLOB,\n" +
                     "    likes INT,\n" +
+                    "    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n" +
+                    ");\n");
+
+
+            stmt.execute("CREATE TABLE comments (\n" +
+                    "    comment_id BIGINT AUTO_INCREMENT PRIMARY KEY,\n" +
+                    "    post_id BIGINT NOT NULL,\n" +
+                    "    user_id VARCHAR(50) NOT NULL,\n" +
+                    "    content CLOB,\n" +
                     "    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n" +
                     ");\n");
         }
@@ -84,7 +94,7 @@ public class Database {
         }
     }
 
-    public static Collection<User> findAll() {
+    public static Collection<User> findAllUser() {
         try {
             Collection<User> users = new ArrayList<>();
             String sql = "SELECT * FROM users";
@@ -100,7 +110,7 @@ public class Database {
             return users;
         }
         catch (SQLException e){
-            throw DBExceptionConverter.failToAddUser();
+            throw DBExceptionConverter.failToFindUser();
         }
     }
 
@@ -148,6 +158,43 @@ public class Database {
 
         } catch (SQLException e) {
             throw DBExceptionConverter.failToFindPost();
+        }
+    }
+
+    public static void addComment(Comment comment) {
+        try {
+            String sql = "INSERT INTO comments(post_id, user_id, content) VALUES (?, ?, ?)";
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setLong(1, comment.postId());
+            pstmt.setString(2, comment.authorId());
+            pstmt.setString(3, comment.content());
+
+            pstmt.executeUpdate();
+        }
+        catch (SQLException e){
+            throw DBExceptionConverter.failToAddComment();
+        }
+    }
+
+    public static Collection<Comment> findCommentsByPost(long postId) {
+        try {
+            Collection<Comment> comments = new ArrayList<>();
+            String sql = "SELECT * FROM comment WHERE post_id = (?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setLong(1, postId);
+
+            ResultSet result = pstmt.executeQuery();
+            while(result.next()){
+                comments.add(new Comment(result.getLong("comment_id"),
+                        result.getLong("post_id"),
+                        result.getString("user_id"),
+                        result.getString("content")));
+            }
+            return comments;
+        }
+        catch (SQLException e){
+            throw DBExceptionConverter.failToAddUser();
         }
     }
 }

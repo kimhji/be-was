@@ -39,8 +39,22 @@ public class DBExceptionConverter {
 
     public static WebException failToLoadImage() {
         return new WebException(
-                WebException.HTTPStatus.BAD_REQUEST,
+                WebException.HTTPStatus.NOT_FOUND,
                 "포스트의 이미지 데이터를 불러올 수 없습니다."
+        );
+    }
+
+    public static WebException failToAddComment() {
+        return new WebException(
+                WebException.HTTPStatus.BAD_REQUEST,
+                "댓글 데이터를 DB에 저장하는 과정에서 에러가 발생했습니다."
+        );
+    }
+
+    public static WebException failToFindComment() {
+        return new WebException(
+                WebException.HTTPStatus.BAD_REQUEST,
+                "댓글 데이터를 DB에서 탐색하는 과정에서 에러가 발생했습니다."
         );
     }
 }
