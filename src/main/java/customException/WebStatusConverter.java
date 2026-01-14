@@ -15,6 +15,13 @@ public class WebStatusConverter {
         );
     }
 
+    public static WebException fileWriteError() {
+        return new WebException(
+                WebException.HTTPStatus.INTERNAL_SERVER_ERROR,
+                "파일을 쓰는 과정 중에 예상치 못한 에러가 발생했습니다."
+        );
+    }
+
     public static WebException emptyRequest() {
         return new WebException(
                 WebException.HTTPStatus.BAD_REQUEST,
