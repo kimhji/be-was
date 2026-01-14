@@ -30,14 +30,22 @@ public class PageStruct {
                     "    <a class=\"btn btn_ghost btn_size_s\" href=\"/registration\">회원 가입</a>" +
                     "  </li>" +
                     "</ul>");
-        headerContent.setPage(true, PageReplacer.PageType.DEFAULT, "<div id=link_to_mypage>" +
+        headerContent.setPage(true, PageReplacer.PageType.DEFAULT, "<div>" +
                     "<ul class=\"header__menu\">" +
                     "  <li class=\"header__menu__item\">" +
-                    "    <img class=\"post__account__img\" />" +
+                    "    <img id=link_to_mypage class=\"post__account__img\" />" +
                     "  </li>" +
                     "  <li class=\"header__menu__item\">" +
-                    "    <p class=\"post__account__nickname\">{{user.name}}</p>" +
+                    "    <p id=link_to_mypage class=\"post__account__nickname\">안녕하세요, {{user.name}}님!</p>" +
                     "  </li>" +
+                    "<li class=\"header__menu__item\">\n" +
+                    "<a class=\"btn btn_contained btn_size_s\" href=\"/write\">글쓰기</a>" +
+                    "          </li>\n" +
+                    "          <li class=\"header__menu__item\">\n" +
+                    "            <button id=\"logout-btn\" class=\"btn btn_ghost btn_size_s\">\n" +
+                    "              로그아웃\n" +
+                    "            </button>\n" +
+                    "          </li>"+
                     "</ul>" +
                     "</div>");
         headerContent.setPage(false, PageReplacer.PageType.ARTICLE, "<ul class=\"header__menu\">" +
@@ -48,17 +56,24 @@ public class PageStruct {
                     "    <a class=\"btn btn_ghost btn_size_s\" href=\"/registration\">회원 가입</a>" +
                     "  </li>" +
                     "</ul>");
-        headerContent.setPage(true,PageReplacer.PageType.ARTICLE, "<div id=link_to_mypage>" +
-                    "<ul class=\"header__menu\">" +
-                    "  <li class=\"header__menu__item\">" +
-                    "    <img class=\"post__account__img\" />" +
-                    "  </li>" +
-                    "  <li class=\"header__menu__item\">" +
-                    "    <p class=\"post__account__nickname\">{{user.name}}</p>" +
-                    "  </li>" +
-                    "<button id=\"logout-btn\" class=\"btn btn_ghost btn_size_s\">로그아웃 </button>" +
-                    "</ul>" +
-                    "</div>");
+        headerContent.setPage(true,PageReplacer.PageType.ARTICLE, "<div>" +
+                "<ul class=\"header__menu\">" +
+                "  <li class=\"header__menu__item\">" +
+                "    <img id=link_to_mypage class=\"post__account__img\" />" +
+                "  </li>" +
+                "  <li class=\"header__menu__item\">" +
+                "    <p id=link_to_mypage class=\"post__account__nickname\">안녕하세요, {{user.name}}님!</p>" +
+                "  </li>" +
+                "<li class=\"header__menu__item\">\n" +
+                "<a class=\"btn btn_contained btn_size_s\" href=\"/write\">글쓰기</a>" +
+                "          </li>\n" +
+                "          <li class=\"header__menu__item\">\n" +
+                "            <button id=\"logout-btn\" class=\"btn btn_ghost btn_size_s\">\n" +
+                "              로그아웃\n" +
+                "            </button>\n" +
+                "          </li>"+
+                "</ul>" +
+                "</div>");
 
     }
 }
