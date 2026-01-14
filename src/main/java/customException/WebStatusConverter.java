@@ -56,4 +56,11 @@ public class WebStatusConverter {
                 "해당 url에 맞는 처리 방식이 없습니다."
         );
     }
+
+    public static WebException cannotFindNoPostPage() {
+        return new WebException(
+                WebException.HTTPStatus.NOT_FOUND,
+                "포스트가 없음 페이지를 띄울 수 없습니다."
+        );
+    }
 }

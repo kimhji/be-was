@@ -3,23 +3,28 @@ package webserver.process;
 import common.Config;
 import customException.PostExceptionConverter;
 import customException.WebException;
+import customException.WebStatusConverter;
 import db.Database;
 import model.Post;
 import model.User;
 import webserver.http.Request;
 import webserver.http.RequestBody;
 import webserver.http.Response;
+import webserver.parse.DTO.PostViewer;
 import webserver.parse.PageReplacer;
 import webserver.parse.DataReplacer;
 import webserver.parse.PageStruct;
 import webserver.route.Router;
 
+import java.nio.charset.StandardCharsets;
+
 public class Processor {
 
     private static final Router router = new Router();
     private static final UserProcessor userProcessor = new UserProcessor();
-    private static final DataReplacer userReplacer = new DataReplacer("user");
     private static final DataReplacer pageReplacer = new DataReplacer("page");
+    private static final DataReplacer userReplacer = new DataReplacer("user");
+    private static final DataReplacer postReplacer = new DataReplacer("post");
     private static final PageStruct pageStruct = new PageStruct();
     //private static final PageReplacer pageReplacer = new PageReplacer();
 
@@ -106,7 +111,15 @@ public class Processor {
             if (body != null) {
                 pageStruct.setState(simpleReq.path, user != null);
                 String template = pageReplacer.replace(pageStruct, new String(body));
-                body = userReplacer.replace(user, template).getBytes();
+                template = userReplacer.replace(user, template);
+                PostViewer postViewer = getPostViewer(simpleReq);
+                body = postReplacer.replace(postViewer, template).getBytes();
+                if(postViewer == null && Router.needPostData(simpleReq.path)){
+                    simpleReq.path = Config.NOPOST_PAGE_PATH;
+                    body = StaticFileProcessor.processReq(simpleReq);
+                    template = pageReplacer.replace(pageStruct, new String(body));
+                    body = userReplacer.replace(user, template).getBytes(StandardCharsets.UTF_8);
+                }
 
                 response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));
             }
@@ -115,5 +128,20 @@ public class Processor {
             response = router.route(simpleReq);
         }
         return response;
+    }
+
+    private byte[] getNoPostExceptionPage(Request request){
+        request.path = Config.NOPOST_PAGE_PATH;
+        byte[] body = StaticFileProcessor.processReq(request);
+        if(body == null) throw WebStatusConverter.cannotFindNoPostPage();
+        return pageReplacer.replace(pageStruct, new String(body)).getBytes(StandardCharsets.UTF_8);
+    }
+
+    private PostViewer getPostViewer(Request request){
+        Post post = Database.getRecentPost();
+        if(post == null) return null;
+        User author = Database.findUserById(post.userId());
+        if(author == null) return null;
+        return new PostViewer(post, author, 0);
     }
 }

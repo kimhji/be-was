@@ -66,6 +66,7 @@ public class Database {
             pstmt.executeUpdate();
         }
         catch (SQLException e){
+            logger.error(e.getMessage());
             throw DBExceptionConverter.failToAddUser();
         }
     }
@@ -90,6 +91,7 @@ public class Database {
             );
         }
         catch (SQLException e){
+            logger.error(e.getMessage());
             throw DBExceptionConverter.failToAddUser();
         }
     }
@@ -110,6 +112,7 @@ public class Database {
             return users;
         }
         catch (SQLException e){
+            logger.error(e.getMessage());
             throw DBExceptionConverter.failToFindUser();
         }
     }
@@ -130,13 +133,14 @@ public class Database {
             pstmt.executeUpdate();
         }
         catch (SQLException e){
+            logger.error(e.getMessage());
             throw DBExceptionConverter.failToAddPost();
         }
     }
 
     public static Post getRecentPost(){
         String sql = """
-            SELECT post_id, user_id, image_path, content
+            SELECT post_id, user_id, image_path, content, likes
             FROM posts
             ORDER BY post_id DESC
         """;
@@ -145,7 +149,7 @@ public class Database {
             ResultSet rs = pstmt.executeQuery();
 
             if (!rs.next()) {
-                throw PostExceptionConverter.notFoundPost();
+                return null;
             }
             String imagePath = rs.getString("image_path");
             return new Post(
@@ -158,6 +162,7 @@ public class Database {
             );
 
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw DBExceptionConverter.failToFindPost();
         }
     }
@@ -174,6 +179,7 @@ public class Database {
             pstmt.executeUpdate();
         }
         catch (SQLException e){
+            logger.error(e.getMessage());
             throw DBExceptionConverter.failToAddComment();
         }
     }
