@@ -48,9 +48,9 @@ public class Processor {
             return process(request);
         });
 
-        router.register(new Request(Request.Method.GET, "/"), dummy -> {
-            return new Response(WebException.HTTPStatus.OK, "<h1>Hello World</h1>".getBytes(), Response.ContentType.HTML);
-
+        router.register(new Request(Request.Method.GET, "/"), request -> {
+            request.path = Config.DEFAULT_PAGE_PATH;
+            return process(request);
         });
 
         router.register(new Request(Request.Method.POST, "/user/create"), request -> {
