@@ -1,5 +1,6 @@
 package db;
 
+import common.Config;
 import customException.DBExceptionConverter;
 import customException.WebStatusConverter;
 
@@ -11,7 +12,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class ImageManager {
-    static String basePath = "./src/main/resources/uploads";
+    static String basePath = Config.IMAGE_BASE_PATH;
+    static String baseProfilePath = Config.IMAGE_PROFILE_BASE_PATH;
     private static final DateTimeFormatter FORMATTER =
             DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS");
 
