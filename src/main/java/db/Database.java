@@ -33,6 +33,7 @@ public class Database {
                     "    user_id VARCHAR(50) NOT NULL,\n" +
                     "    image_path VARCHAR(100),\n" +
                     "    content CLOB,\n" +
+                    "    likes INT,\n" +
                     "    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n" +
                     ");\n");
         }
@@ -109,7 +110,7 @@ public class Database {
 
             String imagePath = ImageManager.saveImage(post.image());
 
-            String sql = "INSERT INTO posts(user_id, image_path, content) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO posts(user_id, image_path, content, likes) VALUES (?, ?, ?, 0)";
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, post.userId());
@@ -138,10 +139,11 @@ public class Database {
             }
 
             return new Post(
-                    rs.getInt("post_id"),
+                    rs.getLong("post_id"),
                     ImageManager.readImage(rs.getString("image_path")),
                     rs.getString("user_id"),
-                    rs.getString("content")
+                    rs.getString("content"),
+                    rs.getInt("likes")
             );
 
         } catch (SQLException e) {
