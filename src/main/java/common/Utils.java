@@ -120,4 +120,31 @@ public class Utils {
         }
         return null;
     }
+
+    public static String detectImageType(byte[] data) {
+        if (data.length < 4) return Config.IMAGE_TYPE_UNKNOWN;
+
+        if ((data[0] & 0xFF) == 0xFF &&
+                (data[1] & 0xFF) == 0xD8 &&
+                (data[2] & 0xFF) == 0xFF) {
+            return Config.IMAGE_TYPE_JPEG;
+        }
+
+        if ((data[0] & 0xFF) == 0x89 &&
+                (data[1] & 0xFF) == 0x50 &&
+                (data[2] & 0xFF) == 0x4E &&
+                (data[3] & 0x47) == 0x47) {
+            return Config.IMAGE_TYPE_PNG;
+        }
+
+//        // GIF
+//        if ((data[0] & 0xFF) == 0x47 &&
+//                (data[1] & 0xFF) == 0x49 &&
+//                (data[2] & 0xFF) == 0x46) {
+//            return "GIF";
+//        }
+
+        return Config.IMAGE_TYPE_UNKNOWN;
+    }
+
 }

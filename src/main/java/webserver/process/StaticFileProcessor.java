@@ -1,5 +1,8 @@
 package webserver.process;
 
+import common.Config;
+import common.Utils;
+import customException.DBExceptionConverter;
 import customException.WebStatusConverter;
 import webserver.http.Request;
 
@@ -16,6 +19,11 @@ public class StaticFileProcessor {
             result = getStaticSources(simpleReq.path);
         }
         return result;
+    }
+
+    static public void checkImageType(byte[] data) {
+        String type = Utils.detectImageType(data);
+        if(type.compareTo(Config.IMAGE_TYPE_UNKNOWN) == 0) throw DBExceptionConverter.notAppliedImageType();
     }
 
     static public void setBasePath(String basePath) {

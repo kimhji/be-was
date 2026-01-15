@@ -12,6 +12,8 @@ import webserver.http.RequestBody;
 
 import java.util.Optional;
 
+import static webserver.process.StaticFileProcessor.checkImageType;
+
 public class UserProcessor {
     public byte[] createUser(Request request) {
         User user = new User(Optional.ofNullable(request.bodyParam.get("userId"))
@@ -93,6 +95,7 @@ public class UserProcessor {
         RequestBody image = request.bodyParam.get("profileImage");
         RequestBody imagePath = request.bodyParam.get("previewImg");
         if(image != null) {
+            checkImageType(image.getContent());
             switchProfileImage(image.getContent(), user);
         }
         else if(imagePath != null){

@@ -64,4 +64,11 @@ public class DBExceptionConverter {
                 "댓글 데이터를 DB에서 탐색하는 과정에서 에러가 발생했습니다."
         );
     }
+
+    public static WebException notAppliedImageType() {
+        return new WebException(
+                WebException.HTTPStatus.BAD_REQUEST,
+                "png 파일과 jpeg 파일만 지원합니다."
+        );
+    }
 }

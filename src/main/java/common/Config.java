@@ -35,6 +35,11 @@ public class Config {
 
     public static final String NO_COMMENT = "댓글이 없습니다. 먼저 작성을 시작해주세요!";
 
+    public static final String IMAGE_TYPE_UNKNOWN = "unknown";
+    public static final String IMAGE_TYPE_PNG = "png";
+    public static final String IMAGE_TYPE_JPEG = "JPEG";
+
+
     public static final String PAGE_HEADER_LOGIN = "<div>" +
             "<ul class=\"header__menu\">" +
             "  <li class=\"header__menu__item\">" +

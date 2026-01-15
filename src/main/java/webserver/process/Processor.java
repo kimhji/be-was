@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
+import static webserver.process.StaticFileProcessor.checkImageType;
+
 public class Processor {
 
     private static final Router router = new Router();
@@ -109,7 +111,7 @@ public class Processor {
             if (request.bodyParam.get("image") == null) {
                 throw PostExceptionConverter.badFileContentPost();
             }
-            System.out.println("!!!!"+request.bodyParam.get("image").getContent());
+            checkImageType(request.bodyParam.get("image").getContent());
             Post post = new Post(request.bodyParam.get("image").getContent(),
                     user.getUserId(),
                     request.bodyParam.getOrDefault("content", new RequestBody("")).toString());
