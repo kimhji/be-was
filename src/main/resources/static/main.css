@@ -149,3 +149,13 @@
   vertical-align: center;
   align-items: center;
 }
+.nav__menu__item__btn.disabled {
+  color: #aaa;
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.nav__menu__item__btn.disabled img {
+  opacity: 0.4;
+}

@@ -313,4 +313,51 @@ public class Database {
             throw UserExceptionConverter.failedUserUpdate();
         }
     }
+
+    public static Long getPrevPostId(long postId) {
+        String sql = """
+        SELECT post_id
+        FROM posts
+        WHERE post_id < ?
+        ORDER BY post_id DESC
+        LIMIT 1
+    """;
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, postId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (!rs.next()) {
+                return null;
+            }
+
+            return rs.getLong("post_id");
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+            throw DBExceptionConverter.failToFindPost();
+        }
+    }
+    public static Long getNextPostId(long postId) {
+        String sql = """
+            SELECT post_id
+            FROM posts
+            WHERE post_id > ?
+            ORDER BY post_id ASC
+            LIMIT 1
+        """;
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, postId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (!rs.next()) {
+                return null;
+            }
+
+            return rs.getLong("post_id");
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+            throw DBExceptionConverter.failToFindPost();
+        }
+    }
 }

@@ -57,7 +57,7 @@
         <nav class="nav">
             <ul class="nav__menu">
                 <li class="nav__menu__item">
-                    <a class="nav__menu__item__btn" href="">
+                    <a class="nav__menu__item__btn {{cursor.ablePrev}}" href="/post/{{cursor.prev}}" >
                         <img
                                 class="nav__menu__item__img"
                                 src="./img/ci_chevron-left.svg"
@@ -69,7 +69,7 @@
                     <a class="btn btn_ghost btn_size_m" href="/comment/{{post.postId}}">댓글 작성</a>
                 </li>
                 <li class="nav__menu__item">
-                    <a class="nav__menu__item__btn" href="">
+                    <a class="nav__menu__item__btn {{cursor.ableNext}}" href="/post/{{cursor.next}}">
                         다음 글
                         <img
                                 class="nav__menu__item__img"

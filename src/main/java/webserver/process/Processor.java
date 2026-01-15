@@ -15,6 +15,7 @@ import webserver.http.Request;
 import webserver.http.RequestBody;
 import webserver.http.Response;
 import webserver.parse.DTO.CommentViewer;
+import webserver.parse.DTO.CursorViewer;
 import webserver.parse.DTO.PostViewer;
 import webserver.parse.PageReplacer;
 import webserver.parse.DataReplacer;
@@ -37,6 +38,7 @@ public class Processor {
     private static final DataReplacer pageReplacer = new DataReplacer("page");
     private static final DataReplacer userReplacer = new DataReplacer("user");
     private static final DataReplacer postReplacer = new DataReplacer("post");
+    private static final DataReplacer cursorReplacer = new DataReplacer("cursor");
     private static final PageStruct pageStruct = new PageStruct();
     private static final RepeatDataReplacer commentRepeatReplacer = new RepeatDataReplacer("comment", Config.COMMENT_REPEAT_FORMAT, Config.NO_COMMENT);
 
@@ -195,6 +197,8 @@ public class Processor {
                             template = commentRepeatReplacer.repeatReplace(comments, template, Config.DEFAULT_COMMENT_COUNT);
                         else
                             template = commentRepeatReplacer.repeatReplace(comments, template);
+
+                        template = cursorReplacer.replace(getCursorViewer(postViewer.postId()), template);
                     }
                     template = postReplacer.replace(postViewer, template);
                 }
@@ -236,5 +240,11 @@ public class Processor {
     private Collection<CommentViewer> getCommentViewers(PostViewer postViewer){
         Collection<Comment> comments = Database.findCommentsByPost(postViewer.postId());
         return comments.stream().map(comment -> new CommentViewer(comment.content(), postViewer.authorName(), postViewer.authorImagePath())).toList();
+    }
+
+    private CursorViewer getCursorViewer(long postId){
+        Long prevId = Database.getPrevPostId(postId);
+        Long nextId = Database.getNextPostId(postId);
+        return new CursorViewer(prevId==null?"disabled":"", nextId==null?"disabled":"", prevId==null?"":String.valueOf(prevId), nextId==null?"":String.valueOf(nextId));
     }
 }
