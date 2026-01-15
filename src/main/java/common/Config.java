@@ -28,6 +28,10 @@ public class Config {
 
     public static final String POST_ID_QUERY_NAME = "postId";
 
+    public static final String REPEAT_FORMAT_PLACEHOLDER = "{{REPEAT}}";
+
+    public static final String NO_COMMENT = "댓글이 없습니다. 먼저 작성을 시작해주세요!";
+
     public static final String PAGE_HEADER_LOGIN = "<div>" +
             "<ul class=\"header__menu\">" +
             "  <li class=\"header__menu__item\">" +
@@ -54,4 +58,14 @@ public class Config {
             "    <a class=\"btn btn_ghost btn_size_s\" href=\"/registration\">회원 가입</a>" +
             "  </li>" +
             "</ul>";
+
+    public static final String COMMENT_REPEAT_FORMAT = "<li class=\"comment__item\">\n" +
+            "                <div class=\"comment__item__user\">\n" +
+            "                    <img class=\"comment__item__user__img\" src=\"/image/profile/{{{{REPEAT}}.authorImagePath}}\"/>\n" +
+            "                    <p class=\"comment__item__user__nickname\">{{{{REPEAT}}.authorName}}</p>\n" +
+            "                </div>\n" +
+            "                <p class=\"comment__item__article\">\n" +
+            "                    {{{{REPEAT}}.content}}\n" +
+            "                </p>\n" +
+            "            </li>";
 }

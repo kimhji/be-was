@@ -13,14 +13,17 @@ import model.User;
 import webserver.http.Request;
 import webserver.http.RequestBody;
 import webserver.http.Response;
+import webserver.parse.DTO.CommentViewer;
 import webserver.parse.DTO.PostViewer;
 import webserver.parse.PageReplacer;
 import webserver.parse.DataReplacer;
 import webserver.parse.PageStruct;
+import webserver.parse.RepeatDataReplacer;
 import webserver.route.Router;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 public class Processor {
 
@@ -32,6 +35,8 @@ public class Processor {
     private static final DataReplacer userReplacer = new DataReplacer("user");
     private static final DataReplacer postReplacer = new DataReplacer("post");
     private static final PageStruct pageStruct = new PageStruct();
+    private static final RepeatDataReplacer commentRepeatReplacer = new RepeatDataReplacer("comment", Config.COMMENT_REPEAT_FORMAT, Config.NO_COMMENT);
+
     //private static final PageReplacer pageReplacer = new PageReplacer();
 
     public Processor() {
@@ -163,10 +168,19 @@ public class Processor {
                 pageStruct.setState(simpleReq.path, user != null);
                 String template = pageReplacer.replace(pageStruct, new String(body));
                 template = userReplacer.replace(user, template);
-                PostViewer postViewer = getPostViewer(simpleReq);
-                body = postReplacer.replace(postViewer, template).getBytes();
-                if (postViewer == null && Router.needPostData(simpleReq.path)) {
-                    body = getNoPostExceptionPage(simpleReq, user);
+                body = template.getBytes(StandardCharsets.UTF_8);
+                if (Router.needPostData(simpleReq.path)) {
+                    PostViewer postViewer = getPostViewer(simpleReq);
+                    template = postReplacer.replace(postViewer, template);
+                    if(postViewer == null){
+                        template = new String(getNoPostExceptionPage(simpleReq, user));
+                    }
+                    else if(Router.needCommentData(simpleReq.path)){
+                        Collection<CommentViewer> comments = getCommentViewers(postViewer);
+
+                        template = commentRepeatReplacer.repeatReplace(comments, template);
+                    }
+                    body = template.getBytes(StandardCharsets.UTF_8);
                 }
 
                 response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));
@@ -199,5 +213,10 @@ public class Processor {
         User author = Database.findUserById(post.userId());
         if (author == null) return null;
         return new PostViewer(post, author, Database.findCommentsByPost(post.postId()).size());
+    }
+
+    private Collection<CommentViewer> getCommentViewers(PostViewer postViewer){
+        Collection<Comment> comments = Database.findCommentsByPost(postViewer.postId());
+        return comments.stream().map(comment -> new CommentViewer(comment.content(), postViewer.authorName(), postViewer.authorImagePath())).toList();
     }
 }
