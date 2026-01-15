@@ -98,7 +98,7 @@ public class UserProcessor {
 
     private void switchProfileImage(byte[] image, User user) {
         if(!user.getImagePath().endsWith(Config.IMAGE_DEFAULT_PROFILE_NAME)){
-            //TODO:이미지 삭제
+            ImageManager.deleteProfileFile(user.getImagePath());
         }
         String path = ImageManager.saveImageProfile(image);
         user.setImagePath(path);

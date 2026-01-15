@@ -35,7 +35,6 @@ public class ImageManager {
             dir.mkdirs();
         }
 
-        // 파일명 생성
         String timestamp = LocalDateTime.now().format(FORMATTER);
         String fileName = timestamp + ".png";
 
@@ -77,5 +76,15 @@ public class ImageManager {
         }
 
         return image;
+    }
+
+    public static boolean deleteProfileFile(String path) {
+        File file = new File(baseProfilePath, path);
+
+        if (!file.exists() || !file.isFile()) {
+            return false;
+        }
+
+        return file.delete();
     }
 }
