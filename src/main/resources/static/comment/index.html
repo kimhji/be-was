@@ -15,7 +15,8 @@
       </header>
       <div class="page">
         <h2 class="page-title">댓글 작성</h2>
-        <form class="form">
+        <form class="form" id="create_comment_btn"
+              data-post-id="{{post.postId}}">
           <div class="textfield textfield_size_m">
             <p class="title_textfield">내용</p>
             <textarea
@@ -23,13 +24,14 @@
               placeholder="글의 내용을 입력하세요"
               autocomplete="username"
               name="content"
+              id="content"
             ></textarea>
           </div>
           <button
-            id="create_comment_btn"
+            id="registration-btn"
             class="btn btn_contained btn_size_m"
             style="margin-top: 24px"
-            type="button"
+            type="submit"
             data-post-id="{{post.postId}}"
           >
             작성 완료

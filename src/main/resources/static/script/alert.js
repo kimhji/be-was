@@ -33,7 +33,8 @@ async function alertCall(response){
 function addListenerAddComment(){
     const btn = document.getElementById('create_comment_btn');
 
-    btn.addEventListener('submit', async () => {
+    btn?.addEventListener('submit', async (e) => {
+        e.preventDefault();
         const postId = btn.dataset.postId;
         if (!postId) return;
         const content = document.querySelector("#content").value;
