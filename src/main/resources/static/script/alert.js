@@ -114,6 +114,27 @@ document.getElementById("registration")?.addEventListener("submit", async (e) =>
     await formResponseProcessToLogin(response);
 });
 
+document.getElementById("user_update")?.addEventListener("submit", async (e) => {
+    e.preventDefault(); // 기본 submit 막기
+    const userName = document.querySelector("#update-name").value;
+    const password = document.querySelector("#update-password").value;
+    const checkPassword = document.querySelector("#update-check-password").value;
+
+    const response = await fetch("/user/update", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+            userName,
+            password,
+            checkPassword
+        })
+    });
+
+    await formResponseProcessToMain(response);
+});
+
 document.getElementById("link_to_mypage")?.addEventListener("click", async (e) => {
     e.preventDefault(); // 기본 submit 막기
 

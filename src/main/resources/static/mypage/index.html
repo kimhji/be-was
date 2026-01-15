@@ -11,16 +11,7 @@
     <div class="container">
       <header class="header">
         <a href="/"><img src="./img/signiture.svg" /></a>
-        <ul class="header__menu">
-        <li class="header__menu__item">
-            <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
-          </li>
-          <li class="header__menu__item">
-            <button id="logout-btn" class="btn btn_ghost btn_size_s">
-              로그아웃
-            </button>
-          </li>
-        </ul>
+        {{page.header}}
       </header>
       <div class="page">
         <h2 class="page-title">마이페이지</h2>
@@ -40,14 +31,14 @@
                   </div>
               </div>
         </div>
-          <form class="form">
+          <form class="form" id="user_update">
             <div class="textfield textfield_size_s input_margin">
               <p class="title_textfield">닉네임</p>
               <input
                 class="input_textfield"
-                placeholder="{{user.name}}"
                 autocomplete="username"
-              />
+                placeholder="{{user.name}}"
+                id="update-name"/>
             </div>
             <div class="textfield textfield_size_s">
               <p class="title_textfield">비밀번호</p>
@@ -55,6 +46,7 @@
                 class="input_textfield"
                 placeholder="비밀번호를 변경할 경우 입력해주세요"
                 autocomplete="current-password"
+                id="update-password"
               />
             </div>
             <div class="textfield textfield_size_s">
@@ -64,13 +56,14 @@
                 type="password"
                 placeholder="한 번 더 입력해주세요"
                 autocomplete="current-password"
+                id="update-check-password"
               />
             </div>
             <button
               id="registration-btn"
               class="btn btn_contained btn_size_m input_margin"
 
-              type="button"
+              type="submit"
             >
               변경사항 저장
             </button>

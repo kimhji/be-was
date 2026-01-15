@@ -98,6 +98,12 @@ public class Processor {
             return response;
         });
 
+
+        router.register(new Request(Request.Method.POST, "/user/update"), request -> {
+            userProcessor.updateUser(request);
+            return new Response(WebException.HTTPStatus.OK, null, Response.ContentType.HTML);
+        });
+
         router.register(new Request(Request.Method.POST, "/post/create"), request -> {
             User user = userProcessor.getUserOrException(request);
             if (request.bodyParam.getOrDefault("content", null) == null) {

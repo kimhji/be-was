@@ -292,4 +292,19 @@ public class Database {
             throw PostExceptionConverter.notFoundPost();
         }
     }
+
+    public static void updateUser(User user){
+        String sql = "UPDATE users SET name = ?, password = ? WHERE user_id = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, user.getName());
+            pstmt.setString(2, user.getPassword());
+            pstmt.setString(3, user.getUserId());
+            pstmt.execute();
+        }
+        catch (SQLException e){
+            logger.error(e.getMessage());
+            throw UserExceptionConverter.failedUserUpdate();
+        }
+    }
 }

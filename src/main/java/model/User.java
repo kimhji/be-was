@@ -14,9 +14,9 @@ public class User {
         if (userId == null || password == null || name == null
                 || userId.isBlank() || password.isBlank() || name.isBlank())
             throw UserExceptionConverter.needUserData();
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
+        this.userId = userId.trim();
+        this.password = password.trim();
+        this.name = name.trim();
         this.image = null;
         this.imagePath = Config.IMAGE_DEFAULT_PROFILE_NAME;
     }
@@ -39,6 +39,14 @@ public class User {
 
     public void setImagePath(String path) {
         this.imagePath = path;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPassword(String password){
+        this.password = password;
     }
 
     @Override

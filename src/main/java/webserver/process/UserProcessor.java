@@ -26,9 +26,10 @@ public class UserProcessor {
         if (Database.findUserById(user.getUserId()) != null) throw UserExceptionConverter.conflictUserID();
         if (Database.findUserByName(user.getName()) != null) throw UserExceptionConverter.conflictUserName();
 
-        if(user.getUserId().length() < Config.MIN_USER_DATA_LENGTH) throw UserExceptionConverter.tooShortUserId();
-        if(user.getName().length() < Config.MIN_USER_DATA_LENGTH) throw UserExceptionConverter.tooShortUserName();
-        if(user.getPassword().length() < Config.MIN_USER_DATA_LENGTH) throw UserExceptionConverter.tooShortUserPassword();
+        if (user.getUserId().length() < Config.MIN_USER_DATA_LENGTH) throw UserExceptionConverter.tooShortUserId();
+        if (user.getName().length() < Config.MIN_USER_DATA_LENGTH) throw UserExceptionConverter.tooShortUserName();
+        if (user.getPassword().length() < Config.MIN_USER_DATA_LENGTH)
+            throw UserExceptionConverter.tooShortUserPassword();
         Database.addUser(user);
 
         return user.toString().getBytes();
@@ -68,6 +69,22 @@ public class UserProcessor {
         String SID = Utils.getRestStr(cookie, "=", 1);
 
         Auth.deleteSession(SID);
+    }
+
+    public void updateUser(Request request) {
+        User user = getUserOrException(request);
+        if (request.bodyParam.get("userName") != null) {
+            String userName = request.bodyParam.get("userName").getContentString().trim();
+            user.setName(userName);
+        }
+        if (request.bodyParam.get("password") != null && request.bodyParam.get("checkPassword") != null) {
+            String password = request.bodyParam.get("password").getContentString().trim();
+            String checkPassword = request.bodyParam.get("checkPassword").getContentString().trim();
+            if(password.compareTo(checkPassword) != 0) throw UserExceptionConverter.passwordNotMatch();
+            user.setPassword(password);
+        }
+
+        Database.updateUser(user);
     }
 }
 
