@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <base href="/"/>
+    <base href="/" />
     <link href="./reset.css" rel="stylesheet"/>
     <link href="./global.css" rel="stylesheet"/>
     <link href="./main.css" rel="stylesheet"/>
@@ -52,9 +52,7 @@
         </div>
         <ul class="comment">
             {{comment}}
-            <button id="show-all-btn" class="btn btn_ghost btn_size_m">
-                모든 댓글 보기(3개)
-            </button>
+            {{expand_comment_btn}}
         </ul>
         <nav class="nav">
             <ul class="nav__menu">

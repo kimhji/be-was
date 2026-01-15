@@ -29,4 +29,21 @@ public class RepeatDataReplacer {
         Utils.replaceAll(result, "{{" + this.replacerName + "}}", !objects.isEmpty() ?dataInputs.toString():noDataFormat);
         return result.toString();
     }
+
+    public String repeatReplace(Collection<?> objects, String template, int count){
+        StringBuilder dataInputs = new StringBuilder();
+        StringBuilder tns;
+        StringBuilder result = new StringBuilder(template);
+        DataReplacer dataReplacer = new DataReplacer(replacerName);
+        int i = 0;
+        for(Object object: objects){
+            tns = new StringBuilder(format);
+            Utils.replaceAll(tns, Config.REPEAT_FORMAT_PLACEHOLDER, replacerName);
+            dataInputs.append(dataReplacer.replace(object, tns.toString()));
+            i++;
+            if(i >= count){ break; }
+        }
+        Utils.replaceAll(result, "{{" + this.replacerName + "}}", !objects.isEmpty() ?dataInputs.toString():noDataFormat);
+        return result.toString();
+    }
 }

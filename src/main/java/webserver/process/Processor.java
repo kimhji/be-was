@@ -1,6 +1,7 @@
 package webserver.process;
 
 import common.Config;
+import common.Utils;
 import customException.CommentExceptionConverter;
 import customException.PostExceptionConverter;
 import customException.WebException;
@@ -176,21 +177,23 @@ public class Processor {
             if (body != null) {
                 pageStruct.setState(simpleReq.path, user != null);
                 String template = pageReplacer.replace(pageStruct, new String(body));
-                template = userReplacer.replace(user, template);
-                body = template.getBytes(StandardCharsets.UTF_8);
                 if (Router.needPostData(simpleReq.path)) {
                     PostViewer postViewer = getPostViewer(simpleReq);
-                    template = postReplacer.replace(postViewer, template);
                     if(postViewer == null){
                         template = new String(getNoPostExceptionPage(simpleReq, user));
                     }
                     else if(Router.needCommentData(simpleReq.path)){
                         Collection<CommentViewer> comments = getCommentViewers(postViewer);
-
-                        template = commentRepeatReplacer.repeatReplace(comments, template);
+                        StringBuilder sb = new StringBuilder(template);
+                        Utils.replaceAll(sb, "{{expand_comment_btn}}",
+                                postViewer.commentNum()>Config.DEFAULT_COMMENT_COUNT?Config.COMMENT_WANT_TO_SEE_MORE:"");
+                        template = sb.toString();
+                        template = commentRepeatReplacer.repeatReplace(comments, template, Config.DEFAULT_COMMENT_COUNT);
                     }
-                    body = template.getBytes(StandardCharsets.UTF_8);
+                    template = postReplacer.replace(postViewer, template);
                 }
+                template = userReplacer.replace(user, template);
+                body = template.getBytes(StandardCharsets.UTF_8);
 
                 response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));
             }

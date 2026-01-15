@@ -39,6 +39,7 @@ public class Config {
     public static final String IMAGE_TYPE_PNG = "png";
     public static final String IMAGE_TYPE_JPEG = "JPEG";
 
+    public static final int DEFAULT_COMMENT_COUNT = 3;
 
     public static final String PAGE_HEADER_LOGIN = "<div>" +
             "<ul class=\"header__menu\">" +
@@ -76,4 +77,8 @@ public class Config {
             "                    {{{{REPEAT}}.content}}\n" +
             "                </p>\n" +
             "            </li>";
+
+    public static final String COMMENT_WANT_TO_SEE_MORE = "<button id=\"show-all-btn\" class=\"btn btn_ghost btn_size_m\">\n" +
+            "                모든 댓글 보기({{post.commentNum}}개)\n" +
+            "            </button>";
 }
