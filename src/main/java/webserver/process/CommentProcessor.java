@@ -1,24 +1,37 @@
 package webserver.process;
 
+import customException.CommentExceptionConverter;
 import customException.UserExceptionConverter;
+import customException.WebException;
 import db.Database;
 import model.Comment;
 import model.User;
 import webserver.http.Request;
 import webserver.http.RequestBody;
+import webserver.http.Response;
 
 import java.util.Optional;
 
 public class CommentProcessor {
-//    public Comment createComment(Request request, String userId, long postId) {
-//
-//        Comment comment = new Comment(postId, userId, request.)
-//
-//        if (Database.findUserById(user.getUserId()) != null) throw UserExceptionConverter.conflictUserID();
-//        if (Database.findUserByName(user.getName()) != null) throw UserExceptionConverter.conflictUserName();
-//        Database.addUser(user);
-//
-//        return user.toString().getBytes();
-//    }
+    public Response createComment(Request request, User user) {
+
+        String[] pathSplit = request.path.split("/");
+        if (request.bodyParam.getOrDefault("content", null) == null) {
+            throw CommentExceptionConverter.badContentComment();
+        }
+        try {
+            long postId = Long.parseLong(pathSplit[pathSplit.length - 1]);
+            Database.addComment(new Comment(postId, user.getUserId(), request.bodyParam.get("content").toString()));
+            Response response = new Response(
+                    WebException.HTTPStatus.CREATED,
+                    null,
+                    Response.ContentType.PLAIN_TEXT
+            );
+            //response.addHeader(Config.HEADER_LOCATION, Config.POST_PAGE_PATH + "/" + postId);
+            return response;
+        } catch (NumberFormatException e) {
+            throw CommentExceptionConverter.noPostId();
+        }
+    }
 
 }

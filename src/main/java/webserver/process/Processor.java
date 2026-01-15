@@ -26,6 +26,7 @@ public class Processor {
 
     private static final Router router = new Router();
     private static final UserProcessor userProcessor = new UserProcessor();
+    private static final CommentProcessor commentProcessor = new CommentProcessor();
     private static final DataReplacer pageReplacer = new DataReplacer("page");
     private static final DataReplacer userReplacer = new DataReplacer("user");
     private static final DataReplacer postReplacer = new DataReplacer("post");
@@ -145,24 +146,8 @@ public class Processor {
         });
 
         router.register(new Request(Request.Method.POST, "/comment"), request -> {
-            String[] pathSplit = request.path.split("/");
             User user = userProcessor.getUserOrException(request);
-            if (request.bodyParam.getOrDefault("content", null) == null) {
-                throw CommentExceptionConverter.badContentComment();
-            }
-            try {
-                long postId = Long.parseLong(pathSplit[pathSplit.length - 1]);
-                Database.addComment(new Comment(postId, user.getUserId(), request.bodyParam.get("content").toString()));
-                Response response = new Response(
-                        WebException.HTTPStatus.CREATED,
-                        null,
-                        Response.ContentType.PLAIN_TEXT
-                );
-                //response.addHeader(Config.HEADER_LOCATION, Config.POST_PAGE_PATH + "/" + postId);
-                return response;
-            } catch (NumberFormatException e) {
-                throw CommentExceptionConverter.noPostId();
-            }
+            return commentProcessor.createComment(request, user);
         });
     }
 
