@@ -66,7 +66,7 @@ public class UserExceptionConverter {
     public static WebException unAuthorized() {
         return new WebException(
                 WebException.HTTPStatus.UNAUTHORIZED,
-                "로그인에 실패했습니다."
+                "비밀번호가 틀렸습니다."
         );
     }
 
