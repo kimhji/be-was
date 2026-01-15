@@ -140,7 +140,9 @@ public class Processor {
             String[] pathSplit = request.path.split("/");
             try {
                 request.path = Config.MAIN_PAGE_PATH;
-                request.queryParam.put(Config.POST_ID_QUERY_NAME, pathSplit[pathSplit.length - 1]);
+                if(Database.getPostByPostId(Long.parseLong(pathSplit[pathSplit.length - 1])) != null)
+                    request.queryParam.put(Config.POST_ID_QUERY_NAME, pathSplit[pathSplit.length - 1]);
+
                 return process(request);
             }
             catch (NumberFormatException e) {
