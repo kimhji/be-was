@@ -184,11 +184,17 @@ public class Processor {
                     }
                     else if(Router.needCommentData(simpleReq.path)){
                         Collection<CommentViewer> comments = getCommentViewers(postViewer);
+                        String queryP = simpleReq.queryParam.get("expanded");
+                        boolean expanded = queryP != null && queryP.equals("true");
+
                         StringBuilder sb = new StringBuilder(template);
                         Utils.replaceAll(sb, "{{expand_comment_btn}}",
-                                postViewer.commentNum()>Config.DEFAULT_COMMENT_COUNT?Config.COMMENT_WANT_TO_SEE_MORE:"");
+                                (!expanded && postViewer.commentNum()>Config.DEFAULT_COMMENT_COUNT)?Config.COMMENT_WANT_TO_SEE_MORE:"");
                         template = sb.toString();
-                        template = commentRepeatReplacer.repeatReplace(comments, template, Config.DEFAULT_COMMENT_COUNT);
+                        if(!expanded)
+                            template = commentRepeatReplacer.repeatReplace(comments, template, Config.DEFAULT_COMMENT_COUNT);
+                        else
+                            template = commentRepeatReplacer.repeatReplace(comments, template);
                     }
                     template = postReplacer.replace(postViewer, template);
                 }

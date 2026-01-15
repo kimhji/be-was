@@ -1,5 +1,7 @@
 package webserver.process;
 
+import common.Config;
+import common.Utils;
 import customException.CommentExceptionConverter;
 import customException.UserExceptionConverter;
 import customException.WebException;
@@ -31,5 +33,4 @@ public class CommentProcessor {
             throw CommentExceptionConverter.noPostId();
         }
     }
-
 }

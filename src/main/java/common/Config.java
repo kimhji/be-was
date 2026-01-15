@@ -78,7 +78,9 @@ public class Config {
             "                </p>\n" +
             "            </li>";
 
-    public static final String COMMENT_WANT_TO_SEE_MORE = "<button id=\"show-all-btn\" class=\"btn btn_ghost btn_size_m\">\n" +
-            "                모든 댓글 보기({{post.commentNum}}개)\n" +
-            "            </button>";
+    public static final String COMMENT_WANT_TO_SEE_MORE = "<a id=\"show-all-btn\" " +
+            "class=\"btn btn_ghost btn_size_m\" " +
+            "href=\"/post/{{post.postId}}?expanded=true\">" +
+            "모든 댓글 보기({{post.commentNum}}개)" +
+            "</a>";
 }
