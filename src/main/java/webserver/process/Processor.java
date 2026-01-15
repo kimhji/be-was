@@ -27,6 +27,7 @@ public class Processor {
     private static final Router router = new Router();
     private static final UserProcessor userProcessor = new UserProcessor();
     private static final CommentProcessor commentProcessor = new CommentProcessor();
+    private static final PostProcessor postProcessor = new PostProcessor();
     private static final DataReplacer pageReplacer = new DataReplacer("page");
     private static final DataReplacer userReplacer = new DataReplacer("user");
     private static final DataReplacer postReplacer = new DataReplacer("post");
@@ -48,7 +49,7 @@ public class Processor {
                 {
                     request.path = Config.LOGIN_PAGE_PATH;
                     if (userProcessor.getUser(request) != null) {
-                        request.path = Config.DEFAULT_PAGE_PATH;
+                        request.path = Config.MAIN_PAGE_PATH;
                     }
                     return process(request);
                 }
@@ -65,7 +66,7 @@ public class Processor {
         });
 
         router.register(new Request(Request.Method.GET, "/"), request -> {
-            request.path = Config.DEFAULT_PAGE_PATH;
+            request.path = Config.MAIN_PAGE_PATH;
             return process(request);
         });
 
@@ -117,20 +118,7 @@ public class Processor {
         });
 
 
-        router.register(new Request(Request.Method.POST, "/post/like"), request -> {
-            String[] pathSplit = request.path.split("/");
-            try {
-                long postId = Long.parseLong(pathSplit[pathSplit.length - 1]);
-                int likes = Database.updatePostLikes(postId);
-                return new Response(
-                        WebException.HTTPStatus.OK,
-                        ("{\"likes\":" + likes + "}").getBytes(),
-                        Response.ContentType.JSON
-                );
-            } catch (NumberFormatException e) {
-                throw PostExceptionConverter.badPostId();
-            }
-        });
+        router.register(new Request(Request.Method.POST, "/post/like"), postProcessor::addLikeToPost);
 
         router.register(new Request(Request.Method.GET, "/comment"), request -> {
             String[] pathSplit = request.path.split("/");
@@ -146,6 +134,18 @@ public class Processor {
         router.register(new Request(Request.Method.POST, "/comment"), request -> {
             User user = userProcessor.getUserOrException(request);
             return commentProcessor.createComment(request, user);
+        });
+
+        router.register(new Request(Request.Method.GET, "/post"), request -> {
+            String[] pathSplit = request.path.split("/");
+            try {
+                request.path = Config.MAIN_PAGE_PATH;
+                request.queryParam.put(Config.POST_ID_QUERY_NAME, pathSplit[pathSplit.length - 1]);
+                return process(request);
+            }
+            catch (NumberFormatException e) {
+                throw PostExceptionConverter.badPostId();
+            }
         });
     }
 

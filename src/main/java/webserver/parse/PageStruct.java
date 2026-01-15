@@ -26,7 +26,9 @@ public class PageStruct {
     private void init(){
         headerContent.setPage(false, PageReplacer.PageType.DEFAULT,  Config.PAGE_HEADER_NOT_LOGIN);
         headerContent.setPage(true, PageReplacer.PageType.DEFAULT, Config.PAGE_HEADER_LOGIN);
-        headerContent.setPage(false, PageReplacer.PageType.ARTICLE, Config.PAGE_HEADER_NOT_LOGIN);
+        headerContent.setPage(false, PageReplacer.PageType.DEFAULT,  Config.PAGE_HEADER_NOT_LOGIN);
+        headerContent.setPage(true, PageReplacer.PageType.MAIN, Config.PAGE_HEADER_LOGIN);
+        headerContent.setPage(false, PageReplacer.PageType.MAIN, Config.PAGE_HEADER_NOT_LOGIN);
         headerContent.setPage(true,PageReplacer.PageType.ARTICLE, Config.PAGE_HEADER_LOGIN);
         headerContent.setPage(true,PageReplacer.PageType.COMMENT, Config.PAGE_HEADER_LOGIN);
     }

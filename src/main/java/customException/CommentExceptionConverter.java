@@ -7,7 +7,7 @@ public class CommentExceptionConverter {
         return new WebException(
                 WebException.HTTPStatus.MOVED_TEMPORALLY,
                 "댓글 작성 페이지에 대한 잘못된 접근입니다.",
-                Config.DEFAULT_PAGE_PATH
+                Config.MAIN_PAGE_PATH
         );
     }
 
