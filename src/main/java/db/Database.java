@@ -25,7 +25,7 @@ public class Database {
             stmt.execute("CREATE TABLE users (\n" +
                     "    user_id VARCHAR(50) PRIMARY KEY,\n" +
                     "    password VARCHAR(255) NOT NULL,\n" +
-                    "    name VARCHAR(50) NOT NULL,\n" +
+                    "    name VARCHAR(50) NOT NULL UNIQUE ,\n" +
                     "    email VARCHAR(100) NOT NULL\n" +
                     ");\n");
 
@@ -77,6 +77,31 @@ public class Database {
             String sql = "SELECT * FROM users WHERE user_id = (?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
+
+            ResultSet result = pstmt.executeQuery();
+            if (!result.next()) {
+                return null;
+            }
+
+            return new User(
+                    result.getString("user_id"),
+                    result.getString("password"),
+                    result.getString("name"),
+                    result.getString("email")
+            );
+        }
+        catch (SQLException e){
+            logger.error(e.getMessage());
+            throw DBExceptionConverter.failToAddUser();
+        }
+    }
+
+    public static User findUserByName(String name) {
+        try {
+            if (name == null || name.isBlank()) throw UserExceptionConverter.needUserName();
+            String sql = "SELECT * FROM users WHERE name = (?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, name);
 
             ResultSet result = pstmt.executeQuery();
             if (!result.next()) {

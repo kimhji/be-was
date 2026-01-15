@@ -26,7 +26,8 @@ public class UserProcessor {
                         .map(RequestBody::getContentString)
                         .orElseThrow(UserExceptionConverter::needUserData));
 
-        if (Database.findUserById(user.getUserId()) != null) throw UserExceptionConverter.conflictUser();
+        if (Database.findUserById(user.getUserId()) != null) throw UserExceptionConverter.conflictUserID();
+        if (Database.findUserByName(user.getName()) != null) throw UserExceptionConverter.conflictUserName();
         Database.addUser(user);
 
         return user.toString().getBytes();

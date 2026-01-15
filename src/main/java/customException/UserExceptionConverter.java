@@ -1,10 +1,16 @@
 package customException;
 
 public class UserExceptionConverter {
-    public static WebException conflictUser() {
+    public static WebException conflictUserID() {
         return new WebException(
                 WebException.HTTPStatus.CONFLICT,
                 "해당 아이디를 사용하는 회원이 존재합니다."
+        );
+    }
+    public static WebException conflictUserName() {
+        return new WebException(
+                WebException.HTTPStatus.CONFLICT,
+                "해당 이름을 사용하는 회원이 존재합니다."
         );
     }
 
@@ -12,6 +18,14 @@ public class UserExceptionConverter {
         return new WebException(
                 WebException.HTTPStatus.BAD_REQUEST,
                 "사용자 아이디를 요청에 포함해야 합니다."
+        );
+    }
+
+
+    public static WebException needUserName() {
+        return new WebException(
+                WebException.HTTPStatus.BAD_REQUEST,
+                "사용자 이름을 요청에 포함해야 합니다."
         );
     }
 
