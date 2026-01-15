@@ -53,7 +53,6 @@ document.getElementById("registration")?.addEventListener("submit", async (e) =>
     e.preventDefault(); // 기본 submit 막기
     const userId = document.querySelector("#userId").value;
     const password = document.querySelector("#password").value;
-    const email = document.querySelector("#email").value;
     const name = document.querySelector("#name").value;
 
     const response = await fetch("/user/create", {
@@ -64,7 +63,6 @@ document.getElementById("registration")?.addEventListener("submit", async (e) =>
         body: new URLSearchParams({
             userId,
             password,
-            email,
             name
         })
     });

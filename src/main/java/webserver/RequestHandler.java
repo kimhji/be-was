@@ -25,7 +25,7 @@ public class RequestHandler implements Runnable {
     }
 
     public static void addTestUser(){
-        Database.addUser(new User("tttt", "1234", "현지", "t@n.c"));
+        Database.addUser(new User("tttt", "1234", "현지"));
     }
 
     public void run() {

@@ -25,8 +25,7 @@ public class Database {
             stmt.execute("CREATE TABLE users (\n" +
                     "    user_id VARCHAR(50) PRIMARY KEY,\n" +
                     "    password VARCHAR(255) NOT NULL,\n" +
-                    "    name VARCHAR(50) NOT NULL UNIQUE ,\n" +
-                    "    email VARCHAR(100) NOT NULL\n" +
+                    "    name VARCHAR(50) NOT NULL UNIQUE\n" +
                     ");\n");
 
             stmt.execute("CREATE TABLE posts (\n" +
@@ -55,13 +54,12 @@ public class Database {
 
     public static void addUser(User user) {
         try {
-            String sql = "INSERT INTO users(user_id, password, name, email) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO users(user_id, password, name) VALUES (?, ?, ?)";
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, user.getUserId());
             pstmt.setString(2, user.getPassword());
             pstmt.setString(3, user.getName());
-            pstmt.setString(4, user.getEmail());
 
             pstmt.executeUpdate();
         }
@@ -86,8 +84,7 @@ public class Database {
             return new User(
                     result.getString("user_id"),
                     result.getString("password"),
-                    result.getString("name"),
-                    result.getString("email")
+                    result.getString("name")
             );
         }
         catch (SQLException e){
@@ -111,8 +108,7 @@ public class Database {
             return new User(
                     result.getString("user_id"),
                     result.getString("password"),
-                    result.getString("name"),
-                    result.getString("email")
+                    result.getString("name")
             );
         }
         catch (SQLException e){
@@ -131,8 +127,7 @@ public class Database {
             while(result.next()){
                 users.add(new User(result.getString("user_id"),
                         result.getString("password"),
-                        result.getString("name"),
-                        result.getString("email")));
+                        result.getString("name")));
             }
             return users;
         }

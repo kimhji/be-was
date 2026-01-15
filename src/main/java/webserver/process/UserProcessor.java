@@ -21,9 +21,6 @@ public class UserProcessor {
                         .orElseThrow(UserExceptionConverter::needUserData),
                 Optional.ofNullable(request.bodyParam.get("name"))
                         .map(RequestBody::getContentString)
-                        .orElseThrow(UserExceptionConverter::needUserData),
-                Optional.ofNullable(request.bodyParam.get("email"))
-                        .map(RequestBody::getContentString)
                         .orElseThrow(UserExceptionConverter::needUserData));
 
         if (Database.findUserById(user.getUserId()) != null) throw UserExceptionConverter.conflictUserID();
