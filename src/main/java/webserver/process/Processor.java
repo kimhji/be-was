@@ -5,6 +5,7 @@ import customException.PostExceptionConverter;
 import customException.WebException;
 import customException.WebStatusConverter;
 import db.Database;
+import db.ImageManager;
 import model.Post;
 import model.User;
 import webserver.http.Request;
@@ -97,6 +98,20 @@ public class Processor {
                     request.bodyParam.get("content").toString());
             Database.addPost(post);
             return new Response(WebException.HTTPStatus.OK, null, Response.ContentType.PLAIN_TEXT);
+        });
+
+        router.register(new Request(Request.Method.GET, "/image/profile"), request -> {
+            String[] pathSplit = request.path.split("/");
+            byte[] image = ImageManager.readImageProfile(pathSplit[pathSplit.length-1]);
+            System.out.println("profile"+pathSplit[pathSplit.length-1]+" is OK.");
+            return new Response(WebException.HTTPStatus.OK, image, Response.contentType(request.path));
+        });
+
+        router.register(new Request(Request.Method.GET, "/image"), request -> {
+            String[] pathSplit = request.path.split("/");
+            byte[] image = ImageManager.readImagePost(pathSplit[pathSplit.length-1]);
+            System.out.println("post"+pathSplit[pathSplit.length-1]+" is OK.");
+            return new Response(WebException.HTTPStatus.OK, image, Response.contentType(request.path));
         });
     }
 

@@ -41,8 +41,9 @@ public class Router {
 
         for (String part : parts) {
             if (part.isEmpty()) continue;
-            curNode = curNode.children.get(part);
-            if (curNode == null) throw WebStatusConverter.notAllowedPath();
+            RouterNode tnsNode = curNode.children.get(part);
+            if (tnsNode == null) break;
+            curNode = tnsNode;
         }
 
         Function<Request, Response> func = curNode.funcs.get(req.method);

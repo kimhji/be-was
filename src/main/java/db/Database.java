@@ -121,7 +121,7 @@ public class Database {
     public static void addPost(Post post) {
         try {
 
-            String imagePath = ImageManager.saveImage(post.image());
+            String imagePath = ImageManager.saveImagePost(post.image());
 
             String sql = "INSERT INTO posts(user_id, image_path, content, likes) VALUES (?, ?, ?, 0)";
 
@@ -154,7 +154,7 @@ public class Database {
             String imagePath = rs.getString("image_path");
             return new Post(
                     rs.getLong("post_id"),
-                    ImageManager.readImage(imagePath),
+                    ImageManager.readImagePost(imagePath),
                     rs.getString("user_id"),
                     rs.getString("content"),
                     rs.getInt("likes"),

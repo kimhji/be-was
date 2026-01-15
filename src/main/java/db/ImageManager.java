@@ -17,12 +17,20 @@ public class ImageManager {
     private static final DateTimeFormatter FORMATTER =
             DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS");
 
-    public static String saveImage(byte[] imageBytes) {
+    public static String saveImagePost(byte[] imageBytes) {
+        return saveImage(basePath, imageBytes);
+    }
+
+    public static String saveImageProfile(byte[] imageBytes) {
+        return saveImage(baseProfilePath, imageBytes);
+    }
+
+    private static String saveImage(String inputBasePath, byte[] imageBytes) {
         if (imageBytes == null || imageBytes.length == 0) {
             throw DBExceptionConverter.failToLoadImage();
         }
 
-        File dir = new File(basePath);
+        File dir = new File(inputBasePath);
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -42,8 +50,16 @@ public class ImageManager {
         return fileName;
     }
 
-    public static byte[] readImage(String path){
-        File file = new File(basePath+"/"+path);
+    public static byte[] readImagePost(String path){
+        return readImage(basePath, path);
+    }
+
+    public static byte[] readImageProfile(String path){
+        return readImage(baseProfilePath, path);
+    }
+
+    private static byte[] readImage(String inputBasePath, String path){
+        File file = new File(inputBasePath+"/"+path);
         if (!file.exists() || !file.isFile()) {
             throw DBExceptionConverter.failToLoadImage();
         }
@@ -59,6 +75,7 @@ public class ImageManager {
         } catch (IOException e) {
             throw DBExceptionConverter.failToLoadImage();
         }
+
         return image;
     }
 }
