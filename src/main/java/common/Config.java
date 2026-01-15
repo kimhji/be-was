@@ -27,6 +27,7 @@ public class Config {
     public static final String IMAGE_BASE_PATH = "./src/main/resources/uploads";
     public static final String IMAGE_PROFILE_BASE_PATH = "./src/main/resources/uploads/profiles";
     public static final String IMAGE_DEFAULT_PROFILE_NAME = "default.png";
+    public static final String IMAGE_DEFAULT_PROFILE_API = "/image/profile/default.png";
 
     public static final String POST_ID_QUERY_NAME = "postId";
 

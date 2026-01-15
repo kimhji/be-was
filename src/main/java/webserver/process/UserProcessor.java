@@ -79,6 +79,7 @@ public class UserProcessor {
             if (userName.length() < Config.MIN_USER_DATA_LENGTH) throw UserExceptionConverter.tooShortUserName();
             user.setName(userName);
         }
+
         if (request.bodyParam.get("password") != null && request.bodyParam.get("checkPassword") != null
         && !request.bodyParam.get("password").toString().isBlank()) {
             String password = request.bodyParam.get("password").getContentString().trim();
@@ -88,11 +89,26 @@ public class UserProcessor {
                 throw UserExceptionConverter.tooShortUserPassword();
             user.setPassword(password);
         }
+
         RequestBody image = request.bodyParam.get("profileImage");
+        RequestBody imagePath = request.bodyParam.get("previewImg");
         if(image != null) {
             switchProfileImage(image.getContent(), user);
         }
+        else if(imagePath != null){
+            try {
+                String raw = imagePath.getContentString();
+                String path = new java.net.URL(raw).getPath();
 
+                if (Config.IMAGE_DEFAULT_PROFILE_API.equals(path)) {
+                    switchProfileImage(
+                            ImageManager.readImageProfile(Config.IMAGE_DEFAULT_PROFILE_NAME),
+                            user
+                    );
+                }
+            } catch (Exception e) {
+            }
+        }
         Database.updateUser(user);
     }
 
