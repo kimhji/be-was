@@ -23,15 +23,17 @@
           <div class="post__menu">
             <ul class="post__menu__personal">
               <li>
-                <button class="post__menu__btn">
+                <button id="post__like__btn" class="post__menu__btn" data-post-id="{{post.postId}}">
                   <img src="./img/like.svg" />
                 </button>
               </li>
               <li>
-                <a class="post__like__count">{{post.likes}}</a>
+                <span class="post__like__count" data-post-id="{{post.postId}}">
+                  {{post.likes}}
+                </span>
               </li>
               <li>
-                <button class="post__menu__btn">
+                <button class="post__menu__btn" data-post-id="{{post.postId}}">
                   <img src="./img/comment.svg" />
                 </button>
               </li>
@@ -136,5 +138,6 @@
     </div>
 
     <script src="./script/alert.js"></script>
+    <script src="./script/extraEvent.js"></script>
   </body>
 </html>

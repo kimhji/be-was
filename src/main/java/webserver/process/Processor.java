@@ -17,6 +17,7 @@ import webserver.parse.DataReplacer;
 import webserver.parse.PageStruct;
 import webserver.route.Router;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class Processor {
@@ -112,6 +113,23 @@ public class Processor {
             byte[] image = ImageManager.readImagePost(pathSplit[pathSplit.length-1]);
             System.out.println("post"+pathSplit[pathSplit.length-1]+" is OK.");
             return new Response(WebException.HTTPStatus.OK, image, Response.contentType(request.path));
+        });
+
+
+        router.register(new Request(Request.Method.POST, "/post/like"), request -> {
+            String[] pathSplit = request.path.split("/");
+            try{
+                long postId = Long.parseLong(pathSplit[pathSplit.length-1]);
+                int likes = Database.updatePostLikes(postId);
+                return new Response(
+                        WebException.HTTPStatus.OK,
+                        ("{\"likes\":" + likes + "}").getBytes(),
+                        Response.ContentType.JSON
+                );
+            }
+            catch (NumberFormatException e){
+                throw PostExceptionConverter.badPostId();
+            }
         });
     }
 

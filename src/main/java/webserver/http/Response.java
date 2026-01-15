@@ -13,6 +13,7 @@ public class Response {
         HTML("text/html;charset=utf-8"),
         CSS("text/css"),
         JS("application/javascript"),
+        JSON("application/json"),
         PNG("image/png"),
         JPG("image/png"),
         JPEG("image/jpeg"),

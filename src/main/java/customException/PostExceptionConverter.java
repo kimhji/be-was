@@ -14,4 +14,11 @@ public class PostExceptionConverter{
                 "포스트의 내용이 존재하지 않습니다."
         );
     }
+
+    public static WebException badPostId() {
+        return new WebException(
+                WebException.HTTPStatus.BAD_REQUEST,
+                "포스트 id가 형식에 맞지 않습니다."
+        );
+    }
 }

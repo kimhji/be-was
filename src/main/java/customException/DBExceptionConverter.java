@@ -22,6 +22,13 @@ public class DBExceptionConverter {
         );
     }
 
+    public static WebException failToUpdatePost(){
+        return new WebException(
+                WebException.HTTPStatus.INTERNAL_SERVER_ERROR,
+                "포스트의 좋아요를 업데이트 하는 것에 실패했습니다."
+        );
+    }
+
 
     public static WebException failToAddPost() {
         return new WebException(

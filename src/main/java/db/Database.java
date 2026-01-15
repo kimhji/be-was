@@ -224,4 +224,41 @@ public class Database {
             throw DBExceptionConverter.failToAddUser();
         }
     }
+
+    public static int updatePostLikes(long postId) {
+        String sql = """
+        UPDATE posts
+        SET likes = likes + 1
+        WHERE post_id = ?
+    """;
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, postId);
+
+            int updated = pstmt.executeUpdate();
+            if (updated == 0) {
+                throw PostExceptionConverter.notFoundPost();
+            }
+
+            return getPostLikes(postId);
+        }
+        catch (SQLException e){
+            throw DBExceptionConverter.failToUpdatePost();
+        }
+    }
+
+
+    public static int getPostLikes(long postId) {
+        String sql = "SELECT likes FROM posts WHERE post_id = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, postId);
+            ResultSet rs = pstmt.executeQuery();
+            rs.next();
+            return rs.getInt("likes");
+        }
+        catch (SQLException e){
+            throw PostExceptionConverter.notFoundPost();
+        }
+    }
 }
