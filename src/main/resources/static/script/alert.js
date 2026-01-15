@@ -33,13 +33,22 @@ async function alertCall(response){
 function addListenerAddComment(){
     const btn = document.getElementById('create_comment_btn');
 
-    btn.addEventListener('click', async () => {
+    btn.addEventListener('submit', async () => {
         const postId = btn.dataset.postId;
         if (!postId) return;
+        const content = document.querySelector("#content").value;
 
         const response = await fetch(`/comment/${postId}`, {
-            method: "POST"
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+                content
+            })
         });
+
+        await formResponseProcessToMain(response);
     });
 }
 
