@@ -49,7 +49,7 @@ function addListenerAddComment(){
             })
         });
 
-        await formResponseProcessToMain(response);
+        await formResponseProcess(response, `/post/${postId}`);
     });
 }
 

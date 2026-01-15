@@ -22,13 +22,11 @@ public class CommentProcessor {
         try {
             long postId = Long.parseLong(pathSplit[pathSplit.length - 1]);
             Database.addComment(new Comment(postId, user.getUserId(), request.bodyParam.get("content").toString()));
-            Response response = new Response(
+            return new Response(
                     WebException.HTTPStatus.CREATED,
                     null,
                     Response.ContentType.PLAIN_TEXT
             );
-            //response.addHeader(Config.HEADER_LOCATION, Config.POST_PAGE_PATH + "/" + postId);
-            return response;
         } catch (NumberFormatException e) {
             throw CommentExceptionConverter.noPostId();
         }
