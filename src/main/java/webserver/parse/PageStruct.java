@@ -31,5 +31,6 @@ public class PageStruct {
         headerContent.setPage(false, PageReplacer.PageType.MAIN, Config.PAGE_HEADER_NOT_LOGIN);
         headerContent.setPage(true,PageReplacer.PageType.ARTICLE, Config.PAGE_HEADER_LOGIN);
         headerContent.setPage(true,PageReplacer.PageType.COMMENT, Config.PAGE_HEADER_LOGIN);
+        headerContent.setPage(true,PageReplacer.PageType.MY_PAGE, Config.PAGE_HEADER_LOGIN);
     }
 }

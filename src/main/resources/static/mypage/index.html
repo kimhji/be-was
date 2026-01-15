@@ -1,76 +1,77 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="/" />
-    <link href="./reset.css" rel="stylesheet" />
-    <link href="./global.css" rel="stylesheet" />
-  </head>
-  <body>
-    <div class="container">
-      <header class="header">
-        <a href="/"><img src="./img/signiture.svg" /></a>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <base href="/"/>
+    <link href="./reset.css" rel="stylesheet"/>
+    <link href="./global.css" rel="stylesheet"/>
+    <link href="./main.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <a href="/"><img src="./img/signiture.svg"/></a>
         {{page.header}}
-      </header>
-      <div class="page">
+    </header>
+    <div class="page">
         <h2 class="page-title">마이페이지</h2>
 
         <div class="profile_container">
-          <div class="profile_box">
-              <div class="profile_image">
-                <img class="profile" />
-              </div>
-              <div class="profile_frame">
-                  <div class="btn_profile">
+            <div class="profile_box">
+                <div class="profile_image">
+                    <img class="profile"/>
+                </div>
+                <div class="profile_frame">
+                    <div class="btn_profile">
                         <div class="btn_container">수정</div>
-                  </div>
-                  <div class="btn_bar"></div>
-                  <div class="btn_profile">
-                      <div class="btn_container">삭제</div>
-                  </div>
-              </div>
-        </div>
-          <form class="form" id="user_update">
-            <div class="textfield textfield_size_s input_margin">
-              <p class="title_textfield">닉네임</p>
-              <input
-                class="input_textfield"
-                autocomplete="username"
-                placeholder="{{user.name}}"
-                id="update-name"/>
+                    </div>
+                    <div class="btn_bar"></div>
+                    <div class="btn_profile">
+                        <div class="btn_container">삭제</div>
+                    </div>
+                </div>
             </div>
-            <div class="textfield textfield_size_s">
-              <p class="title_textfield">비밀번호</p>
-              <input
-                class="input_textfield"
-                placeholder="비밀번호를 변경할 경우 입력해주세요"
-                autocomplete="current-password"
-                id="update-password"
-              />
-            </div>
-            <div class="textfield textfield_size_s">
-              <p class="title_textfield">비밀번호 확인</p>
-              <input
-                class="input_textfield"
-                type="password"
-                placeholder="한 번 더 입력해주세요"
-                autocomplete="current-password"
-                id="update-check-password"
-              />
-            </div>
-            <button
-              id="registration-btn"
-              class="btn btn_contained btn_size_m input_margin"
+            <form class="form" id="user_update">
+                <div class="textfield textfield_size_s input_margin">
+                    <p class="title_textfield">닉네임</p>
+                    <input
+                            class="input_textfield"
+                            autocomplete="username"
+                            placeholder="{{user.name}}"
+                            id="update-name"/>
+                </div>
+                <div class="textfield textfield_size_s">
+                    <p class="title_textfield">비밀번호</p>
+                    <input
+                            class="input_textfield"
+                            placeholder="비밀번호를 변경할 경우 입력해주세요"
+                            autocomplete="current-password"
+                            id="update-password"
+                    />
+                </div>
+                <div class="textfield textfield_size_s">
+                    <p class="title_textfield">비밀번호 확인</p>
+                    <input
+                            class="input_textfield"
+                            type="password"
+                            placeholder="한 번 더 입력해주세요"
+                            autocomplete="current-password"
+                            id="update-check-password"
+                    />
+                </div>
+                <button
+                        id="registration-btn"
+                        class="btn btn_contained btn_size_m input_margin"
 
-              type="submit"
-            >
-              변경사항 저장
-            </button>
-          </form>
+                        type="submit"
+                >
+                    변경사항 저장
+                </button>
+            </form>
         </div>
-      </div>
     </div>
-    <script src="./script/alert.js"></script>
-  </body>
+</div>
+<script src="./script/alert.js"></script>
+</body>
 </html>
