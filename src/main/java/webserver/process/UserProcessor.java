@@ -74,14 +74,18 @@ public class UserProcessor {
 
     public void updateUser(Request request) {
         User user = getUserOrException(request);
-        if (request.bodyParam.get("userName") != null) {
+        if (request.bodyParam.get("userName") != null && !request.bodyParam.get("userName").toString().isBlank()) {
             String userName = request.bodyParam.get("userName").getContentString().trim();
+            if (userName.length() < Config.MIN_USER_DATA_LENGTH) throw UserExceptionConverter.tooShortUserName();
             user.setName(userName);
         }
-        if (request.bodyParam.get("password") != null && request.bodyParam.get("checkPassword") != null) {
+        if (request.bodyParam.get("password") != null && request.bodyParam.get("checkPassword") != null
+        && !request.bodyParam.get("password").toString().isBlank()) {
             String password = request.bodyParam.get("password").getContentString().trim();
             String checkPassword = request.bodyParam.get("checkPassword").getContentString().trim();
             if(password.compareTo(checkPassword) != 0) throw UserExceptionConverter.passwordNotMatch();
+            if (password.length() < Config.MIN_USER_DATA_LENGTH)
+                throw UserExceptionConverter.tooShortUserPassword();
             user.setPassword(password);
         }
         RequestBody image = request.bodyParam.get("profileImage");

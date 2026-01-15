@@ -19,6 +19,16 @@ public class User {
         this.imagePath = Config.IMAGE_DEFAULT_PROFILE_NAME;
     }
 
+    public User(String userId, String password, String name, String imagePath) {
+        if (userId == null || password == null || name == null
+                || userId.isBlank() || password.isBlank() || name.isBlank())
+            throw UserExceptionConverter.needUserData();
+        this.userId = userId.trim();
+        this.password = password.trim();
+        this.name = name.trim();
+        this.imagePath = imagePath.trim();
+    }
+
     public String getUserId() {
         return userId;
     }

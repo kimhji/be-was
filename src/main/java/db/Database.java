@@ -25,7 +25,8 @@ public class Database {
             stmt.execute("CREATE TABLE users (\n" +
                     "    user_id VARCHAR(50) PRIMARY KEY,\n" +
                     "    password VARCHAR(255) NOT NULL,\n" +
-                    "    name VARCHAR(50) NOT NULL UNIQUE\n" +
+                    "    name VARCHAR(50) NOT NULL UNIQUE,\n" +
+                    "    image_path VARCHAR(255) NOT NULL\n" +
                     ");\n");
 
             stmt.execute("CREATE TABLE posts (\n" +
@@ -54,12 +55,13 @@ public class Database {
 
     public static void addUser(User user) {
         try {
-            String sql = "INSERT INTO users(user_id, password, name) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO users(user_id, password, name, image_path) VALUES (?, ?, ?, ?)";
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, user.getUserId());
             pstmt.setString(2, user.getPassword());
             pstmt.setString(3, user.getName());
+            pstmt.setString(4, user.getImagePath());
 
             pstmt.executeUpdate();
         }
@@ -84,7 +86,8 @@ public class Database {
             return new User(
                     result.getString("user_id"),
                     result.getString("password"),
-                    result.getString("name")
+                    result.getString("name"),
+                    result.getString("image_path")
             );
         }
         catch (SQLException e){
@@ -108,7 +111,8 @@ public class Database {
             return new User(
                     result.getString("user_id"),
                     result.getString("password"),
-                    result.getString("name")
+                    result.getString("name"),
+                    result.getString("image_path")
             );
         }
         catch (SQLException e){
@@ -127,7 +131,8 @@ public class Database {
             while(result.next()){
                 users.add(new User(result.getString("user_id"),
                         result.getString("password"),
-                        result.getString("name")));
+                        result.getString("name"),
+                        result.getString("image_path")));
             }
             return users;
         }
@@ -294,12 +299,13 @@ public class Database {
     }
 
     public static void updateUser(User user){
-        String sql = "UPDATE users SET name = ?, password = ? WHERE user_id = ?";
+        String sql = "UPDATE users SET name = ?, password = ?, image_path = ? WHERE user_id = ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getName());
             pstmt.setString(2, user.getPassword());
-            pstmt.setString(3, user.getUserId());
+            pstmt.setString(3, user.getImagePath());
+            pstmt.setString(4, user.getUserId());
             pstmt.execute();
         }
         catch (SQLException e){
