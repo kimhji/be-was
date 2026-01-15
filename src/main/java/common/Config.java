@@ -4,6 +4,8 @@ public class Config {
     public static final String CRLF = "\r\n";
     public static final String REPLACE_PLACEHOLDER = "page";
 
+    public static final int MIN_USER_DATA_LENGTH = 4;
+
     public static final String DEFAULT_PAGE_PATH = "/index.html";
     public static final String MAIN_PAGE_PATH = "/main/index.html";
     public static final String REGISTRATION_PAGE_PATH = "/registration/index.html";

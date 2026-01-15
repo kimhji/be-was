@@ -21,6 +21,26 @@ public class UserExceptionConverter {
         );
     }
 
+    public static WebException tooShortUserId(){
+        return new WebException(
+                WebException.HTTPStatus.BAD_REQUEST,
+                "사용자 아이디는 4자 이상이어야 합니다."
+        );
+    }
+
+    public static WebException tooShortUserName(){
+        return new WebException(
+                WebException.HTTPStatus.BAD_REQUEST,
+                "사용자명은 4자 이상이어야 합니다."
+        );
+    }
+
+    public static WebException tooShortUserPassword(){
+        return new WebException(
+                WebException.HTTPStatus.BAD_REQUEST,
+                "비밀번호는 4자 이상이어야 합니다."
+        );
+    }
 
     public static WebException needUserName() {
         return new WebException(

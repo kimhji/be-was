@@ -25,6 +25,10 @@ public class UserProcessor {
 
         if (Database.findUserById(user.getUserId()) != null) throw UserExceptionConverter.conflictUserID();
         if (Database.findUserByName(user.getName()) != null) throw UserExceptionConverter.conflictUserName();
+
+        if(user.getUserId().length() < Config.MIN_USER_DATA_LENGTH) throw UserExceptionConverter.tooShortUserId();
+        if(user.getName().length() < Config.MIN_USER_DATA_LENGTH) throw UserExceptionConverter.tooShortUserName();
+        if(user.getPassword().length() < Config.MIN_USER_DATA_LENGTH) throw UserExceptionConverter.tooShortUserPassword();
         Database.addUser(user);
 
         return user.toString().getBytes();
