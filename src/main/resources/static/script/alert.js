@@ -1,6 +1,12 @@
 async function formResponseProcessToMain(response) {
     await formResponseProcess(response, "./index.html")
 }
+async function formResponseProcessToLogin(response) {
+    await formResponseProcess(response, "./login/index.html")
+}
+async function formResponseProcessToRegistration(response) {
+    await formResponseProcess(response, "./index.html")
+}
 
 async function formResponseProcess(response, nextPath) {
     if(await alertCall(response)) return;
@@ -68,6 +74,21 @@ document.getElementById("login")?.addEventListener("submit", async (e) => {
             password
         })
     });
+    if(response.status >= 400 && response.status < 500){
+        const text = await response.text();
+        if (text === '사용자 데이터가 존재하지 않습니다.') {
+            const goSignup = confirm(
+                '존재하지 않는 아이디입니다.\n회원 가입 하시겠습니까?'
+            );
+
+            if (goSignup) {
+                location.href = '/registration/index.html';
+            }
+            return;
+        }
+        alert("에러 발생: " + text);
+        return;
+    }
 
     await formResponseProcessToMain(response);
 });
@@ -90,7 +111,7 @@ document.getElementById("registration")?.addEventListener("submit", async (e) =>
         })
     });
 
-    await formResponseProcessToMain(response);
+    await formResponseProcessToLogin(response);
 });
 
 document.getElementById("link_to_mypage")?.addEventListener("click", async (e) => {
