@@ -5,6 +5,7 @@ import common.Config;
 import common.Utils;
 import customException.UserExceptionConverter;
 import db.Database;
+import db.ImageManager;
 import model.User;
 import webserver.http.Request;
 import webserver.http.RequestBody;
@@ -83,8 +84,20 @@ public class UserProcessor {
             if(password.compareTo(checkPassword) != 0) throw UserExceptionConverter.passwordNotMatch();
             user.setPassword(password);
         }
+        RequestBody image = request.bodyParam.get("profileImage");
+        if(image != null) {
+            switchProfileImage(image.getContent(), user);
+        }
 
         Database.updateUser(user);
+    }
+
+    private void switchProfileImage(byte[] image, User user) {
+        if(!user.getImagePath().endsWith(Config.IMAGE_DEFAULT_PROFILE_NAME)){
+            //TODO:이미지 삭제
+        }
+        String path = ImageManager.saveImageProfile(image);
+        user.setImagePath(path);
     }
 }
 

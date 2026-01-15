@@ -121,17 +121,21 @@ document.getElementById("user_update")?.addEventListener("submit", async (e) => 
     const userName = document.querySelector("#update-name").value;
     const password = document.querySelector("#update-password").value;
     const checkPassword = document.querySelector("#update-check-password").value;
+    const imageInput = document.querySelector("#update-image");
+    const file = imageInput.files[0];
+
+    const formData = new FormData();
+    formData.append("userName", userName);
+    formData.append("password", password);
+    formData.append("checkPassword", checkPassword);
+
+    if (file) {
+        formData.append("profileImage", file); // 이미지 추가
+    }
 
     const response = await fetch("/user/update", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: new URLSearchParams({
-            userName,
-            password,
-            checkPassword
-        })
+        body: formData
     });
 
     await formResponseProcessToMain(response);

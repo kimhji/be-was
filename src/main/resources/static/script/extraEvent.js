@@ -19,7 +19,7 @@ function addListenerLikeAction(){
 }
 
 function addListenerSaveTempImage(){
-    const imageInput = document.getElementById('form_profile_image');
+    const imageInput = document.getElementById('update-image');
     if(imageInput == null) return;
 
     imageInput.addEventListener('change', async (e) => {
@@ -36,7 +36,7 @@ function addListenerSaveTempImage(){
 
 function addListenerRemoveTempImage(){
     const removeBtn = document.getElementById('remove_profile_image');
-    const imageInput = document.getElementById('form_profile_image');
+    const imageInput = document.getElementById('update-image');
     const previewImg = document.getElementById('user-profile-preview');
     if(removeBtn == null || imageInput == null || previewImg == null) return;
 

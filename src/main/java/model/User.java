@@ -7,7 +7,6 @@ public class User {
     private String userId;
     private String password;
     private String name;
-    private byte[] image;
     private String imagePath;
 
     public User(String userId, String password, String name) {
@@ -17,7 +16,6 @@ public class User {
         this.userId = userId.trim();
         this.password = password.trim();
         this.name = name.trim();
-        this.image = null;
         this.imagePath = Config.IMAGE_DEFAULT_PROFILE_NAME;
     }
 
