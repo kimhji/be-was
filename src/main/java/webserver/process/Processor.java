@@ -107,14 +107,12 @@ public class Processor {
         router.register(new Request(Request.Method.GET, "/image/profile"), request -> {
             String[] pathSplit = request.path.split("/");
             byte[] image = ImageManager.readImageProfile(pathSplit[pathSplit.length - 1]);
-            System.out.println("profile" + pathSplit[pathSplit.length - 1] + " is OK.");
             return new Response(WebException.HTTPStatus.OK, image, Response.contentType(request.path));
         });
 
         router.register(new Request(Request.Method.GET, "/image"), request -> {
             String[] pathSplit = request.path.split("/");
             byte[] image = ImageManager.readImagePost(pathSplit[pathSplit.length - 1]);
-            System.out.println("post" + pathSplit[pathSplit.length - 1] + " is OK.");
             return new Response(WebException.HTTPStatus.OK, image, Response.contentType(request.path));
         });
 
