@@ -20,11 +20,16 @@
         <div class="profile_container">
             <div class="profile_box">
                 <div class="profile_image">
-                    <img class="profile"/>
+                    <img id="user-profile-preview" class="profile" src="/image/profile/{{user.imagePath}}"/>
                 </div>
                 <div class="profile_frame">
                     <div class="btn_profile">
-                        <div class="btn_container">수정</div>
+                        <div class="btn_container">
+                            <label for="form_profile_image" class="upload-text">
+                                수정
+                            </label>
+                            <input type="file" name="image" id="form_profile_image" hidden="hidden">
+                        </div>
                     </div>
                     <div class="btn_bar"></div>
                     <div class="btn_profile">
@@ -73,5 +78,6 @@
     </div>
 </div>
 <script src="./script/alert.js"></script>
+<script src="./script/extraEvent.js"></script>
 </body>
 </html>
