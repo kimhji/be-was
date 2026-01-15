@@ -2,10 +2,7 @@ package webserver.process;
 
 import common.Config;
 import common.Utils;
-import customException.CommentExceptionConverter;
-import customException.PostExceptionConverter;
-import customException.WebException;
-import customException.WebStatusConverter;
+import customException.*;
 import db.Database;
 import db.ImageManager;
 import model.Comment;
@@ -239,7 +236,11 @@ public class Processor {
 
     private Collection<CommentViewer> getCommentViewers(PostViewer postViewer){
         Collection<Comment> comments = Database.findCommentsByPost(postViewer.postId());
-        return comments.stream().map(comment -> new CommentViewer(comment.content(), postViewer.authorName(), postViewer.authorImagePath())).toList();
+        return comments.stream().map(comment -> {
+            User user = Database.findUserById(comment.authorId());
+            if(user == null) throw UserExceptionConverter.notFoundUser();
+            return new CommentViewer(comment.content(), user.getName(), user.getImagePath());
+        }).toList();
     }
 
     private CursorViewer getCursorViewer(long postId){
