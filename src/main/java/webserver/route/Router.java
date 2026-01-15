@@ -12,14 +12,15 @@ public class Router {
 
     private final RouterNode root = new RouterNode();
 
-    public static boolean needLogin(String path){
+    public static boolean needLogin(String path) {
         return (path.compareTo(Config.MY_PAGE_PAGE_PATH) == 0) || (path.compareTo("/mypage") == 0)
-                || (path.compareTo("/write") ==0)|| (path.compareTo(Config.ARTICLE_PAGE_PATH)==0);
+                || (path.compareTo("/write") == 0) || (path.compareTo(Config.ARTICLE_PAGE_PATH) == 0)
+                || (path.startsWith(Config.COMMENT_PAGE_PATH_PREFIX));
     }
 
-    public static boolean needPostData(String path){
+    public static boolean needPostData(String path) {
         return (path.compareTo(Config.DEFAULT_PAGE_PATH) == 0) || (path.compareTo("/") == 0)
-                || (path.compareTo(Config.MAIN_PAGE_PATH)==0);
+                || (path.compareTo(Config.MAIN_PAGE_PATH) == 0);
     }
 
     public void register(Request req, Function<Request, Response> func) {

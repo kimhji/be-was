@@ -12,6 +12,8 @@ public class Config {
     public static final String COMMENT_PAGE_PATH = "/comment/index.html";
     public static final String ARTICLE_PAGE_PATH = "/article/index.html";
     public static final String NOPOST_PAGE_PATH = "/exception/nopost.html";
+    public static final String COMMENT_PAGE_PATH_PREFIX = "/comment";
+    public static final String POST_PAGE_PATH = "/post";
 
     public static final String HEADER_CONTENT_LENGTH = "content-length";
     public static final String HEADER_LOCATION = "location";
@@ -23,6 +25,8 @@ public class Config {
     public static final String IMAGE_BASE_PATH = "./src/main/resources/uploads";
     public static final String IMAGE_PROFILE_BASE_PATH = "./src/main/resources/uploads/profiles";
     public static final String IMAGE_DEFAULT_PROFILE_NAME = "default.png";
+
+    public static final String POST_ID_QUERY_NAME = "postId";
 
     public static final String PAGE_HEADER_LOGIN = "<div>" +
             "<ul class=\"header__menu\">" +

@@ -1,11 +1,13 @@
 package webserver.process;
 
 import common.Config;
+import customException.CommentExceptionConverter;
 import customException.PostExceptionConverter;
 import customException.WebException;
 import customException.WebStatusConverter;
 import db.Database;
 import db.ImageManager;
+import model.Comment;
 import model.Post;
 import model.User;
 import webserver.http.Request;
@@ -44,7 +46,7 @@ public class Processor {
         router.register(new Request(Request.Method.GET, "/login"), (request) ->
                 {
                     request.path = Config.LOGIN_PAGE_PATH;
-                    if(userProcessor.getUser(request) != null){
+                    if (userProcessor.getUser(request) != null) {
                         request.path = Config.DEFAULT_PAGE_PATH;
                     }
                     return process(request);
@@ -91,7 +93,7 @@ public class Processor {
 
         router.register(new Request(Request.Method.POST, "/post/create"), request -> {
             User user = userProcessor.getUserOrException(request);
-            if(request.bodyParam.getOrDefault("content", null)==null){
+            if (request.bodyParam.getOrDefault("content", null) == null) {
                 throw PostExceptionConverter.badContentPost();
             }
             Post post = new Post(request.bodyParam.getOrDefault("image", new RequestBody("")).getContent(),
@@ -103,32 +105,63 @@ public class Processor {
 
         router.register(new Request(Request.Method.GET, "/image/profile"), request -> {
             String[] pathSplit = request.path.split("/");
-            byte[] image = ImageManager.readImageProfile(pathSplit[pathSplit.length-1]);
-            System.out.println("profile"+pathSplit[pathSplit.length-1]+" is OK.");
+            byte[] image = ImageManager.readImageProfile(pathSplit[pathSplit.length - 1]);
+            System.out.println("profile" + pathSplit[pathSplit.length - 1] + " is OK.");
             return new Response(WebException.HTTPStatus.OK, image, Response.contentType(request.path));
         });
 
         router.register(new Request(Request.Method.GET, "/image"), request -> {
             String[] pathSplit = request.path.split("/");
-            byte[] image = ImageManager.readImagePost(pathSplit[pathSplit.length-1]);
-            System.out.println("post"+pathSplit[pathSplit.length-1]+" is OK.");
+            byte[] image = ImageManager.readImagePost(pathSplit[pathSplit.length - 1]);
+            System.out.println("post" + pathSplit[pathSplit.length - 1] + " is OK.");
             return new Response(WebException.HTTPStatus.OK, image, Response.contentType(request.path));
         });
 
 
         router.register(new Request(Request.Method.POST, "/post/like"), request -> {
             String[] pathSplit = request.path.split("/");
-            try{
-                long postId = Long.parseLong(pathSplit[pathSplit.length-1]);
+            try {
+                long postId = Long.parseLong(pathSplit[pathSplit.length - 1]);
                 int likes = Database.updatePostLikes(postId);
                 return new Response(
                         WebException.HTTPStatus.OK,
                         ("{\"likes\":" + likes + "}").getBytes(),
                         Response.ContentType.JSON
                 );
-            }
-            catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 throw PostExceptionConverter.badPostId();
+            }
+        });
+
+        router.register(new Request(Request.Method.GET, "/comment"), request -> {
+            String[] pathSplit = request.path.split("/");
+            try {
+                request.path = Config.COMMENT_PAGE_PATH;
+                request.queryParam.put(Config.POST_ID_QUERY_NAME, pathSplit[pathSplit.length - 1]);
+                return process(request);
+            } catch (NumberFormatException e) {
+                throw CommentExceptionConverter.noPostId();
+            }
+        });
+
+        router.register(new Request(Request.Method.POST, "/comment"), request -> {
+            String[] pathSplit = request.path.split("/");
+            User user = userProcessor.getUserOrException(request);
+            if (request.bodyParam.getOrDefault("content", null) == null) {
+                throw CommentExceptionConverter.badContentComment();
+            }
+            try {
+                long postId = Long.parseLong(pathSplit[pathSplit.length - 1]);
+                Database.addComment(new Comment(postId, user.getUserId(), request.bodyParam.get("content").toString()));
+                Response response = new Response(
+                        WebException.HTTPStatus.MOVED_PERMANENTLY,
+                        null,
+                        Response.ContentType.PLAIN_TEXT
+                );
+                response.addHeader(Config.HEADER_LOCATION, Config.POST_PAGE_PATH + "/" + postId);
+                return response;
+            } catch (NumberFormatException e) {
+                throw CommentExceptionConverter.noPostId();
             }
         });
     }
@@ -147,7 +180,7 @@ public class Processor {
                 template = userReplacer.replace(user, template);
                 PostViewer postViewer = getPostViewer(simpleReq);
                 body = postReplacer.replace(postViewer, template).getBytes();
-                if(postViewer == null && Router.needPostData(simpleReq.path)){
+                if (postViewer == null && Router.needPostData(simpleReq.path)) {
                     body = getNoPostExceptionPage(simpleReq, user);
                 }
 
@@ -160,20 +193,26 @@ public class Processor {
         return response;
     }
 
-    private byte[] getNoPostExceptionPage(Request request, User user){
+    private byte[] getNoPostExceptionPage(Request request, User user) {
         request.path = Config.NOPOST_PAGE_PATH;
         byte[] body = StaticFileProcessor.processReq(request);
-        if(body == null) throw WebStatusConverter.cannotFindNoPostPage();
+        if (body == null) throw WebStatusConverter.cannotFindNoPostPage();
 
         String template = pageReplacer.replace(pageStruct, new String(body));
         return userReplacer.replace(user, template).getBytes(StandardCharsets.UTF_8);
     }
 
-    private PostViewer getPostViewer(Request request){
-        Post post = Database.getRecentPost();
-        if(post == null) return null;
+    private PostViewer getPostViewer(Request request) {
+        Post post = null;
+        if (request.queryParam.get(Config.POST_ID_QUERY_NAME) != null) {
+            long postId = Long.parseLong(request.queryParam.get(Config.POST_ID_QUERY_NAME));
+            post = Database.getPostByPostId(postId);
+        } else {
+            post = Database.getRecentPost();
+        }
+        if (post == null) return null;
         User author = Database.findUserById(post.userId());
-        if(author == null) return null;
-        return new PostViewer(post, author, 0);
+        if (author == null) return null;
+        return new PostViewer(post, author, Database.findCommentsByPost(post.postId()).size());
     }
 }

@@ -12,7 +12,7 @@ public class StaticFileProcessor {
 
     public static byte[] processReq(Request simpleReq) {
         byte[] result = "".getBytes();
-        if (simpleReq != null && simpleReq.method== Request.Method.GET) {
+        if (simpleReq != null && simpleReq.method == Request.Method.GET) {
             result = getStaticSources(simpleReq.path);
         }
         return result;

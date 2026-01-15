@@ -30,6 +30,19 @@ async function alertCall(response){
     return false;
 }
 
+function addListenerAddComment(){
+    const btn = document.getElementById('create_comment_btn');
+
+    btn.addEventListener('click', async () => {
+        const postId = btn.dataset.postId;
+        if (!postId) return;
+
+        const response = await fetch(`/comment/${postId}`, {
+            method: "POST"
+        });
+    });
+}
+
 document.getElementById("login")?.addEventListener("submit", async (e) => {
     e.preventDefault(); // 기본 submit 막기
     const userId = document.querySelector("#userId").value;
@@ -103,3 +116,5 @@ document.getElementById("post")?.addEventListener("submit", async (e) => {
 
     await formResponseProcessToMain(response);
 });
+
+addListenerAddComment();

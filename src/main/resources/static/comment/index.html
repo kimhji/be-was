@@ -10,16 +10,7 @@
     <div class="container">
       <header class="header">
         <a href="/"><img src="../img/signiture.svg" /></a>
-        <ul class="header__menu">
-          <li class="header__menu__item">
-            <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
-          </li>
-          <li class="header__menu__item">
-            <button id="logout-btn" class="btn btn_ghost btn_size_s">
-              로그아웃
-            </button>
-          </li>
-        </ul>
+        {{page.header}}
       </header>
       <div class="page">
         <h2 class="page-title">댓글 작성</h2>
@@ -30,13 +21,15 @@
               class="input_textfield"
               placeholder="글의 내용을 입력하세요"
               autocomplete="username"
+              name="content"
             ></textarea>
           </div>
           <button
-            id="registration-btn"
+            id="create_comment_btn"
             class="btn btn_contained btn_size_m"
             style="margin-top: 24px"
             type="button"
+            data-post-id="{{post.postId}}"
           >
             작성 완료
           </button>

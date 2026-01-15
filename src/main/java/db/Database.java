@@ -113,7 +113,7 @@ public class Database {
         }
         catch (SQLException e){
             logger.error(e.getMessage());
-            throw DBExceptionConverter.failToAddUser();
+            throw DBExceptionConverter.failToFindUser();
         }
     }
 
@@ -155,6 +155,36 @@ public class Database {
         catch (SQLException e){
             logger.error(e.getMessage());
             throw DBExceptionConverter.failToAddPost();
+        }
+    }
+
+    public static Post getPostByPostId(long postId){
+        String sql = """
+            SELECT post_id, user_id, image_path, content, likes
+            FROM posts
+            WHERE post_id = ?
+        """;
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, postId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (!rs.next()) {
+                return null;
+            }
+            String imagePath = rs.getString("image_path");
+            return new Post(
+                    rs.getLong("post_id"),
+                    ImageManager.readImagePost(imagePath),
+                    rs.getString("user_id"),
+                    rs.getString("content"),
+                    rs.getInt("likes"),
+                    imagePath
+            );
+
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+            throw DBExceptionConverter.failToFindPost();
         }
     }
 
@@ -207,7 +237,7 @@ public class Database {
     public static Collection<Comment> findCommentsByPost(long postId) {
         try {
             Collection<Comment> comments = new ArrayList<>();
-            String sql = "SELECT * FROM comment WHERE post_id = (?)";
+            String sql = "SELECT * FROM comments WHERE post_id = (?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setLong(1, postId);
 
@@ -221,7 +251,8 @@ public class Database {
             return comments;
         }
         catch (SQLException e){
-            throw DBExceptionConverter.failToAddUser();
+            logger.error(e.getMessage());
+            throw DBExceptionConverter.failToFindComment();
         }
     }
 
