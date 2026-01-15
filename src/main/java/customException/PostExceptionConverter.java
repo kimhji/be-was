@@ -15,6 +15,13 @@ public class PostExceptionConverter{
         );
     }
 
+    public static WebException badFileContentPost() {
+        return new WebException(
+                WebException.HTTPStatus.BAD_REQUEST,
+                "포스트의 이미지가 존재하지 않습니다."
+        );
+    }
+
     public static WebException badPostId() {
         return new WebException(
                 WebException.HTTPStatus.BAD_REQUEST,

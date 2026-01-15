@@ -106,12 +106,13 @@ public class Processor {
 
         router.register(new Request(Request.Method.POST, "/post/create"), request -> {
             User user = userProcessor.getUserOrException(request);
-            if (request.bodyParam.getOrDefault("content", null) == null) {
-                throw PostExceptionConverter.badContentPost();
+            if (request.bodyParam.get("image") == null) {
+                throw PostExceptionConverter.badFileContentPost();
             }
-            Post post = new Post(request.bodyParam.getOrDefault("image", new RequestBody("")).getContent(),
+            System.out.println("!!!!"+request.bodyParam.get("image").getContent());
+            Post post = new Post(request.bodyParam.get("image").getContent(),
                     user.getUserId(),
-                    request.bodyParam.get("content").toString());
+                    request.bodyParam.getOrDefault("content", new RequestBody("")).toString());
             Database.addPost(post);
             return new Response(WebException.HTTPStatus.OK, null, Response.ContentType.PLAIN_TEXT);
         });

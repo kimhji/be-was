@@ -166,10 +166,15 @@ document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
 });
 
 document.getElementById("post")?.addEventListener("submit", async (e) => {
-    e.preventDefault(); // 기본 submit 막기
-
+    e.preventDefault();
     const form = e.target;
-    const formData = new FormData(form);
+    const formData = new FormData();
+    formData.append("content", form.querySelector("#content").value);
+
+    const fileInput = form.querySelector('input[name="image"]');
+    if (fileInput.files.length > 0) {
+        formData.append("image", fileInput.files[0]);
+    }
 
     const response = await fetch("/post/create", {
         method: "POST",
