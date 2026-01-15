@@ -7,6 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import db.Database;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.process.Processor;
@@ -36,6 +37,7 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
         // 이후 삭제
+        Database.init();
         RequestHandler.addTestUser();
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);

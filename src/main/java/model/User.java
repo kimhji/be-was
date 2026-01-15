@@ -1,5 +1,6 @@
 package model;
 
+import common.Config;
 import customException.UserExceptionConverter;
 
 public class User {
@@ -7,6 +8,8 @@ public class User {
     private String password;
     private String name;
     private String email;
+    private byte[] image;
+    private String imagePath;
 
     public User(String userId, String password, String name, String email) {
         if (userId == null || password == null || name == null || email == null
@@ -16,6 +19,8 @@ public class User {
         this.password = password;
         this.name = name;
         this.email = email;
+        this.image = null;
+        this.imagePath = Config.IMAGE_DEFAULT_PROFILE_NAME;
     }
 
     public String getUserId() {
@@ -32,6 +37,14 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getImagePath() {
+        return this.imagePath;
+    }
+
+    public void setImagePath(String path) {
+        this.imagePath = path;
     }
 
     @Override

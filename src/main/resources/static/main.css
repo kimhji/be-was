@@ -144,3 +144,8 @@
   width: 32px;
   height: 32px;
 }
+
+.post__menu__personal{
+  vertical-align: center;
+  align-items: center;
+}

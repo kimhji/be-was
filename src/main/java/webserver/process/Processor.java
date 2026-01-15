@@ -3,22 +3,30 @@ package webserver.process;
 import common.Config;
 import customException.PostExceptionConverter;
 import customException.WebException;
+import customException.WebStatusConverter;
 import db.Database;
 import model.Post;
 import model.User;
 import webserver.http.Request;
 import webserver.http.RequestBody;
 import webserver.http.Response;
+import webserver.parse.DTO.PostViewer;
 import webserver.parse.PageReplacer;
 import webserver.parse.DataReplacer;
+import webserver.parse.PageStruct;
 import webserver.route.Router;
+
+import java.nio.charset.StandardCharsets;
 
 public class Processor {
 
     private static final Router router = new Router();
     private static final UserProcessor userProcessor = new UserProcessor();
+    private static final DataReplacer pageReplacer = new DataReplacer("page");
     private static final DataReplacer userReplacer = new DataReplacer("user");
-    private static final PageReplacer pageReplacer = new PageReplacer();
+    private static final DataReplacer postReplacer = new DataReplacer("post");
+    private static final PageStruct pageStruct = new PageStruct();
+    //private static final PageReplacer pageReplacer = new PageReplacer();
 
     public Processor() {
         init();
@@ -34,6 +42,9 @@ public class Processor {
         router.register(new Request(Request.Method.GET, "/login"), (request) ->
                 {
                     request.path = Config.LOGIN_PAGE_PATH;
+                    if(userProcessor.getUser(request) != null){
+                        request.path = Config.DEFAULT_PAGE_PATH;
+                    }
                     return process(request);
                 }
         );
@@ -48,9 +59,9 @@ public class Processor {
             return process(request);
         });
 
-        router.register(new Request(Request.Method.GET, "/"), dummy -> {
-            return new Response(WebException.HTTPStatus.OK, "<h1>Hello World</h1>".getBytes(), Response.ContentType.HTML);
-
+        router.register(new Request(Request.Method.GET, "/"), request -> {
+            request.path = Config.DEFAULT_PAGE_PATH;
+            return process(request);
         });
 
         router.register(new Request(Request.Method.POST, "/user/create"), request -> {
@@ -72,6 +83,7 @@ public class Processor {
             userProcessor.deleteUserSession(request);
             Response response = new Response(WebException.HTTPStatus.OK, null, Response.ContentType.HTML);
             response.addHeader(Config.HEADER_LOCATION, "http://localhost:8080/index.html");
+            response.addHeader(Config.HEADER_SET_COOKIE, "cookieName=; Max-Age=0;");
             return response;
         });
 
@@ -97,8 +109,14 @@ public class Processor {
             byte[] body = StaticFileProcessor.processReq(simpleReq);
 
             if (body != null) {
-                String template = pageReplacer.getWholePage(new String(body), simpleReq.path, user != null);
-                body = userReplacer.replace(user, template).getBytes();
+                pageStruct.setState(simpleReq.path, user != null);
+                String template = pageReplacer.replace(pageStruct, new String(body));
+                template = userReplacer.replace(user, template);
+                PostViewer postViewer = getPostViewer(simpleReq);
+                body = postReplacer.replace(postViewer, template).getBytes();
+                if(postViewer == null && Router.needPostData(simpleReq.path)){
+                    body = getNoPostExceptionPage(simpleReq, user);
+                }
 
                 response = new Response(WebException.HTTPStatus.OK, body, Response.contentType(simpleReq.path));
             }
@@ -107,5 +125,22 @@ public class Processor {
             response = router.route(simpleReq);
         }
         return response;
+    }
+
+    private byte[] getNoPostExceptionPage(Request request, User user){
+        request.path = Config.NOPOST_PAGE_PATH;
+        byte[] body = StaticFileProcessor.processReq(request);
+        if(body == null) throw WebStatusConverter.cannotFindNoPostPage();
+
+        String template = pageReplacer.replace(pageStruct, new String(body));
+        return userReplacer.replace(user, template).getBytes(StandardCharsets.UTF_8);
+    }
+
+    private PostViewer getPostViewer(Request request){
+        Post post = Database.getRecentPost();
+        if(post == null) return null;
+        User author = Database.findUserById(post.userId());
+        if(author == null) return null;
+        return new PostViewer(post, author, 0);
     }
 }

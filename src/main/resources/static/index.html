@@ -11,15 +11,15 @@
     <div class="container">
       <header class="header">
         <a href="/"><img src="./img/signiture.svg" /></a>
-        {{page}}
+        {{page.header}}
       </header>
       <div class="wrapper">
         <div class="post">
           <div class="post__account">
-            <img class="post__account__img" />
-            <p class="post__account__nickname">account</p>
+            <img class="post__account__img" src="{{post.authorImagePath}}"/>
+            <p class="post__account__nickname">{{post.authorName}}</p>
           </div>
-          <img class="post__img" />
+          <img class="post__img" src="{{post.imagePath}}"/>
           <div class="post__menu">
             <ul class="post__menu__personal">
               <li>
@@ -28,9 +28,15 @@
                 </button>
               </li>
               <li>
+                <a class="post__like__count">{{post.likes}}</a>
+              </li>
+              <li>
                 <button class="post__menu__btn">
                   <img src="./img/comment.svg" />
                 </button>
+              </li>
+              <li>
+                <a class="post__comment__count">{{post.commentNum}}</a>
               </li>
             </ul>
             <button class="post__menu__btn">
@@ -38,6 +44,7 @@
             </button>
           </div>
           <p class="post__article">
+            {{post.content}}
             우리는 시스템 아키텍처에 대한 일관성 있는 접근이 필요하며, 필요한
             모든 측면은 이미 개별적으로 인식되고 있다고 생각합니다. 즉, 응답이
             잘 되고, 탄력적이며 유연하고 메시지 기반으로 동작하는 시스템 입니다.

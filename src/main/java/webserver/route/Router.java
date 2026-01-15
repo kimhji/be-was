@@ -17,6 +17,11 @@ public class Router {
                 || (path.compareTo("/write") ==0)|| (path.compareTo(Config.ARTICLE_PAGE_PATH)==0);
     }
 
+    public static boolean needPostData(String path){
+        return (path.compareTo(Config.DEFAULT_PAGE_PATH) == 0) || (path.compareTo("/") == 0)
+                || (path.compareTo(Config.MAIN_PAGE_PATH)==0);
+    }
+
     public void register(Request req, Function<Request, Response> func) {
         String[] parts = req.path.split("/");
         RouterNode curNode = root;
