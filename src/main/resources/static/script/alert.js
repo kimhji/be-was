@@ -1,15 +1,17 @@
 async function formResponseProcessToMain(response) {
     await formResponseProcess(response, "./index.html")
 }
+
 async function formResponseProcessToLogin(response) {
     await formResponseProcess(response, "./login/index.html")
 }
+
 async function formResponseProcessToRegistration(response) {
     await formResponseProcess(response, "./index.html")
 }
 
 async function formResponseProcess(response, nextPath) {
-    if(await alertCall(response)) return;
+    if (await alertCall(response)) return;
 
     // 성공
     if (response.status >= 200 && response.status < 300 && nextPath != null && nextPath.length > 0) {
@@ -18,7 +20,7 @@ async function formResponseProcess(response, nextPath) {
 }
 
 async function getView(response) {
-    if(await alertCall(response)) return;
+    if (await alertCall(response)) return;
 
 
     const html = await response.text();
@@ -27,7 +29,7 @@ async function getView(response) {
     document.close();
 }
 
-async function alertCall(response){
+async function alertCall(response) {
     if (response.status >= 400 && response.status < 500) {
         const msg = await response.text();
         alert("에러 발생: " + msg);
@@ -36,7 +38,7 @@ async function alertCall(response){
     return false;
 }
 
-function addListenerAddComment(){
+function addListenerAddComment() {
     const btn = document.getElementById('create_comment_btn');
 
     btn?.addEventListener('submit', async (e) => {
@@ -74,7 +76,7 @@ document.getElementById("login")?.addEventListener("submit", async (e) => {
             password
         })
     });
-    if(response.status >= 400 && response.status < 500){
+    if (response.status >= 400 && response.status < 500) {
         const text = await response.text();
         if (text === '사용자 데이터가 존재하지 않습니다.') {
             const goSignup = confirm(
@@ -135,14 +137,16 @@ document.getElementById("user_update")?.addEventListener("submit", async (e) => 
     await formResponseProcessToMain(response);
 });
 
-document.getElementById("link_to_mypage")?.addEventListener("click", async (e) => {
-    e.preventDefault(); // 기본 submit 막기
+document.querySelectorAll(".link_to_mypage").forEach(el => {
+    el.addEventListener("click", async (e) => {
+        e.preventDefault(); // 기본 submit 막기
 
-    const response = await fetch("/mypage", {
-        method: "GET"
-    });
+        const response = await fetch("/mypage", {
+            method: "GET"
+        });
 
-    await getView(response);
+        await getView(response);
+    })
 });
 
 document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
