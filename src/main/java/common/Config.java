@@ -27,7 +27,7 @@ public class Config {
     public static final String PAGE_HEADER_LOGIN = "<div>" +
             "<ul class=\"header__menu\">" +
             "  <li class=\"header__menu__item\">" +
-            "    <img id=link_to_mypage class=\"post__account__img\" />" +
+            "    <img id=link_to_mypage class=\"post__account__img\" src=\"/image/profile/{{user.imagePath}}\" />" +
             "  </li>" +
             "  <li class=\"header__menu__item\">" +
             "    <p id=link_to_mypage class=\"post__account__nickname\">안녕하세요, {{user.name}}님!</p>" +
