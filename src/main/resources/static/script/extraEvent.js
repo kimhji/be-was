@@ -34,6 +34,19 @@ function addListenerSaveTempImage(){
     });
 }
 
+function addListenerRemoveTempImage(){
+    const removeBtn = document.getElementById('remove_profile_image');
+    const imageInput = document.getElementById('form_profile_image');
+    const previewImg = document.getElementById('user-profile-preview');
+    if(removeBtn == null || imageInput == null || previewImg == null) return;
+
+    removeBtn.addEventListener('click', async (e) => {
+        imageInput.value = "";
+        previewImg.src = "/image/profile/default.png";
+    });
+}
+
 
 addListenerLikeAction();
 addListenerSaveTempImage();
+addListenerRemoveTempImage();
