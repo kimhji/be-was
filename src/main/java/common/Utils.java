@@ -2,10 +2,7 @@ package common;
 
 import webserver.http.RequestBody;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Utils {
     public static String getRestStr(String wholeStr, String splitParam, int idx) {
@@ -23,31 +20,26 @@ public class Utils {
         return sb.toString();
     }
 
-    public static String parseMapToQueryString_RequestBody(Map<String, RequestBody> queryParam) {
+    public static <T> String parseGeneralMapToQueryString(Map<String, T> queryParam) {
         StringBuilder sb = new StringBuilder();
 
         boolean first = true;
-        for (Map.Entry<String, RequestBody> entry : queryParam.entrySet()) {
+        for (Map.Entry<String, T> entry : queryParam.entrySet()) {
             if (!first) sb.append("&");
             sb.append(entry.getKey())
                     .append("=")
-                    .append(entry.getValue().toString());
+                    .append(String.valueOf(entry.getValue()));
             first = false;
         }
         return sb.toString();
     }
-    public static String parseMapToQueryString(Map<String, String> queryParam) {
-        StringBuilder sb = new StringBuilder();
 
-        boolean first = true;
-        for (Map.Entry<String, String> entry : queryParam.entrySet()) {
-            if (!first) sb.append("&");
-            sb.append(entry.getKey())
-                    .append("=")
-                    .append(entry.getValue());
-            first = false;
-        }
-        return sb.toString();
+    public static String parseMapToQueryString_RequestBody(Map<String, RequestBody> queryParam) {
+        return parseGeneralMapToQueryString(queryParam);
+    }
+
+    public static String parseMapToQueryString(Map<String, String> queryParam) {
+        return parseGeneralMapToQueryString(queryParam);
     }
     public static void replaceAll(StringBuilder sb, String target, String replacement) {
         int index;
@@ -136,14 +128,6 @@ public class Utils {
                 (data[3] & 0x47) == 0x47) {
             return Config.IMAGE_TYPE_PNG;
         }
-
-//        // GIF
-//        if ((data[0] & 0xFF) == 0x47 &&
-//                (data[1] & 0xFF) == 0x49 &&
-//                (data[2] & 0xFF) == 0x46) {
-//            return "GIF";
-//        }
-
         return Config.IMAGE_TYPE_UNKNOWN;
     }
 
